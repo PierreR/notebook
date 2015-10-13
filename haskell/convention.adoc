@@ -1,0 +1,51 @@
+= Naming convention
+Pierre Radermecker <pierrer@pi3r.be>
+2014
+:imagesdir: img
+:data-uri:
+:language: haskell
+:source-highlighter: pygments
+:icons: font
+
+== Algebraic Data Type
+
+```
+data List a =
+  Cons a (List a)
+  | Nil
+
+-- in pipes or ekmett you even have:
+
+data List a
+  = Cons a (List a)
+  | Nil
+
+```
+
+== Record
+
+This is a common layout (used in the `lens` code base)
+```
+data Person = Person
+  { _firstName :: String
+  , _lastName :: String
+  } deriving (Eq, Show)
+```
+In order to mimic ADT we could go with this:
+```
+data Person
+      = Person
+      { _firstName :: String
+      , _lastName :: String
+      } deriving (Eq, Show)
+```
+
+== Module
+
+```
+module Puppet.Parser (
+         expression
+       , puppetParser
+       , runPParser
+       ) where
+```

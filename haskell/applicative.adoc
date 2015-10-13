@@ -1,0 +1,82 @@
+# Applicative
+Pierre Radermecker <pierrer@pi3r.be>
+2015
+:imagesdir: img
+:data-uri:
+:language: haskell
+:source-highlighter: pygments
+:icons: font
+
+
+## Introduction
+
+Applicative functors are to be preferred to monads when the structure of a computation is fixed a priori.
+That makes it possible to perform certain kinds of static analysis on applicative values.
+
+```
+class Functor f ⇒ Applicative f where
+  pure :: a → f a
+ (<*>) :: f (a → b) → f a → f b
+```
+`f a` represents an “effectful” computation returning a result of type a.
+
+
+An Alternative instance gives an applicative functor the structure of a monoid,
+with empty as the unit element, and <|> as the binary operation. 
+
+```
+class Applicative f ⇒ Alternative f where
+  empty :: f a
+ (<|>) :: f a → f a → f a
+```
+
+## Free Applicative Functor
+
+Given  a  functor f,  the fmap method  gives  us  a  way  to  lift unary pure  functions (a → b) to  effectful functions (f a → f b), 
+but what about functions of arbitrary arity?
+
+It is not that hard to convince yourself that an applicative functor is just a functor that knows how to lift functions of arbitrary arities.
+
+```
+data Free f a
+  = Pure a
+  | Free (f (Free f a))
+```
+
+The  typical  use  case  for  this  construction  is  creating  embedded  DSLs which can be statically analysed.
+The fixed point of a function is generally just the repeated application of that function:
+
+```
+fix f = f (f (f (f (f (f (f (f (f (f (f (f (f ... ))))))))))))
+-- or
+fix f = f (fix f)
+```
+
+```
+data Free f a = Free (f (Free f a)) | Pure a
+```
+
+## UI
+
+* HsQML (qt 5)
+* SDL2/gl for game
+* Web (ghcjs, threepenny, ...)
+
+
+## Q ?
+
+## Mind blowing
+
+```
+instance Monoid r => Monoid (Managed r) where
+    mempty = pure mempty
+    mappend = liftA2 mappend
+```
+
+```
+xs = 1 : [x + 1 | x <- xs] --> [1,2,3 ...]
+```
+
+```
+Right cfg -> return . Right . query cfg fp =<< F.newFileCache
+```

@@ -1,0 +1,50 @@
+= Pipes MVC
+Pierre Radermecker <pierrer@pi3r.be>
+2014
+:language: haskell
+:source-highlighter: pygments
+:icons: font
+
+== Controller/Model/View
+
+.Controller
+Represent concurrent effectful inputs to your system. A `controller` is really just a synonym for an `Input` from `pipes-concurrency`. So you have this function:
+```
+producer :: Buffer a -> Producer a IO () -> Managed (Controller a)
+```
+
+.Model
+A pure streaming transformation from the combined controller to the combined views.
+You can test this pure kernel by swapping out controllers with predicable inputs.
+```
+asPipe :: Pipe a b (State s) () -> Model s a b
+```
+
+.View
+Handles all effectful outputs from the model.
+```
+asSink :: (a -> IO ()) -> View aa
+```
+
+.Run it
+```
+runMVC ::
+  initialState
+  -> Model s a b
+  -> Managed (View b, Controller a)
+  -> IO s
+```
+
+== Managed
+
+You have a resource a that can be acquired and then released.
+```
+-- | A @(Managed a)@ is a resource @(a)@ bracketed by acquisition and release
+newtype Managed a = Manage
+    { -- | Consume a managed resource
+      with :: forall x . (a -> IO x) -> IO x
+    }
+Resource ((forall b. IO b -> IO b) -> IO (Allocated a))
+```
+
+&sy5l06@

@@ -1,0 +1,95 @@
+= Folds
+Pierre Radermecker <pierrer@pi3r.be>
+2014
+:imagesdir: img
+:data-uri:
+:language: haskell
+:source-highlighter: pygments
+:icons: font
+
+
+
+== foldl/foldr
+```
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr f v [] = v
+foldr f v (x:xs) = f x (foldr f v xs)
+
+foldl :: (s -> a -> s) -> s -> [a] -> s
+foldl  f v []     =  v
+foldl  f v (x:xs) =  foldl f (f v x) xs
+```
+
+You can think of `foldr` *non-recursively* as simultaneously replacing each (:) in a list by a given function, and [] by a given value.
+
+image::right-fold-transformation.png[Foldr]
+
+`Foldr` is handy if `f` is *not* strict in both arguments. That way we can rely on laziness to stop the recursion (or build an infinite list).
+`Map` for instance has to use `foldr` to maintain its laziness capabilities:
+
+```
+map = foldr (\x ys -> f x : ys) []
+-- or map' = foldr ((:) . f) []
+
+-- of course it can also be defined with recursion only
+map' :: (a -> b) -> [a] -> [b]
+map' _ [] = []
+map' f (x:xs) = f x : (map f xs)
+
+-- ex
+takeWhile (< 12) $ map (*2) [1..]
+```
+
+On the other hand, when the whole list needs to be traversed (`sum` or `reverse` are two examples), `foldl'` is actually more efficient in term of memory space.
+
+```
+reverse = foldl' (flip (:)) []
+```
+
+The strict version `foldl'` should always be used instead of foldl (don't ever use `foldl` from Prelude)
+
+image::left-fold-transformation.png[Foldl]
+
+
+== foldl
+
+To get a better representation for fold we need to transform the function into data.
+
+```
+{-# LANGUAGE ExistentialQuantification #-}
+-- existential datatype (note that `x` does not appear on the left side)
+data Fold a b
+--                    step func      initial acc     extract func (done)
+ = forall x . Fold  (x -> a -> x)       x             (x -> b)
+```
+`Fold` is a functor, a monoid and an applicative.
+It is  also a profunctor and a comonad.
+It is actually isomorphic to a Moore machine (see https://www.fpcomplete.com/school/to-infinity-and-beyond/pick-of-the-week/part-2)
+
+
+```
+-- | Apply a strict left 'Fold' to a 'Foldable' container
+fold :: Foldable f => Fold a b -> f a -> b
+fold (Fold step begin done) as = F.foldr cons done as begin
+  where
+    cons a k x = k $! step x a
+```
+
+This makes it possible to define cleanly the function `average` without traversing twice the foldable container.
+
+```
+average = (/) <$> sum <*> genericLength
+
+sum :: Num a => Fold a a
+sum = Fold (+) 0 id
+
+genericLength :: Num b => Fold a b
+genericLength = Fold (\n _ -> n + 1) 0 id
+
+λ> fold average [1..10000000]
+```
+
+NOTE:
+
+- `Fold` is also a profunctor and a comonad.
+- Nothing in Foldable or Traversable ever changes the "shape" of the container it is given.

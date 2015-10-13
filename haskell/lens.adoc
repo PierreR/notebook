@@ -1,0 +1,70 @@
+= Lenses TECHNICAL NOTE
+Pierre Radermecker
+2013
+
+== Lens
+
+A lens is a first-class reference to a subpart of some data type.
+
+`Lens' s a` operates on a container `s` and put the focus on 'a'.
+
+Note that lenses are not `accessors` but `focusers`. It focus on a particular location of a structure. These are the types we want for `view`, `set` and `over/update`:
+
+```
+view :: Lens' s a -> s -> a
+set :: Lens' s a -> a -> s -> s
+over :: Lens' s a -> (a -> a) -> s -> s
+```
+
+The big insight is the fact that the `Lens'` type can be implemented as an unique type that works for all 3 methods (given we add a functor constraint). It is actually a type synonym for:
+
+```
+type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s <1>
+```
+<1> This is a kind of a lifting from the element `(a -> f a)` to the container `(s -> f s)`
+
+
+
+
+.Common operators
+:===
+^. : view
+.~ : set
+%~ : over
+.= : state monad view
+:===
+
+NOTE: Lenses form a category where `.` is composition and `id` is the identity.
+
+
+.Examples
+
+....
+> over _1 (++ "!!!") ("goal", "the crowd goes wild")
+("goal!!!", "the crowd goes wild")
+
+> ("world", "world") & _1 .~ "hello" & _2 .~ "hello" <1>
+....
+<1> `&` allows to make a start with `s` and then compose.
+It is defined as the reverse of `$` operator.
+
+
+== Traverse
+
+A Traversal is a like a Lens' except weaker:
+```
+type Traversal' a b =
+    forall f . (Applicative f) => (b -> f b) -> (a -> f a)
+```
+
+== Prims
+
+Prisms are kind of like Lenses that can fail or miss.
+
+preview `(^?)` is like `(^.)` for Prism's or Traversal's. It handles access that focuses on either 0 or 1 targets.
+
+toListOf `(^..)` view list of targets
+
+== FreeT
+
+Just think of FreeT f m Void as a convenient monadic way to build up values of type Fix that is a bit more beginner friendly.
