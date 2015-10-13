@@ -1,0 +1,248 @@
+= SALT TECHNICAL NOTE
+Pierre Radermecker
+2015
+
+== Targeting
+
+=== Minion id
+
+- unique (FQDN by default)
+- can be overridden in the minion config file
+- if changed, P/P keys need to be regenerated
+- match by shell-style globbing around the minion id or top file
+- use single quote
+- Perl-compatible regex can be used with the -E option
+
+
+```
+salt '*.be.brussels' test.ping
+salt -L 'web1, web2, web3' disk.usage
+salt -E 'web[0-9]' cmd.exec_code python 'import sys; print sys.version'
+```
+
+```
+base:
+'web-(develjstaging)'
+  - match: pcre
+  - webserver
+```
+
+=== Grains
+
+- static bits of information that a minion collects when the minion starts
+- can be statically described in the minion config file with the option grains
+- available to Salt modules
+- automatically sync when state.highstate is called.
+
+ salt -G 'os:CentOS' --batch-size 25% grains.item num_cpus
+
+=== Node groups
+
+- predefined group of minions declared in the master
+- declared using compound matchers (see doc)
+
+
+== Salt states
+
+Use SLS files (SaLt State) to represent the state of a system.
+
+- SLS files are just dictionaries, lists, strings, and numbers (HighState data structure)
+- default serialization format is YAML with the Jinja2 templating system
+- system data and function can be used via salt, grain and pillar
+- files are combined to form a salt state tree using source, include and extend
+
+
+```yaml
+declaration-id: <1>
+  pkg:
+    - installed
+  service:
+    - running
+    - watch: <2>
+    - pkg: apache
+    - file: /etc/httpd/conf/httpd.conf
+
+/etc/httpd/conf/httpd.conf:
+  file.managed:
+    - source: salt://apache/httpd.conf
+    - user: root
+    - group: root
+    - mode: 644
+```
+<1> *declaration-id* set the name of the thing that needs to be manipulated
+<2> *watch* & *require* to manage order and events
+
+=== Salt file server & top file & environment
+
+The *top file* is used to map what modules get loaded onto what minions
+
+```yaml
+base: <1>
+  'bmob': <2>
+    - packages <3>
+```
+<1> environment
+<2> salt 'bmob' state.highstate
+<3> sls module name
+
+The *file server* is  suitable for distributing files to minions
+
+```yaml
+file_roots:
+  base:
+    - /srv/salt
+```
+
+== External Auth
+
+```yaml
+# The external auth system
+external_auth:
+  ldap:
+    pradermecker:
+      - 'G@hostname:middleware': <1>
+      - cmd.run
+      - disk.*
+      - host.*
+      - grains.*
+      - network.*
+      - ps.*
+      - pkg.*
+      - service.*
+      - sys.*
+      - test.*
+      - '@runner' <2>
+
+auth.ldap.basedn: OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
+auth.ldap.binddn: CN=rdr_cas,OU=Service_Groups_ Accounts,OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
+auth.ldap.bindpw: P@ssw0rd01
+auth.ldap.filter: (cn={{username}})
+auth.ldap.port: 389
+auth.ldap.server: svidscapw250.ad.cirb.lan
+auth.ldap.tls: False
+```
+<1> Define the allow targets (compount). No relation to the salt notion of environment.
+<2> Access to the runner module but this work only via the `salt-api`
+    On the command line, `salt-run` does not support the `pam` or `ldap` flag.
+
+== Standalone minions
+
+Minion can run without master.
+In the minion config file, set the option `file client: local`
+
+By default the contents of the master configuration file are loaded into pillar for all minions, this is to enable the master configuration file to be used for global configuration of minions. To disable the master config from being added to the pillar set pillar_opts to False.
+
+
+== Master Event
+
+```
+event = salt.utils.event.MasterEvent('/home/vagrant/projects/jules/var/run/salt/master')
+event.get_event(wait=20, tag='salt')
+```
+
+== Pillars
+
+The data can be arbitrary.
+The pillar is built in a similar fashion as the state tree, it is comprised of sls files and has a top file, just like the state
+tree.
+The default location for the pillar is in /srv/pillar ("pillar_roots" master config key).
+
+== GITFS
+
+When using the gitfs backend, Salt translates git branches and tags into environments, making environment management very simple.
+```yaml
+fileserver_backend:
+  - git
+
+gitfs_remotes:
+  - http://stash.cirb.lan/scm/middleware/salt-stack.git
+
+```
+
+== Salt API
+
+```bash
+curl -si 192.168.30.100:8000/login \
+        -H "Accept: application/json" \
+        -d username='jfroche' \
+        -d password='xMLrzzzz' \
+        -d eauth='pam' > /tmp/cookies.txt
+curl -b /tmp/cookies.txt -si 192.168.30.100:8000 \
+    -d client='runner' \
+    -d mods='orchestration.bootstrap-puppet' \
+    -d fun='state.orchestrate' \
+    -d eauth='pam'
+```
+
+== Orchestration
+```
+[main]
+SALTAPI_URL=http://saltmaster.sandbox.srv.cirb.lan:8000
+SALTAPI_USER=pradermecker
+SALTAPI_PASS=pass
+SALTAPI_EAUTH=pam
+```
+```
+salt-run state.orchestrate orch.test
+pepper '*' test.ping
+pepper 'puppetmaster2*'  grains.item subgroup role
+pepper --client=runner state.orchestrate mods=orchestration.bootstrap-puppet
+```
+
+```yaml
+
+set_puppet_role_to_master:
+    salt.function:
+        - name: utils.set_role
+        - tgt: 'G@role:server and G@subgroup:puppet'
+        - kwarg:
+            role: master
+        - require:
+          - salt: run_saltmaster
+
+# /srv/salt/orch/test-puppet.sls
+run_puppet_jenkinsmaster:
+    salt.state: <3>
+        - sls:
+          - puppet <4>
+        - tgt: 'G@role:master and G@subgroup:jenkins'
+        - tgt_type: compound
+
+ping_saltmaster:
+    salt.function: <1>
+        - name: test.ping
+        - tgt: 'role:saltmaster'
+        - tgt_type: grain
+        - require: <2>
+           - salt: run_puppet_jenkinsmaster
+
+# /srv/salt/puppet.sls:
+puppet:
+    module.run:
+        - name: cmd.run
+        - arg:
+           - 'puppet agent --verbose --onetime --no-daemonize --color false'
+```
+<1> To execute a function, use salt.function
+<2> Force order
+<3> To execute a module, use salt.state
+<4> Execute the module /srv/salt/puppet.sls
+
+== Useful commands
+
+
+```
+salt-utils sync_all
+```
+
+== Postgrest
+
+```
+http://pgserver.sandbox.srv.cirb.lan:3000/jids?jid=eq.20150831150415858891
+http://pgserver.sandbox.srv.cirb.lan:3000/salt_returns?full_ret->>jid=eq.20150831150437889173
+```
+
+== Issues
+
+* When the master restart, windows minion does not seem to be able to reconnect (without a minion restart)
+/etc/httpd/conf/httpd.conf:
