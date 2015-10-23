@@ -93,3 +93,29 @@ NOTE:
 
 - `Fold` is also a profunctor and a comonad.
 - Nothing in Foldable or Traversable ever changes the "shape" of the container it is given.
+
+== Foldable/Traversable
+
+.Fold
+`fold` from the `foldl` take as an argument any `Foldable` structure. `Foldable` are structures that we can **reduce** into a single result.
+
+```
+class Foldable t where
+  fold    :: Monoid m => t m -> m
+  foldMap :: Monoid m => (a -> m) -> t a -> m
+```
+Note that `fold` and `foldMap` require the elements of the Foldable to be monoids.
+
+.Traversable
+When you traverse a structure you actually want to keep it intact.
+The function `traverse` is exactly `mapM` generalized for all `Foldable`s and applying any applicative effect:
+```
+class (Functor t, Foldable t) => Traversable t where
+  traverse  :: Applicative f => (a -> f b) -> t a -> f (t b)
+  traverse f = sequenceA . fmap f
+  mapM = traverse
+  sequenceA :: Applicative f => t (f a) -> f (t a)
+  sequenceA = traverse id
+
+for = flip traverse
+```

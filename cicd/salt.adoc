@@ -14,7 +14,7 @@ Pierre Radermecker
 - Perl-compatible regex can be used with the -E option
 
 
-```
+```Shell
 salt '*.be.brussels' test.ping
 salt -L 'web1, web2, web3' disk.usage
 salt -E 'web[0-9]' cmd.exec_code python 'import sys; print sys.version'
@@ -161,7 +161,7 @@ gitfs_remotes:
 
 == Salt API
 
-```bash
+```shell
 curl -si 192.168.30.100:8000/login \
         -H "Accept: application/json" \
         -d username='jfroche' \
@@ -231,7 +231,7 @@ puppet:
 == Useful commands
 
 
-```
+```shell
 salt-utils sync_all
 ```
 
