@@ -96,7 +96,7 @@ NOTE:
 
 == Foldable/Traversable
 
-.Fold
+Fold::
 `fold` from the `foldl` take as an argument any `Foldable` structure. `Foldable` are structures that we can **reduce** into a single result.
 
 ```
@@ -106,7 +106,7 @@ class Foldable t where
 ```
 Note that `fold` and `foldMap` require the elements of the Foldable to be monoids.
 
-.Traversable
+Traversable::
 When you traverse a structure you actually want to keep it intact.
 The function `traverse` is exactly `mapM` generalized for all `Foldable`s and applying any applicative effect:
 ```

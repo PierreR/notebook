@@ -1,0 +1,46 @@
+= Spacemacs Cheatsheet
+Pierre Radermecker <pierrer@pi3r.be>
+2015
+
+=== Magit
+
+:===
+<SPC> l, E, E :       Ediff a file (awesome)
+:===
+
+=== Helm
+
+:===
+c-k :                 "abort" helm completion !!
+:===
+
+=== Ido
+
+:===
+c-Return :            dired
+:===
+
+=== Misc
+
+:===
+<SPC> a u :           undo-tree-visualize
+<SPC> p f :           helm-find file for your project !amazing!
+<SPC> s l :           helm-semantic-or-imenu
+<SPC> f e h :         open helm spacemacs for help
+<SPC> f S :           save all buffers
+<SPC> i K :           insert empty line above
+<SPC> b b :           helm find buffer
+<SPC> x J / SPC x K : move lines up and down i
+
+,gg :                 jump to def (awesome!)
+
+<SPC> p y :  	        find tags
+<SPC> / :             ag search
+<SPC> m c R :         reload .spacemacs
+<SPC> f e d :         open .spacemacs
+:===
+
+(define-key evil-normal-state-map (kbd "C-p C-b") 'ibuffer)
+
+=== Tramp
+/ssh:saltmaster_testing|sudo:root@saltmaster:/srv/myfile.sls
