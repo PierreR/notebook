@@ -1,0 +1,108 @@
+= Nix
+Pierre Radermecker <pierrer@pi3r.be>
+2014/2015
+:language: nix
+:source-highlighter: pygments
+:icons: font
+
+== Expressions
+
+.Set
+```
+let x = 123; in
+{ inherit x; <1>
+  text = "Hello";
+  y = f { bla = 456; };
+}.text or "World" <2>
+
+```
+<1> When defining a set it is often convenient to copy variables from the surrounding lexical scope
+<2> Sets accessor using `.` +
+    Default using `or`
+
+.List
+```
+[ 123 ./foo.nix "abc" (f { x = y; }) ]
+```
+
+.Function
+```
+pattern: body
+```
+The pattern can be a single identifier:
+```
+negate = x: !x;
+```
+Or a set of arguments:
+```
+{stdenv, fetchurl, perl }:
+
+stdenv.mkDerivation { <1>
+  name = "hello-2.1.1";
+  builder = ./builder.sh;
+  src = fetchurl {
+  url = ftp://ftp.nluug.nl/pub/gnu/hello/hello-2.1.1.tar.gz; <2>
+  md5 = "70c9ccf9fac07f762c24f2df2290784d";
+  };
+  inherit perl; <3>
+}
+```
+<1> Building something from other stuff is called a `derivation`. We perform a derivation by calling the function `stdenv.mkDerivation` passing the set as argument.
+<2> As a convenience, URIs can be written as is.
+<3> The derivation function requires Perl. We use `inherit` to pass the value of the perl function argument to the builder.
+
+.With
+```
+with e1; e2
+```
+Introduces all attributes of the set `e1` into the lexical scope of the expression `e2`:
+
+```
+let as = { x = "foo"; y = "bar"; };
+in with as; x + y
+```
+
+.Optional argument
+```
+{ x, y ? "foo", z ? "bar" }: z + y + x <1>
+```
+<1> a function that only requires an attribute named x, but optionally accepts y and z.
+
+
+== Bootstrap
+
+Nix composes all of these individual functions into a large package repository. This repository essentially calls every single top level function, with support for recursive bindings in order to satisfy dependencies. Continuing with the hello example, we may have a top-level entry point like:
+
+
+```
+rec {
+  hello = import /path/to/hello.nix { inherit stdenv fetchurl; }; <1>
+
+  stdenv = import /path/to/stdenv.nix { inherit gcc };
+
+  fetchurl = import /path/to ;
+
+  gcc = import /path/to/gcc.nix {};
+
+  # ...
+}
+```
+<1> Import loads a file containing a function and then calls that function with the provided arguments
+
+> But wait - I just said this calls all functions… so wouldn’t that then mean that all software gets installed? The trick here is that Nix is a lazy language.
+
+== NixOS
+
+.System update
+```shell
+sudo nixos-rebuild switch --upgrade
+```
+.User update
+```shell
+nix-channel --update
+nix-env -u '*'
+```
+.Haskell
+```shell
+nix-env -iA nixpkgs.ghcDevEnv
+```

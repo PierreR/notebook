@@ -108,11 +108,10 @@ class Foldable t where
   fold    :: Monoid m => t m -> m
   foldMap :: Monoid m => (a -> m) -> t a -> m
   foldMap g = mconcat . map g
-```
-...
+
 λ> foldMap Sum [1,2,3,4]
 Sum {getSum = 10}
-...
+```
 
 NOTE: `fold` and `foldMap` require the elements of the Foldable to be monoids.
 
