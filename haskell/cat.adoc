@@ -108,6 +108,8 @@ As a stretch while applicative allows for parallelism, monad allows for sequenci
 
 > A monad is like a monoid where we combine functors "vertically". `join` is analogous to `(+)` and `return` to `0`.
 
+NOTE: By law `>>` = `*>`. Consequently `mapM_` =  `traverse_`.
+
 - Side-Effect
 - Environment
 - Error

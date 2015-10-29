@@ -42,5 +42,9 @@ c-Return :            dired
 
 (define-key evil-normal-state-map (kbd "C-p C-b") 'ibuffer)
 
+== Surround
+
+Enter visual state with `v`>> `e` for selecting expression >> `s` for surrounding >> `)` with parents without extra spaces.
+
 === Tramp
 /ssh:saltmaster_testing|sudo:root@saltmaster:/srv/myfile.sls

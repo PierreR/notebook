@@ -82,7 +82,7 @@ base: <1>
     - packages <3>
 ```
 <1> environment
-<2> salt 'bmob' state.highstate
+<2> target for state.highstate
 <3> sls module name
 
 The *file server* is  suitable for distributing files to minions
@@ -183,11 +183,12 @@ SALTAPI_PASS=pass
 SALTAPI_EAUTH=pam
 ```
 ```
-salt-run state.orchestrate orch.test
+salt-run state.orchestrate orch.test saltenv=middleware <1>
 pepper '*' test.ping
 pepper 'puppetmaster2*'  grains.item subgroup role
 pepper --client=runner state.orchestrate mods=orchestration.bootstrap-puppet
 ```
+<1> pick up the gitfs branch that host `orch.test` source
 
 ```yaml
 
