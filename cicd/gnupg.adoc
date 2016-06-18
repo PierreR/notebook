@@ -1,0 +1,8 @@
+= GNUPG TECHNICAL NOTE
+Pierre Radermecker
+2015
+
+```
+cat cirb.private | ssh puppet/master_testing sudo -u puppet gpg --allow-secret-key-import --import
+cat cirb.private | ssh puppet3 sudo -u puppet gpg --allow-secret-key-import --import
+```

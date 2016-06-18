@@ -2,3 +2,13 @@
 *.pdf
 *.out
 *.log
+*.js
+*.jpg
+*.aux
+*.xml
+*.sublime-project
+haskell/haskell_notebook.sublime-workspace
+haskell/pandoc-config.json
+*.tex
+*.tex-backup
+*.mobi

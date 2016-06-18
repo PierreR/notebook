@@ -1,6 +1,5 @@
 = SALT TECHNICAL NOTE
 Pierre Radermecker
-2015
 
 == Targeting
 
@@ -72,6 +71,10 @@ declaration-id: <1>
 <1> *declaration-id* set the name of the thing that needs to be manipulated
 <2> *watch* & *require* to manage order and events
 
+```shell
+# given a sls web/apache.sls
+salt '*' state.sls web.apache
+```
 === Salt file server & top file & environment
 
 The *top file* is used to map what modules get loaded onto what minions
@@ -99,27 +102,34 @@ file_roots:
 # The external auth system
 external_auth:
   ldap:
+    GP_APP_JENKINS%:
+         - 'test.*'
+         - 'grains.*'
+         - 'pillar.*'
     pradermecker:
       - 'G@hostname:middleware': <1>
-      - cmd.run
-      - disk.*
-      - host.*
-      - grains.*
-      - network.*
-      - ps.*
-      - pkg.*
-      - service.*
-      - sys.*
-      - test.*
-      - '@runner' <2>
+         - '.*'
+         - '@runner' <2>
+         - '@wheel'
+         - '@jobs'
+    jfroche:
+         - 'saltutil.*'
+         - '@runner'
+         - '@wheel'
+         - '@jobs'
 
-auth.ldap.basedn: OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
-auth.ldap.binddn: CN=rdr_cas,OU=Service_Groups_ Accounts,OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
-auth.ldap.bindpw: P@ssw0rd01
-auth.ldap.filter: (cn={{username}})
+auth.ldap.basedn: OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
+auth.ldap.binddn: CN=<%= @ldap_name %>,OU=Saltmasters,OU=Apps,OU=Service_Groups_Accounts,OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
+auth.ldap.bindpw: <%= @ldap_pwd %>
+auth.ldap.filter: (sAMAccountName={{username}})
 auth.ldap.port: 389
-auth.ldap.server: svidscapw250.ad.cirb.lan
+auth.ldap.server: svidscavw003.prd.srv.cirb.lan
 auth.ldap.tls: False
+auth.ldap.no_verify: True
+auth.ldap.activedirectory: True
+auth.ldap.groupclass: group
+auth.ldap.accountattributename: sAMAccountName
+auth.ldap.persontype: person
 ```
 <1> Define the allow targets (compount). No relation to the salt notion of environment.
 <2> Access to the runner module but this work only via the `salt-api`
@@ -229,11 +239,17 @@ puppet:
 <3> To execute a module, use salt.state
 <4> Execute the module /srv/salt/puppet.sls
 
+== Salt SSL
+
+```shell
+make salt-ssh HOST=jenkins2 ZONE=prod CMD="state.sls utils.migrate_puppet3"
+```
+
 == Useful commands
 
 
 ```shell
-salt-utils sync_all
+salt '*' saltutil.sync_all
 ```
 
 == Postgrest
@@ -241,6 +257,58 @@ salt-utils sync_all
 ```
 http://pgserver.sandbox.srv.cirb.lan:3000/jids?jid=eq.20150831150415858891
 http://pgserver.sandbox.srv.cirb.lan:3000/salt_returns?full_ret->>jid=eq.20150831150437889173
+```
+
+== Install PRD / Bootstrap
+
+```bash
+## get salt/puppet version we want
+## We do need to update puppet because the current salt config does not work wih < 3.8
+yum versionlock delete 0:*
+yum install salt-master salt-minion puppet
+# temp /etc/hosts to point to the new salt master
+systemctl start salt-master
+systemctl start salt-minion
+salt '*' saltutil.sync_all
+
+## we need to manually change the config of /etc/salt/master:
+#
+#  file_roots:
+#    base:
+#      - /srv/salt/
+#    middleware:
+#      - /srv/salt/middleware
+
+## new puppetmaster, foreman, puppetdb, pgserver
+# temp /etc/hosts to point to the new salt master
+
+# we still need to manually
+yum makecache fast
+yum update -y
+yum clean all
+
+# we still need to manually
+mkdir -p /etc/facter/facts.d/
+vim /etc/facter/facts.d/host-info.txt
+
+# and finally we need piera to get hiera data before we can bootstrap ...
+
+
+## Do test every pings are working correctly
+
+salt-run state.orchestrate orch.ping saltenv=middleware
+
+## There are issues when puppetconfig restart the minion during the orchestration process
+## Let's do it manually
+
+salt -C 'G@role:master and G@subgroup:puppet and G@hostgroup:middleware' puppetutils.run_apply  hostgroup=middleware role=server zone=prod subgroup=puppet
+
+
+salt -C 'G@role:saltmaster and G@hostgroup:middleware and G@zone:prod' puppetutils.install_stackrpm hostgroup=middleware zone=prod
+
+salt -C 'G@role:saltmaster and G@hostgroup:middleware and G@zone:prod' puppetutils.run_apply hostgroup=middleware role=saltmaster zone=prod
+
+salt -C 'G@role:pgserver and G@hostgroup:middleware and G@zone:prod' puppetutils.run_agent hostgroup=middleware zone=prod
 ```
 
 == Issues

@@ -25,7 +25,6 @@ type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s <1>
 
 
 
-
 .Common operators
 :===
 ^. : view
@@ -41,21 +40,14 @@ NOTE: Lenses form a category where `.` is composition and `id` is the identity.
 
 ....
 > over _1 (++ "!!!") ("goal", "the crowd goes wild")
+> ("goal", "the crowd goes wild") & _1 %~ (++ "!!!") <1>
 ("goal!!!", "the crowd goes wild")
 
 > ("world", "world") & _1 .~ "hello" & _2 .~ "hello" <1>
 ....
-<1> `&` allows to make a start with `s` and then compose.
+<1> `&` allows to start the expression from `s` and then compose.
 It is defined as the reverse of `$` operator.
 
-
-== Traverse
-
-A Traversal is a like a Lens' except weaker:
-```
-type Traversal' a b =
-    forall f . (Applicative f) => (b -> f b) -> (a -> f a)
-```
 
 == Prims
 
@@ -63,6 +55,39 @@ Prisms are kind of like Lenses that can fail or miss.
 
 preview `(^?)` is like `(^.)` for Prism's or Traversal's. It handles access that focuses on either 0 or 1 targets.
 
+Note how the monoid instance of String allows us to get a native String from this expression:
+....
+> s = (Left "hello", 5)
+> s ^. _1._Left
+"hello"
+> s ^. _1._Right
+""
+....
+But without a monoid instance it cannot work and the `(^?)` is necessary:
+```
+> s = (Left 5, 5)
+> s ^? _1._Left
+Just 5
+> s ^? _1._Right
+Nothing
+```
+== Traverse
+
+Traversals are Lenses which focus on multiple targets simultaneously. We actually don't know how many targets they might be focusing on: it could be exactly 1 (like a Lens) or maybe 0 (like a Prism) or several. In that regard, a traversal is a like a Lens' except weaker (more general):
+```
+type Traversal' a b =
+    forall f . (Applicative f) => (b -> f b) -> (a -> f a)
+
+```
+```
+firstOf/lastOf traverse :: Traversable t => t a -> Maybe a
+
+> firstOf traverse [1,2,3]
+1
+> [1..8] & lastOf traverse
+8
+
+```
 toListOf `(^..)` view list of targets
 
 == FreeT

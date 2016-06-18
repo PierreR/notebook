@@ -1,0 +1,33 @@
+= Haxl
+
+== Primitives
+
+.A concurrency monad
+It gives you a `Result`.
+```
+newtype GenHaxl u a = GenHaxl
+  { unHaxl :: Env u -> IORef (RequestStore u) -> IO (Result u a) }
+
+-- | The result of a computation is either 'Done' with a value, 'Throw'
+-- with an exception, or 'Blocked' on the result of a data fetch with
+-- a continuation.
+data Result u a
+  = Done a
+  | Throw SomeException
+  | Blocked (GenHaxl u a)
+
+datafetch :: (DataSource u r, Request r a) => r a -> GenHaxl u a
+```
+
+.A request
+ is a set of *constraints*:
+```
+type Request req a =
+  ( Eq (req a)
+  , Hashable (req a)
+  , Typeable (req a)
+  , Show (req a)
+  , Show a
+  )
+```
+

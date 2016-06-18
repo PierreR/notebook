@@ -1,0 +1,28 @@
+= GIT TECHNICAL NOTE
+Pierre Radermecker
+2013
+
+== Internals
+
+Git maintained snapshot of directory's contents. It is a content-addressable filesystem, a simple key value data store. Keys are SHA-1 hash and values are objects.
+
+There are 4 different types of objects:
+
+  - Blob stores files (it does not store the name of the file)
+  - Tree references other trees and/or blobs, stores the file name and groups them together (as directories do)
+  - Commit points to a single tree and realize "snapshots".
+  - Tag marks a specific commit
+
+== Tricks bag
+
+* Ignore files in all projects but keep this for yourself
+
+	. Add to your ~/.gitconfig file
+
+	```
+	[core]
+	excludesfile = /home/username/.gitignore
+	```
+
+	. Create a ~/.gitignore file with file patterns to be ignored
+

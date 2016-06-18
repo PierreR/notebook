@@ -8,6 +8,12 @@ Pierre Radermecker <pierrer@pi3r.be>
 :icons: font
 
 
+== Introduction
+
+Folding is the act of reducing a structure to a single value.
+
+We can see them as consumers or `comonads`.footnote:[Unfolding is then associated to producers or `monads`.]
+
 
 == foldl/foldr
 ```
@@ -51,7 +57,7 @@ The strict version `foldl'` should always be used instead of foldl (don't ever u
 image::left-fold-transformation.png[Foldl]
 
 
-== foldl
+== Foldl package
 
 To get a better representation for fold we need to transform the function into data.
 
@@ -96,7 +102,24 @@ genericLength = Fold (\n _ -> n + 1) 0 id
 NOTE:
 
 - `Fold` is also a profunctor and a comonad.
-- Nothing in Foldable or Traversable ever changes the "shape" of the container it is given.
+
+=== FoldM
+
+```
+data FoldM m a b =
+  -- | @FoldM @ @ step @ @ initial @ @ extract@
+  forall x . FoldM (x -> a -> m x) (m x) (x -> m b)
+```
+
+`Fold` is equivalent to `FoldM Identity`.
+You use `generalize` (with no performance penalty) to get a `FoldM` from a `Fold`:
+
+```
+generalize :: Monad m => Fold a b -> FoldM m a b
+```
+
+NOTE: In the `turtle` library, `FoldM` plays the role of a consumer and `Shell` the role of a Producer. `fold` is how you connect them together.
+
 
 == Foldable/Traversable
 

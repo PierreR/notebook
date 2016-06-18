@@ -1,0 +1,39 @@
+= Haskell: Turtle
+Pierre Radermecker <pierrer@pi3r.be>
+2015
+:language: haskell
+:source-highlighter: pygments
+https://github.com/Gabriel439/Haskell-Turtle-Library[Github]
+
+== Streams
+
+The Shell monad represents a stream of values. You can think of Shell as `[] + IO + Managed`.
+
+```
+newtype Shell a = Shell { _foldIO :: forall r . FoldM IO a r -> IO r }
+
+
+-- invoke any external shell command
+shell
+    :: Text        -- Command line
+    -> Shell Text  -- Standard input to feed to program
+    -> IO ExitCode
+
+select ::        [a] -> Shell a
+liftIO ::      IO a  -> Shell a
+using  :: Managed a  -> Shell a
+
+-- usual construction primitive
+empty :: Shell a
+
+-- embed a shell cmd as streams
+inshell :: Text -> Shell Text -> Shell Text
+
+-- consume the stream by printing it to stdout
+view   :: Show a => Shell a -> IO ()
+stdout :: Shell Text -> IO ()
+-- consume the (side-effect) stream, discarding any unused values
+sh :: MonadIO io => Shell a -> io ()
+```
+
+Shell` is also an instance of `MonadPlus` (and thus Alternative). So you can concatenate two Shell streams using `<|>`.

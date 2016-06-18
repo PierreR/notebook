@@ -219,3 +219,7 @@ xs = 1 : [x + 1 | x <- xs] --> [1,2,3 ...]
 ```
 Right cfg -> return . Right . query cfg fp =<< F.newFileCache
 ```
+
+== Useful
+
+`-fdefer-type-errors`

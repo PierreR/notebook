@@ -31,13 +31,20 @@ data Person = Person
   , _lastName :: String
   } deriving (Eq, Show)
 ```
-In order to mimic ADT we could go with this:
+But in order to mimic ADT and to make it easy with the haskell-indentation we should go with this instead:
 ```
-data Person
-      = Person
-      { _firstName :: String
-      , _lastName :: String
-      } deriving (Eq, Show)
+data Person =
+  Person
+  { _firstName :: String
+  , _lastName :: String
+  } deriving (Eq, Show)
+```
+or 
+```
+data Person =
+  Person { _firstName :: String
+         , _lastName :: String
+         } deriving (Eq, Show)
 ```
 
 == Module

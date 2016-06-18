@@ -5,7 +5,8 @@ Pierre Radermecker <pierrer@pi3r.be>
 === Magit
 
 :===
-<SPC> l, E, E :       Ediff a file (awesome)
+<SPC> g e     :       Ediff a file (awesome)
+<SPC> g d r   :       Revert hunk
 :===
 
 === Helm
@@ -18,24 +19,36 @@ c-k :                 "abort" helm completion !!
 
 :===
 c-Return :            dired
+c-o      :            | open in a new buffer
+c-s      :            - open in a new buffer
+:===
+
+=== Search
+
+:===
+<SPC> s l   :        helm-semantic-or-imenu
+<SPC> s w g :        search with google
+<SPC> s f   :        search within a path
+<SPC> s s   :        helm-swoop
 :===
 
 === Misc
 
 :===
-<SPC> a u :           undo-tree-visualize
-<SPC> p f :           helm-find file for your project !amazing!
-<SPC> s l :           helm-semantic-or-imenu
-<SPC> f e h :         open helm spacemacs for help
-<SPC> f S :           save all buffers
-<SPC> i K :           insert empty line above
-<SPC> b b :           helm find buffer
+<SPC> a u   :        "undo-tree-visualize"
+<SPC> p f   :        helm-find file for your project !amazing!
+<SPC> f e h :        open helm spacemacs for help
+<SPC> f S   :        save all buffers
+<SPC> f y   :        show file name
+<SPC> i K   :        insert empty line above
+<SPC> b b   :        helm find buffer
 <SPC> x J / SPC x K : move lines up and down i
+<SPC> r y   :        kill ring
 
 ,gg :                 jump to def (awesome!)
 
-<SPC> p y :  	        find tags
-<SPC> / :             ag search
+<SPC> p y   :  	      find tags
+<SPC> /     :         ag search     
 <SPC> m c R :         reload .spacemacs
 <SPC> f e d :         open .spacemacs
 :===
@@ -48,3 +61,5 @@ Enter visual state with `v`>> `e` for selecting expression >> `s` for surroundin
 
 === Tramp
 /ssh:saltmaster_testing|sudo:root@saltmaster:/srv/myfile.sls
+
+== Replace on multiple files

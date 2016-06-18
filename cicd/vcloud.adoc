@@ -1,0 +1,6 @@
+= VCloud
+== Login
+
+```
+curl -i -k -H "Accept:application/*+xml;version=5.5"  -u 'pradermecker@cirb-test:pass' https://c.irisnet.be/api/login
+```

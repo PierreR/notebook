@@ -54,14 +54,14 @@ instance Functor ((->) r) where
 
 Another intuition is to look at functors as producers of output that can have its type adapted. So `Maybe a` represents an output of type a that might be present (Just a) or absent (Nothing). `fmap f` allows us to adapt the output of type a to an output of type b.
 
-But this kind of functor does not allow us to change the type of the input. That’s where Contravariant comes in. The intuition behind a Contravariant is that it reflects a sort of "consumer of input" that can have its type adapted.
+Whenever you have producer of outputs, you might also have the dual consumer of inputs. This is where Contravariant comes in. The intuition behind a Contravariant is that it reflects a sort of "consumer of input" that can have the type of accepted input adapted.
 
 ```
 class Contravariant f where
   contramap :: (b -> a) -> f a -> f b
 ```
 
-So here we can adapt the *input* to the type b.
+So here we can adapt the *input* to go from a consumer of input 'a' to a consumer of input 'b'. But to go there you need to provide a function from 'b' to 'a'
 
 
 == Isomorphisms
@@ -73,18 +73,41 @@ g ∘ f = 1A and f ∘ g = 1B
 
 == Applicative
 
-With a functor f it is not possible to apply a function wrapped by f to a value wrapped by f. This is given by Applicative
+With a functor f it is not possible to apply a function wrapped by the structure `f` to a value wrapped by f. This is given by Applicative:
 
 ```
-pure :: a -> f a
-<*> :: f (a -> b) -> f a -> f b
+class Functor f ⇒ Applicative f where
+  pure :: a → f a
+ (<*>) :: f (a → b) → f a → f b
 ```
-
 (<*>) is just function application within a computational context.
 
+As soon as you want to define the type `(a -> b -> c) -> f a -> f b -> f c` you need the applicative construction:
+
+```
+liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+liftA2 f a b = fmap f a <*> b
+```
+It is not that hard to convince yourself that an applicative functor is just a functor that knows how to lift functions of arbitrary arities.
+
+.Laws:
 ----
 fmap g x = pure g <*> x
 ----
+
+Applicative functors are to be preferred to monads when the structure of a computation is fixed a priori.
+That makes it possible to perform certain kinds of static analysis on applicative values.
+
+=== Alternative
+
+An Alternative instance gives an applicative functor the structure of a monoid,
+with empty as the unit element, and <|> as the binary operation. 
+
+```
+class Applicative f ⇒ Alternative f where
+  empty :: f a
+ (<|>) :: f a → f a → f a
+```
 
 == Monad
 
@@ -96,7 +119,7 @@ class Applicative m => Monad m where
 ```
 <1> The signature of `bind` allows the second computation to depend on the value of the first one.
 
-> Monads provide both substitution (fmap) and renormalization (join)
+> Monadic values are produced in a context. Monads provide both substitution (fmap) and renormalization (join). 
 ```
 m >>= f = join (fmap f m)
 ```
@@ -118,6 +141,7 @@ NOTE: By law `>>` = `*>`. Consequently `mapM_` =  `traverse_`.
 == Free
 
 A free construction is a real instance of that construction that hold no extra property. It is the least special possible instance.
+A free monad is just substitution (fmap) with the minimum amount of renormalization needed to pass the monad laws.
 
 It is perfect to separate syntax (data, ast, parsing) from semantics (interpretation)
 

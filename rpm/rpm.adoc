@@ -1,0 +1,48 @@
+==== Example of building a rpm using a simple shell script
+
+```shell
+#!/usr/bin/env bash
+set -e
+
+stack=$1
+zone=$2
+tag=$3
+puppet_rpm_version=${4:-3.5}
+os_maj_release=${5:-6}
+
+rm -v RPMS/noarch/*.rpm  > /dev/null 2>&1 || echo no old rpms
+
+echo "About to build puppet-${stack}-${zone}-${puppet_rpm_version}-${tag}.el${os_maj_release}.noarch.rpm"
+
+cat << END > puppet.spec
+%define _binaries_in_noarch_packages_terminate_build   0
+
+Summary: Puppet config for ${stack} in ${zone}
+Name: puppet-${stack}-${zone}
+Version: ${puppet_rpm_version}
+Release: ${tag}.el${os_maj_release}
+Group: Puppet/Data
+License: Confidential
+AutoReqProv: no
+Vendor: CIRB/CIBG
+Packager: Jenkins
+
+%description
+Puppet configuration for the stack ${stack} in the ${zone} zone
+
+%prep
+mkdir -p \${RPM_BUILD_ROOT}/etc/puppet/environments/${stack}_${zone}
+
+%build
+cp -r $PWD/{hieradata,manifests,modules} \${RPM_BUILD_ROOT}/etc/puppet/environments/${stack}_${zone}
+find \${RPM_BUILD_ROOT}/etc/puppet/environments/${stack}_${zone}/hieradata -mindepth 1 -maxdepth 1 ! -name ${zone} ! -name ${stack} -type d -exec rm -fr {} \;
+find \${RPM_BUILD_ROOT} -name '.git' -exec rm -rf '{}' \+ || true
+%files
+/etc/puppet/environments/${stack}_${zone}/*
+
+%changelog
+END
+
+git --no-pager log -n10 --pretty=format:"* %cd %an <%ae> %h%n- %s%n" | awk '/^*/ {$7=$5="";gsub("  "," ")} {print}' >> puppet.spec
+rpmbuild --quiet -bb --target=noarch --define="_topdir $PWD" --define="_tmppath $PWD/tmp" puppet.spec
+```
