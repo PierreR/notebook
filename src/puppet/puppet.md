@@ -1,0 +1,13 @@
+
+= Puppet Technical Notes
+
+== Q ?
+
+Static vs Dynamic `require`
+
+
+
+== Hiera
+
+
+FACTER_hostgroup=bos FACTER_zone=prod puppet agent -t --server puppet2.prd.srv.cirb.lan --environment bos_prod

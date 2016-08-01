@@ -1,0 +1,317 @@
+= SALT TECHNICAL NOTE
+Pierre Radermecker
+
+== Targeting
+
+=== Minion id
+
+- unique (FQDN by default)
+- can be overridden in the minion config file
+- if changed, P/P keys need to be regenerated
+- match by shell-style globbing around the minion id or top file
+- use single quote
+- Perl-compatible regex can be used with the -E option
+
+
+```Shell
+salt '*.be.brussels' test.ping
+salt -L 'web1,web2,web3' disk.usage
+salt -E 'web[0-9]' cmd.exec_code python 'import sys; print sys.version'
+```
+
+```
+base:
+'web-(develjstaging)'
+  - match: pcre
+  - webserver
+```
+
+=== Grains
+
+- static bits of information that a minion collects when the minion starts
+- can be statically described in the minion config file with the option grains
+- available to Salt modules
+- automatically sync when state.highstate is called.
+
+ salt -G 'os:CentOS' --batch-size 25% grains.item num_cpus
+
+=== Node groups
+
+- predefined group of minions declared in the master
+- declared using compound matchers (see doc)
+
+
+== Salt states
+
+Use SLS files (SaLt State) to represent the state of a system.
+
+- SLS files are just dictionaries, lists, strings, and numbers (HighState data structure)
+- default serialization format is YAML with the Jinja2 templating system
+- system data and function can be used via salt, grain and pillar
+- files are combined to form a salt state tree using source, include and extend
+
+
+```yaml
+declaration-id: <1>
+  pkg:
+    - installed
+  service:
+    - running
+    - watch: <2>
+    - pkg: apache
+    - file: /etc/httpd/conf/httpd.conf
+
+/etc/httpd/conf/httpd.conf:
+  file.managed:
+    - source: salt://apache/httpd.conf
+    - user: root
+    - group: root
+    - mode: 644
+```
+<1> *declaration-id* set the name of the thing that needs to be manipulated
+<2> *watch* & *require* to manage order and events
+
+```shell
+# given a sls web/apache.sls
+salt '*' state.sls web.apache
+```
+=== Salt file server & top file & environment
+
+The *top file* is used to map what modules get loaded onto what minions
+
+```yaml
+base: <1>
+  'bmob': <2>
+    - packages <3>
+```
+<1> environment
+<2> target for state.highstate
+<3> sls module name
+
+The *file server* is  suitable for distributing files to minions
+
+```yaml
+file_roots:
+  base:
+    - /srv/salt
+```
+
+== External Auth
+
+```yaml
+# The external auth system
+external_auth:
+  ldap:
+    GP_APP_JENKINS%:
+         - 'test.*'
+         - 'grains.*'
+         - 'pillar.*'
+    pradermecker:
+      - 'G@hostname:middleware': <1>
+         - '.*'
+         - '@runner' <2>
+         - '@wheel'
+         - '@jobs'
+    jfroche:
+         - 'saltutil.*'
+         - '@runner'
+         - '@wheel'
+         - '@jobs'
+
+auth.ldap.basedn: OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
+auth.ldap.binddn: CN=<%= @ldap_name %>,OU=Saltmasters,OU=Apps,OU=Service_Groups_Accounts,OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan
+auth.ldap.bindpw: <%= @ldap_pwd %>
+auth.ldap.filter: (sAMAccountName={{username}})
+auth.ldap.port: 389
+auth.ldap.server: svidscavw003.prd.srv.cirb.lan
+auth.ldap.tls: False
+auth.ldap.no_verify: True
+auth.ldap.activedirectory: True
+auth.ldap.groupclass: group
+auth.ldap.accountattributename: sAMAccountName
+auth.ldap.persontype: person
+```
+<1> Define the allow targets (compount). No relation to the salt notion of environment.
+<2> Access to the runner module but this work only via the `salt-api`
+    On the command line, `salt-run` does not support the `pam` or `ldap` flag.
+
+== Standalone minions
+
+Minion can run without master.
+In the minion config file, set the option `file client: local`
+
+By default the contents of the master configuration file are loaded into pillar for all minions, this is to enable the master configuration file to be used for global configuration of minions. To disable the master config from being added to the pillar set pillar_opts to False.
+
+
+== Master Event
+
+```
+event = salt.utils.event.MasterEvent('/home/vagrant/projects/jules/var/run/salt/master')
+event.get_event(wait=20, tag='salt')
+```
+
+== Pillars
+
+The data can be arbitrary.
+The pillar is built in a similar fashion as the state tree, it is comprised of sls files and has a top file, just like the state
+tree.
+The default location for the pillar is in /srv/pillar ("pillar_roots" master config key).
+
+== GITFS
+
+When using the gitfs backend, Salt translates git branches and tags into environments, making environment management very simple.
+```yaml
+fileserver_backend:
+  - git
+
+gitfs_remotes:
+  - http://stash.cirb.lan/scm/middleware/salt-stack.git
+
+```
+
+== Salt API
+
+```shell
+curl -si 192.168.30.100:8000/login \
+        -H "Accept: application/json" \
+        -d username='jfroche' \
+        -d password='xMLrzzzz' \
+        -d eauth='pam' > /tmp/cookies.txt
+curl -b /tmp/cookies.txt -si 192.168.30.100:8000 \
+    -d client='runner' \
+    -d mods='orchestration.bootstrap-puppet' \
+    -d fun='state.orchestrate' \
+    -d eauth='pam'
+```
+
+== Orchestration
+```
+[main]
+SALTAPI_URL=http://saltmaster.sandbox.srv.cirb.lan:8000
+SALTAPI_USER=pradermecker
+SALTAPI_PASS=pass
+SALTAPI_EAUTH=pam
+```
+```
+salt-run state.orchestrate orch.test saltenv=middleware <1>
+pepper '*' test.ping
+pepper 'puppetmaster2*'  grains.item subgroup role
+pepper --client=runner state.orchestrate mods=orchestration.bootstrap-puppet
+```
+<1> pick up the gitfs branch that host `orch.test` source
+
+```yaml
+
+set_puppet_role_to_master:
+    salt.function:
+        - name: utils.set_role
+        - tgt: 'G@role:server and G@subgroup:puppet'
+        - kwarg:
+            role: master
+        - require:
+          - salt: run_saltmaster
+
+# /srv/salt/orch/test-puppet.sls
+run_puppet_jenkinsmaster:
+    salt.state: <3>
+        - sls:
+          - puppet <4>
+        - tgt: 'G@role:master and G@subgroup:jenkins'
+        - tgt_type: compound
+
+ping_saltmaster:
+    salt.function: <1>
+        - name: test.ping
+        - tgt: 'role:saltmaster'
+        - tgt_type: grain
+        - require: <2>
+           - salt: run_puppet_jenkinsmaster
+
+# /srv/salt/puppet.sls:
+puppet:
+    module.run:
+        - name: cmd.run
+        - arg:
+           - 'puppet agent --verbose --onetime --no-daemonize --color false'
+```
+<1> To execute a function, use salt.function
+<2> Force order
+<3> To execute a module, use salt.state
+<4> Execute the module /srv/salt/puppet.sls
+
+== Salt SSL
+
+```shell
+make salt-ssh HOST=jenkins2 ZONE=prod CMD="state.sls utils.migrate_puppet3"
+```
+
+== Useful commands
+
+
+```shell
+salt '*' saltutil.sync_all
+```
+
+== Postgrest
+
+```
+http://pgserver.sandbox.srv.cirb.lan:3000/jids?jid=eq.20150831150415858891
+http://pgserver.sandbox.srv.cirb.lan:3000/salt_returns?full_ret->>jid=eq.20150831150437889173
+```
+
+== Install PRD / Bootstrap
+
+```bash
+## get salt/puppet version we want
+## We do need to update puppet because the current salt config does not work wih < 3.8
+yum versionlock delete 0:*
+yum install salt-master salt-minion puppet
+# temp /etc/hosts to point to the new salt master
+systemctl start salt-master
+systemctl start salt-minion
+salt '*' saltutil.sync_all
+
+## we need to manually change the config of /etc/salt/master:
+#
+#  file_roots:
+#    base:
+#      - /srv/salt/
+#    middleware:
+#      - /srv/salt/middleware
+
+## new puppetmaster, foreman, puppetdb, pgserver
+# temp /etc/hosts to point to the new salt master
+
+# we still need to manually
+yum makecache fast
+yum update -y
+yum clean all
+
+# we still need to manually
+mkdir -p /etc/facter/facts.d/
+vim /etc/facter/facts.d/host-info.txt
+
+# and finally we need piera to get hiera data before we can bootstrap ...
+
+
+## Do test every pings are working correctly
+
+salt-run state.orchestrate orch.ping saltenv=middleware
+
+## There are issues when puppetconfig restart the minion during the orchestration process
+## Let's do it manually
+
+salt -C 'G@role:master and G@subgroup:puppet and G@hostgroup:middleware' puppetutils.run_apply  hostgroup=middleware role=server zone=prod subgroup=puppet
+
+
+salt -C 'G@role:saltmaster and G@hostgroup:middleware and G@zone:prod' puppetutils.install_stackrpm hostgroup=middleware zone=prod
+
+salt -C 'G@role:saltmaster and G@hostgroup:middleware and G@zone:prod' puppetutils.run_apply hostgroup=middleware role=saltmaster zone=prod
+
+salt -C 'G@role:pgserver and G@hostgroup:middleware and G@zone:prod' puppetutils.run_agent hostgroup=middleware zone=prod
+```
+
+== Issues
+
+* When the master restart, windows minion does not seem to be able to reconnect (without a minion restart)
+/etc/httpd/conf/httpd.conf:

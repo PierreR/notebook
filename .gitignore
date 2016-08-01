@@ -12,3 +12,6 @@ haskell/pandoc-config.json
 *.tex
 *.tex-backup
 *.mobi
+_arch/
+_shake/
+out/

@@ -1,0 +1,23 @@
+
+## Run puppet
+
+Watch out ! The first puppet run is not the same ! Puppet will auto-sign and auto-wired with the Puppet Master. You need to pass the environment the first time. In Puppet, the environment is not a fact !
+
+
+## Role, Profile, Module
+
+A role is an entity that can work out in perfect isolation when hosted in a machine.
+
+You might say that the role "scm" is made of 2 profiles: nginx and stash with an adhoc configuration.
+
+Ok that's nice and shiny but why do we need profile at all ...
+
+Well profile starts to make sense if you start to re-use them for instance within multiple role ...
+
+SCM -> Stash and Nginx
+
+## Tips and tricks
+
+```
+puppet agent -t --tags newsletter 
+```

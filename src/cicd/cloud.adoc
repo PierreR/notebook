@@ -1,0 +1,92 @@
+= Cloud
+
+== Open Container Project
+
+http://runc.io/[runC]
+
+
+== Hypervisor
+
+>  The system that can actually see the hardware
+
+* Xen from scratch
+* KVM linux module
+* VirtualWare
+* HyperV
+* VirtualBox
+* LXD a hypervisor that is focused entirely on containers (from Ubuntu)
+
+== Docker 
+
+Machine::
+
+Swarm::
+
+Compose::
+
+
+== Openstack
+
+> an interface around a shared pool of resources. As a developer I just want to have access to resources.
+
+The scheduler is the heart of Openstack (see Kubernetes, Mesos, ...)
+
+== Kubernetes
+
+Decoupled infrastructure
+
+Orchestrator
+
+A pod is the atomic unit of scheduling
+
+~ Docker Swarm
+
+Uses `etcd` (service discovery)
+
+
+== Devops
+
+? Application Ops ! It is totally appropriate for a developer to make Ops for the application they build.
+
+ 
+== Cloud
+
+> A cloud is just an automated layers over virtual machines 
+
+== EC2
+
+> Automate the creation of a machines
+
+== Containers
+
+Much more lightweight than Virtual machines. Economic is important here. Instead of a need for 12 jenkins slave machine, you just need one + 10 containers
+
+== Elasticity vs 
+
+Add resources on demand (scalability) shrink on demand too
+
+== Vendors
+
+Amazon, Azure, RackSpace
+
+Vertical cloud space: cloud targeted to x
+
+CloudFabric ... Polycloud world ??
+
+
+== SAN
+
+"storage Area Network"
+
+== OVH
+
+VPS:: Virtual Private Server (`KVM`)
+We back up the entire VPS every day
+
+Dedicated Cloud:: `openstack`
+
+== Q ?
+
+There is something wierd going on. In a way we want to abstract the OS layer. I don't care if it run on Windows, Linux, ... It is running somewhere on the cloud, I just want computer resources. And still we get a cloud for RHEL ... (look at Openshift).
+
+Be aware `docker` or `alpine linux` does not use systemd (developed by redhat) whereas `nixos` or `coreos` does 

@@ -1,0 +1,86 @@
+= GATS
+Pierre Radermecker <pierrer@pi3r.be>
+2014
+:language: haskell
+:source-highlighter: pygments
+:icons: font
+
+GADTs let you associate different type parameters for different data constructors of a type.
+
+For example, imagine we represent simple language terms that can only be bool/int literals and And/Add operations between those:
+
+```
+data Expr = ExprInt Int
+          | ExprBool Bool
+          | ExprAnd Expr Expr
+          | ExprAdd Expr Expr
+```
+
+This would let us do invalid things like:
+
+```
+ExprAnd (ExprInt 5) (ExprBool True)
+```
+
+Firstly and less importantly, GADTs let us write the same definition using a different notation:
+
+```
+data Expr where
+  ExprInt  :: Int -> Expr
+  ExprBool :: Bool -> Expr
+  ExprAnd  :: Expr -> Expr -> Expr
+  ExprAdd  :: Expr -> Expr -> Expr
+```
+
+The real point of this notation is that it is an opportunity to associate different constructors of `Expr` with different type constraints and type parameters:
+So you restrict the return value of the
+
+```
+data Expr  :: * -> * where
+  ExprInt  :: Int -> Expr Int
+  ExprBool :: Bool -> Expr Bool
+  ExprAnd  :: Expr Bool -> Expr Bool -> Expr Bool
+  ExprAdd  :: Expr Int -> Expr Int -> Expr Int
+```
+
+This rules out non-sensical terms like:
+
+  ExprAnd (ExprInt 5) (ExprBool True)
+
+Additionally, GADTs let you add type-class constraints and forall'd variables to each of the constructors.
+For example, let's say we want to represent a length-indexed list:
+
+```
+data LenList :: Nat -> * -> * where
+  Nil :: LenList 0 a
+  Cons :: a -> LenList n a -> LenList (1 + n) a
+```
+
+Note that not only do the 2 differing constructors have differing type params (0/1+n), they also have constraints linking the "n" from the "LenList" type index (aka type parameter) to the "n" of the given list.
+
+Another important facet of GADTs is that all this extra information is not just used to type-check value constructions as shown above. It also gives you back type information when you do case analysis.
+i.e:
+```
+case myLenList of
+  Nil       -> ... -- ^ the type of myLenList in this case is inferred to (LenList 0 a)
+  Cons x xs -> ... -- ^ the type of myLenList in this case is inferred to
+                   (LenList (1 + n) a) and the type of xs is inferred to (LenList n a)
+```
+
+To reiterate, the type of the term we're case analyzing is inferred differently according to runtime values (which constructor is chosen).
+
+Lastly, by allowing interesting types and constraints on each constructor, GADTs implicitly allow existential quantification, and storing of type-class instances inside values.
+
+For example, this existentially quantified (and mostly useless) type:
+
+  data SomeShowable = forall a. Show a => MkSomeShowable a
+
+Can be represented with GADTs as:
+
+  data SomeShowable where
+    MkSomeShowable :: Show a => a -> SomeShowable
+
+Note the `forall a.` can be left implicit in the GADT version.
+
+Interestingly, with GADTs, you can have existential quantification only in some of your constructors. You can have differing type-class instances stored inside different constructors.
+When you pattern-match your GADT constructor, the instance implicitly comes into scope.
