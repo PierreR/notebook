@@ -16,7 +16,7 @@ main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
     cmd "asciidoctor" doc "-o" out
 
   buildDir <> "/**/*.pdf" %> \out -> do
-    let  doc = dropDirectory1 (out -<.> "adoc")
+    let  doc = srcDir </> dropDirectory1 (out -<.> "adoc")
     need [doc]
     cmd "asciidoctor-pdf" doc "-o" out
 
