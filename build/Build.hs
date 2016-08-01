@@ -5,19 +5,20 @@ import Development.Shake.FilePath
 import Development.Shake.Util
 
 buildDir = "out"
+srcDir = "src"
 
 main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
 
   buildDir <> "/**/*.html" %> \out -> do
-    let  doc = dropDirectory1 (out -<.> "adoc")
+    let  doc = srcDir </> dropDirectory1 (out -<.> "adoc")
     need [doc]
     cmd "asciidoctor" doc "-o" out
 
   buildDir <> "/**/*.pdf" %> \out -> do
     let  doc = dropDirectory1 (out -<.> "adoc")
     need [doc]
-    cmd "asciidoctor-pdf" doc "-o" out 
+    cmd "asciidoctor-pdf" doc "-o" out
 
   "clean" ~> do
     putNormal ("Cleaning files in " <> buildDir)
@@ -25,9 +26,9 @@ main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
     removeFilesAfter buildDir ["/**/*.pdf"]
 
   "html" ~> do
-    is <- getDirectoryFiles "." ["/**/*.adoc"]
+    is <- getDirectoryFiles srcDir ["/**/*.adoc"]
     need [ buildDir </> i -<.> "html" | i <- is ]
 
   "pdf" ~> do
-    is <- getDirectoryFiles "." ["/**/*.adoc"]
+    is <- getDirectoryFiles srcDir ["/**/*.adoc"]
     need [ buildDir </> i -<.> "pdf" | i <- is ]
