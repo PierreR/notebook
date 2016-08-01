@@ -7,18 +7,27 @@ import Development.Shake.Util
 buildDir = "out"
 srcDir = "src"
 
+addExtensionDir :: FilePath -> FilePath
+addExtensionDir fp  = takeDirectory fp </> (drop 1 . takeExtension) fp </> takeFileName fp
+
+dropExtensionDir :: FilePath -> FilePath
+dropExtensionDir fp =
+  let (fp', fn) = splitFileName fp
+  in
+  (takeDirectory . dropTrailingPathSeparator) fp' </> fn
+
+
+callCmd execmd out = do
+    let  doc = srcDir </> (dropDirectory1 . dropExtensionDir)  (out -<.> "adoc")
+    need [doc]
+    cmd execmd doc "-o" out
+
 main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
 
-  buildDir <> "/**/*.html" %> \out -> do
-    let  doc = srcDir </> dropDirectory1 (out -<.> "adoc")
-    need [doc]
-    cmd "asciidoctor" doc "-o" out
+  buildDir <> "/**/*.html" %> callCmd "asciidoctor"
 
-  buildDir <> "/**/*.pdf" %> \out -> do
-    let  doc = srcDir </> dropDirectory1 (out -<.> "adoc")
-    need [doc]
-    cmd "asciidoctor-pdf" doc "-o" out
+  buildDir <> "/**/*.pdf" %> callCmd "asciidoctor-pdf"
 
   "clean" ~> do
     putNormal ("Cleaning files in " <> buildDir)
@@ -27,8 +36,8 @@ main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
 
   "html" ~> do
     is <- getDirectoryFiles srcDir ["/**/*.adoc"]
-    need [ buildDir </> i -<.> "html" | i <- is ]
+    need [ buildDir </> addExtensionDir (i -<.> "html") | i <- is ]
 
   "pdf" ~> do
     is <- getDirectoryFiles srcDir ["/**/*.adoc"]
-    need [ buildDir </> i -<.> "pdf" | i <- is ]
+    need [ buildDir </> addExtensionDir (i-<.> "pdf") | i <- is ]
