@@ -113,6 +113,10 @@ firstOf/lastOf traverse :: Traversable t => t a -> Maybe a
 ```
 toListOf `(^..)` view list of targets
 
-== FreeT
+== Utils
 
-Just think of FreeT f m Void as a convenient monadic way to build up values of type Fix that is a bit more beginner friendly.
+```
+-- create the nested Map when it is missing:
+Map.empty & at "hello" . non Map.empty . at "world" ?~ "!!!"
+-- > fromList [("hello",fromList [("world","!!!")])]
+```

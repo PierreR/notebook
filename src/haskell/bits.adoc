@@ -202,6 +202,7 @@ data Free f a = Free (f (Free f a)) | Pure a
 * Web (ghcjs, threepenny, ...)
 
 
+
 == Q ?
 
 == Mind blowing
@@ -223,3 +224,10 @@ Right cfg -> return . Right . query cfg fp =<< F.newFileCache
 == Useful
 
 `-fdefer-type-errors`
+
+== Common functions
+
+```
+-- give a default and always get an a from a maybe value
+maybe:: a -> Maybe a -> a
+```
