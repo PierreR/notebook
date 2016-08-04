@@ -3,12 +3,12 @@ Pierre Radermecker <pierrer@pi3r.be>
 2014
 :imagesdir: img
 :data-uri:
-:language: haskell
+:source-language: haskell
 :source-highlighter: pygments
 :icons: font
 
 == Algebraic Data Type
- 
+
 Quite common (used in `pipes`, `ekmett`, `servant`, `tibbe`):
 
 ```  

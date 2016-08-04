@@ -1,27 +1,32 @@
 = Nix
 Pierre Radermecker <pierrer@pi3r.be>
 2014-2016
+:toc: left
+:toclevels: 1
 :source-language: bash
-:source-highlighter: highlightjs
-:highlightjs-theme: solarized-light
-:highlightjsdir: ../../../highlight
+:source-highlighter: pygments
 :icons: font
 :keywords: nix, nixos 
-:numbered: 
-
+:numbered:
+:sectnumlevels: 1
+:nofooter:
 
 == NixOS
 
-==== Install
+=== icon:tasks[] Install
 
 . switch to azerty keyboard
 +
-`→ loadkeys be-latin1`
+```
+→ loadkeys be-latin1
+```
 . partition with gdisk (efi) or fdisk (noefi)
 +
 icon:info-circle[] using virtualbox you don't want/need efi
 +
-`→ (g/f)disk /dev/sda`
+```
+→ (g/f)disk /dev/sda
+```
 +
 create 2 partitions sda1(83 default)/sda2(82)
 . create file system
@@ -32,34 +37,46 @@ create 2 partitions sda1(83 default)/sda2(82)
 ```
 . mount it
 +
-`→ mount /dev/disk/by-label/nixos /mnt`
+```
+→ mount /dev/disk/by-label/nixos /mnt
+```
 . generate a default config
 +
 `→ nixos-generate-config --root /mnt`
 . minimal edit the config; don't forget to uncomment the option 'boot.loader.grub.device'
 +
-`→ nano /mnt/etc/nixos/configuration.nix`
+```
+→ nano /mnt/etc/nixos/configuration.nix
+```
 . Install
 +
-`→ nixos-install`
+`→ nixos-install
 . reboot
 +
-`→ reboot`
+```
+→ reboot
+```
 . upgrade
 +
-`→ nixos-rebuild switch --upgrade`
+```
+→ nixos-rebuild boot --upgrade
+→ reboot
+```
 . tweak config
 +
 .. install neovim, gitFull, htop, ...
-.. #create a new user# in configuration.nix (root won't be able to have a chromium session by default)
-.. use `ninmtui` to configure wireless
+.. create a new user icon:exclamation-circle[] +
+(root won't be able to have a chromium session by default)
+.. use the `NetworkManager` text user interface 'nmtui' to configure wireless
 
-==== System management
+=== icon:cog[] System management
 
 .Update
 ```
-→ sudo nixos-rebuild switch --upgrade
+→ sudo nixos-rebuild switch
+→ sudo nixos-rebuild boot --upgrade <1>
 ```
+<1> safer to use `boot` when upgrading
 
 == Derivation
 
@@ -69,8 +86,7 @@ From a nix language point of view, a derivation is simply a set, with some attri
 
 To build a package, `nixpkgs` makes heavy usage of `stdenv` and its function `mkDerivation`:
 
-[source,nix]
-----
+```nix
 stdenv.mkDerivation {
   name = "libfoo-${version}"; <1>
   version = "1.2.3"
@@ -81,7 +97,7 @@ stdenv.mkDerivation {
   builder = ./builder.sh; <2>
   buildInputs = [ruby]; <3>
 }
-----
+```
 <1> mandatory `name` attr
 <2> if not provided, the generic builder is used
 <3> additional requirement needed to build the derivation
@@ -170,60 +186,61 @@ nix-build::
 
 == Language Expressions
 
-.Set
+Set::
++
 ```nix
 let x = 123; in
 { inherit x; <1>
   text = "Hello";
   y = f { bla = 456; };
 }.text or "World" <2>
-
 ```
 <1> When defining a set it is often convenient to copy variables from the surrounding lexical scope
 <2> Sets accessor using `.` +
     Default using `or`
 
-.List
+List::
++
 ```nix
 [ 123 ./foo.nix "abc" (f { x = y; }) ]
 ```
 
-.Function
+Function::
++
 ```nix
 pattern: body
 ```
-The pattern can be a single identifier:
++
 ```nix
-negate = x: !x;
+negate = x: !x; <1>
 ```
-Or a set of arguments:
+<1> pattern is a single identifier 'x'
++
 ```nix
-{stdenv, fetchurl, perl }:
+{stdenv, fetchurl, perl }: <1>
 
-stdenv.mkDerivation { <1>
-  name = "hello-2.1.1";
-  src = fetchurl {
-    ...
+  stdenv.mkDerivation { <2>
+    name = "hello-2.1.1";
+	...
   };
-  inherit perl; <3>
-}
 ```
-<1> Building something from other stuff is called a `derivation`. We perform a derivation by calling the function `stdenv.mkDerivation` passing the set as argument.
-<2> As a convenience, URIs can be written as is.
-<3> The derivation function requires Perl. We use `inherit` to pass the value of the perl function argument to the builder.
+<1> pattern is a set of arguments
+<2> function call
 
-.With
+With::
++
 ```nix
 with e1; e2
 ```
 Introduces all attributes of the set `e1` into the lexical scope of the expression `e2`:
-
++
 ```nix
 let as = { x = "foo"; y = "bar"; };
 in with as; x + y
 ```
 
-.Optional argument
+Optional argument::
++
 ```nix
 { x, y ? "foo", z ? "bar" }: z + y + x <1>
 ```
