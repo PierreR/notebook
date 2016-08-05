@@ -1,6 +1,8 @@
 = Category
 Pierre Radermecker <pierrer@pi3r.be>
 2014
+:toc:
+:toclevel: 1
 :language: haskell
 :source-highlighter: pygments
 :icons: font

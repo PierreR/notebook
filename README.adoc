@@ -1,0 +1,7 @@
+= NOTEBOOK
+
+== Convert in html or pdf
+
+Using [nix] and the alias `build='./build/build.sh'`, just type `build html` or `build pdf`
+
+NOTE: To get `syntax highlighting` with pygments, you need https://github.com/PierreR/devhome/blob/dda32311f395c1cfe5c9247985574c9abb108926/.nixpkgs/config.nix[to override the nix `asciidoctor` package.]

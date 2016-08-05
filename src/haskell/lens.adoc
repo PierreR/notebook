@@ -1,12 +1,18 @@
 = Lenses
 TECHNICAL NOTE
-Pierre Radermecker
+Pierre Radermecker <pierrer@pi3r.be>
+:toc: left
+:toclevels: 1
+:source-language: haskell
 :source-highlighter: pygments
+:keywords: haskell
+:numbered:
+:sectnumlevels: 1
+:nofooter:
 
 == Usage
 
-[source, haskell]
-----
+```
 {-# LANGUAGE TemplateHaskell #-}
 
 data Person = Person
@@ -23,8 +29,7 @@ data Person = Person
   , _PersonSurname   :: String
   }
 makeField ''Person
-----
-
+```
 == Lens
 
 A lens is a first-class reference to a subpart of some data type.

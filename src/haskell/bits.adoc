@@ -1,11 +1,17 @@
 = Bits
 Pierre Radermecker <pierrer@pi3r.be>
-2014
+2014-2016
+:toc: left
+:toclevels: 1
 :imagesdir: img
 :data-uri:
-:language: haskell
+:source-language: haskell
 :source-highlighter: pygments
 :icons: font
+:keywords: haskell
+:numbered:
+:sectnumlevels: 1
+:nofooter:
 
 > This is the key to functional programming’s power — it allows improved modularization
 
