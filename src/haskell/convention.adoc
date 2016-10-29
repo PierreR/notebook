@@ -1,23 +1,10 @@
-= Naming convention
-Pierre Radermecker <pierrer@pi3r.be>
-2014-2016
-:toc: left
-:toclevels: 1
-:imagesdir: img
-:data-uri:
-:source-language: haskell
-:source-highlighter: pygments
-:icons: font
-:keywords: haskell
-:numbered:
-:sectnumlevels: 1
-:nofooter:
+= Naming & convention
 
 == Algebraic Data Type
 
 Quite common (used in `pipes`, `ekmett`, `servant`, `tibbe`):
 
-```
+```haskell
 data List a
   = Cons a (List a)
   | Nil
@@ -31,14 +18,14 @@ data MyProduct = MyProduct Int String
 == Record
 
 The most common (used in the `lens`, `fpcomplete`, `servant`, `tibbe`):
-```
+```haskell
 data Person = Person
   { _firstName :: String -- ^ First name
   , _lastName  :: String -- ^ Last name
   } deriving (Eq, Show)
 ```
 In order to mimic ADT and to make it easy with the haskell-indentation we could go with this instead:
-```
+```haskell
 data Person
   = Person
   { _firstName :: String
@@ -48,7 +35,7 @@ data Person
 
 == Module
 
-```
+```haskell
 module Puppet.Parser (
          expression
        , puppetParser

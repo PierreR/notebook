@@ -1,8 +1,8 @@
-% Elastic Search
-% Pierre Radermecker
+# Elastic Search
 
-* ES only keeps one version of a document
+## Characteristics
 
+ES only keeps one version of a document
 
 Automatic index creation by generating a "mapping"
 

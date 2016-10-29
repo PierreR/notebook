@@ -1,8 +1,0 @@
-= Operational
-Pierre Radermecker <pierrer@pi3r.be>
-2014
-:language: haskell
-:source-highlighter: pygments
-:icons: font
-
-> think of monads as sequences of primitive instructions.

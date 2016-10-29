@@ -1,4 +1,3 @@
-*.html
 *.pdf
 *.out
 *.log
@@ -6,7 +5,7 @@
 *.jpg
 *.aux
 *.xml
-*.sublime-project
+*.sublime-projects
 haskell/haskell_notebook.sublime-workspace
 haskell/pandoc-config.json
 *.tex

@@ -1,6 +1,6 @@
-= Spacemacs Cheatsheet
-Pierre Radermecker <pierrer@pi3r.be>
-2015
+= Spacemacs
+
+== Cheatsheet
 
 === Magit
 
@@ -48,7 +48,7 @@ c-s      :            - open in a new buffer
 ,gg :                 jump to def (awesome!)
 
 <SPC> p y   :  	      find tags
-<SPC> /     :         ag search     
+<SPC> /     :         ag search
 <SPC> m c R :         reload .spacemacs
 <SPC> f e d :         open .spacemacs
 

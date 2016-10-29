@@ -1,34 +1,33 @@
-= POSTGRES TECHNICAL NOTE
-Pierre Radermecker
-2013
+# Postgres
 
-== Postgres enterprise
+## Glossary
 
-Notes:
-PEM : Postgres Enterprise Manager
+PEM:: Postgres Enterprise Manager
 
-PPAS: Postgres Plus Advanced Server
+PPAS:: Postgres Plus Advanced Server
+
+WAL::
++
+At all times, PostgreSQL maintains a WAL (Write Ahead Log) in the pg_xlog/ subdirectory of the cluster's data directory. The log describes every change made to the database's data files. This log exists primarily for crash-safety purposes: if the system crashes, the database can be restored to consistency by "replaying" the log entries made since the last checkpoint. However, the existence of the log makes it possible to use a third strategy for backing up databases: we can combine a file-system-level backup with backup of the WAL files. If recovery is needed, we restore the backup and then replay from the backed-up WAL files to bring the backup up to current time.
 
 
-== Servers
+## Servers
 
 CIRB PROD: 192.168.14.41
 
-
-== Architecture
-
+## Architecture
 
 One process per user, NO THREAD !
 Processes are managed by Postmaster that acts as a listener for new connection and as a supervisor to restart them.
 
 The term "buffer" is usually used for blocks in memory.
 
-7500 concurrent user -> connection pooling 
+7500 concurrent user -> connection pooling
 
 16MB
 
 
-== CLUSTER
+## Cluster
 
 
 A cluster is a collection of databases. Clusters have separate:
@@ -50,14 +49,7 @@ There is a little tricky behavior with the second cluster when you want to conne
 host    all             enterprisedb    192.168.104.0/24        trust
 
 
-== WAL
-
-Write Ahead Log
-
-At all times, PostgreSQL maintains a WAL in the pg_xlog/ subdirectory of the cluster's data directory. The log describes every change made to the database's data files. This log exists primarily for crash-safety purposes: if the system crashes, the database can be restored to consistency by "replaying" the log entries made since the last checkpoint. However, the existence of the log makes it possible to use a third strategy for backing up databases: we can combine a file-system-level backup with backup of the WAL files. If recovery is needed, we restore the backup and then replay from the backed-up WAL files to bring the backup up to current time.
-
-
-== EXERCICES
+## Exercices
 
 COPY edbstore.categories TO '/tmp/test.csv' WITH (FORMAT 'csv');
 
@@ -73,14 +65,14 @@ for t in $(pqsl -U enterprisedb -d edbstore -t
 select table_name from information_schema.tables where table_schema='edbstore';
 
 
-== Backup & Recovery
+## Backup & Recovery
 
 
 * for small DB, we can use a sql dump several time a day:
 pg_dump dbname | gzip > filename.gz
 pg_dump dbname | split -b 1m - filename
 
-=== Restore
+##= Restore
 
 psql dbname < infile
 
@@ -88,12 +80,12 @@ psql dbname < infile
 One of the problem with DRP is the human factor. This is not so much a problem with a database such as datomic.
 
 
-== Migration
+## Migration
 
 Use pgdump to migrate from postgres to postgres.
 
 
-== Replication
+## Replication
 
 * Hot Streaming Replication (Warm Streaming Replication or Log WAL Shipping is deprecated)
 	There is a daemon process started by the PostMaster
@@ -121,8 +113,8 @@ pg_basebackup -h localhost -D /opt/PostgresPlus/9.3AS/data1
 
 	Select * from pg_stat_activity
 	select * from pg
-	
-== Shell utils practices
+
+## Shell utils practices
 
 ```
 psql -h 192.168.14.62 -W -U pradermecker postgres < create_PGPUPPETDB.sql

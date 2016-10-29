@@ -1,0 +1,18 @@
+= Category theory
+
+> Abstract algebra of function
+> In category theory we never look inside objects. All information about objects is encoded in the arrows (morphisms) between them.
+
+definition::
+
+A category is a bunch of objects together with `morphisms` footnote:[also called arrows].
+The objects have not structure or meaning, actually they only serve to mark the beginning or end of an arrow.
+Morphisms are direct mappings between these objects footnote:[you can have zero, one or many arrows from one object to another] that preverse a `structure`.
+The structure whatever it is characterizes the category.
+
+* there must exist a morphism called `identity` (the zero) that maps an object into itself (e.g: 1A).
+* the morphisms need to compose while respecting `associativity`: +
+  `h∘(g∘f) == (h∘g)∘f`
+
+.Example:
+In a functional programming language, morphisms/arrows are `functions` and objects are `types`.

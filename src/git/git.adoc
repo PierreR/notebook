@@ -1,8 +1,6 @@
-= GIT TECHNICAL NOTE
-Pierre Radermecker
-2013
+# Git
 
-== Internals
+## Internals
 
 Git maintained snapshot of directory's contents. It is a content-addressable filesystem, a simple key value data store. Keys are SHA-1 hash and values are objects.
 
@@ -13,7 +11,7 @@ There are 4 different types of objects:
   - Commit points to a single tree and realize "snapshots".
   - Tag marks a specific commit
 
-== Tricks bag
+## Tips
 
 * Ignore files in all projects but keep this for yourself
 
@@ -25,4 +23,3 @@ There are 4 different types of objects:
 	```
 
 	. Create a ~/.gitignore file with file patterns to be ignored
-

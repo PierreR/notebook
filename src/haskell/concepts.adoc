@@ -1,0 +1,300 @@
+= Concepts
+
+
+== Lazyness
+
+Reduction is done using outermost reduction. For instance:
+```
+loop = tail loop
+
+fst (1, loop)
+-- innermost reduction gives:
+-- fst (1, (tail loop))
+-- fst (1, (tail (tail loop))) and never terminates
+-- but outermost reduction gives:
+-- fst (1, loop) = 1 and terminates
+```
+
+=== Redex
+```
+-- only one redex (2*3) both innermost and outermost
+1 + (2 * 3)
+
+-- 2 redexes :
+-- (\x -> 1 + x ) (2 * 3) outermost
+-- (2 * 3) innermost
+(\x -> 1 + x ) (2 * 3)
+
+```
+
+== Existential classes
+
+> When someone defines a universal type ∀X they're saying: You can plug in whatever type you want, I don't need to know anything about the type to do my job, I'll only refer to it opaquely as X.
+
+> When someone defines an existential type ∃X they're saying: I'll use whatever type I want here; you wont know anything about the type, so you can only refer to it opaquely as X
+
+== Type class
+
+Type class enables a (de)limited form of `adhoc polymorphism` or `overloading`.
+Each instance implements the same function differently or to say it diffently one function will behave diffently according to the types of its arguments.
+
+The `adhoc polymporphism` needs to be delimited as such to play well with `parametric polymorphism` and keeping the type checking sane.
+
+Type class are not first class in Haskell. They cannot be used in place of type (as you would in Java with interface).
+
+It is *dictionnary passing*: Ghc puts the methods of the instance in a dictionary and passes that implicitly to any functions having a (Class a) constraint.
+
+It is best to look at them as a set of constraints on type.
+One notable drawback is that each type can have at most one implementation of the type class.
+
+`Eq` is the classical example.
+
+In Scala, type-classes are types themselves, and instances are first class values.
+
+== Type Family
+
+```haskell
+data Nat = Zero | Succ Nat
+
+-- Add is a type which is a function on types
+type family Add (x :: Nat) (y :: Nat) :: Nat
+-- Then comes the implementation of the (type) function
+type instance Add Zero     y = y
+type instance Add (Succ x) y = Succ (Add x y)
+
+```
+
+== Determinic parallel programming
+
+A set of states with an order attached to it is known as a lattice
+
+== Typeable
+
+The `Typeable` class be used to create runtime type information for arbitrary types:
+
+```haskell
+{-# LANGUAGE DeriveDataTypeable #-}
+
+import Data.Typeable
+
+data Animal = Cat | Dog deriving Typeable
+data Zoo a = Zoo [a] deriving Typeable
+
+example :: TypeRep <1>
+example = typeRep (Zoo [Cat, Dog]) <2>
+-- Zoo Animal
+```
+<1> Runtime representation of the type of the value
+<2> `typeRep` correspond to `typeOf` which is kept for backwards-compatibility
+
+```
+class Typeable a where
+  typeRep :: Proxy a -> TypeRep <1>
+```
+<1> take a type (Proxy) that it never look at
+
+`Typeable` is actually as old as Haskell (before it was even called Haskell ...)
+
+
+== Ref/State Primitives
+
+MVars::
+concurrency primitive, designed for access from multiple threads.
+It is a box which can be full or empty. If a thread tries to read a value from an empty MVar, it will block until the MVar gets filled (by another thread). Same with full and takeMVar.
+
+IVar::
+Immutable variable you are only allowed to write to it once.
+
+STM::
+Retry aborts the transaction and retry it whenever the TVar gets modified.
+
+IORef::
+Just a reference to some data, a `cell`.
+Operate in IO.
+You can think of it like a database, file, or other external data store.
+`atomicModifyIORef` uses CAS (compare and swap implemented at the hardware level) to guarantee the atomicity of read-modify-write kind of operations.
+
+
+== Functor
+
+> A functor is a structure-preserving mapping (or homomorphism) between 2 categories.
+
+This means that :
+
+* for an object `A` in one category, there is a corresponding object `F A` in the second one.
+* for a morphism (A -> B), there is the corresponding F A -> F B
+
+In Haskell, the objects are types and the mappings are functions. Type constructors (* -> *) are used to map types into types.
+
+```haskell
+class Functor f where
+	fmap :: (a -> b) -> f a -> f b
+```
+
+The functor defines the action of an arbitrary function (a -> b) on a structure (f a) of elements of type a resulting in the same structure but full of elements of type b.
+
+.Laws:
+```
+fmap id = id
+fmap (g . h) = fmap g . fmap h
+```
+.Example:
+```haskell
+instance Functor ((->) r) where
+  fmap f g = f . g -- or fmap = (.)
+```
+
+Another intuition is to look at functors as producers of output that can have its type adapted. So `Maybe a` represents an output of type a that might be present (Just a) or absent (Nothing). `fmap f` allows us to adapt the output of type a to an output of type b.
+
+Whenever you have producer of outputs, you might also have the dual consumer of inputs. This is where Contravariant comes in. The intuition behind a Contravariant is that it reflects a sort of "consumer of input" that can have the type of accepted input adapted.
+
+```
+class Contravariant f where
+  contramap :: (b -> a) -> f a -> f b
+```
+
+So here we can adapt the *input* to go from a consumer of input 'a' to a consumer of input 'b'. But to go there you need to provide a function from 'b' to 'a'
+
+
+== Isomorphisms
+
+Category theory allows us to give a precise, abstract (works for all categories) and self-contained definition of an isomorphism:
+
+An arrow/morphism f: A -> B is called an isomorphism in *C* if there is an arrow g that goes from B to A such that: +
+g ∘ f = 1A and f ∘ g = 1B
+
+== Applicative
+
+With a functor f it is not possible to apply a function wrapped by the structure `f` to a value wrapped by f. This is given by Applicative:
+
+```
+class Functor f ⇒ Applicative f where
+  pure :: a → f a
+ (<*>) :: f (a → b) → f a → f b
+```
+(<*>) is just function application within a computational context.
+
+As soon as you want to define the type `(a -> b -> c) -> f a -> f b -> f c` you need the applicative construction:
+
+```
+liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+liftA2 f a b = fmap f a <*> b
+```
+It is not that hard to convince yourself that an applicative functor is just a functor that knows how to lift functions of arbitrary arities.
+
+.Laws:
+----
+fmap g x = pure g <*> x
+----
+
+Applicative functors are to be preferred to monads when the structure of a computation is fixed a priori.
+That makes it possible to perform certain kinds of static analysis on applicative values.
+
+=== Alternative
+
+An Alternative instance gives an applicative functor the structure of a monoid,
+with empty as the unit element, and <|> as the binary operation.
+
+```
+class Applicative f ⇒ Alternative f where
+  empty :: f a
+ (<|>) :: f a → f a → f a
+```
+
+== Monad
+
+```haskell
+class Applicative m => Monad m where
+  join :: m (m a) -> m a
+
+(>>=) :: m a -> (a -> m b) -> m b <1>
+```
+<1> The signature of `bind` allows the second computation to depend on the value of the first one.
+
+> Monadic values are produced in a context. Monads provide both substitution (fmap) and renormalization (join).
+```
+m >>= f = join (fmap f m)
+```
+
+Even if a monad is strictly more powerful than an Applicative, there are situations for which an applicative is the only valid choice.
+Indeed `<*>` lets you explore both arguments by pattern matching but with `ap` the right hand side cannot be evaluated without the result from the left.
+
+As a stretch while applicative allows for parallelism, monad allows for sequencing.
+
+> A monad is like a monoid where we combine functors "vertically". `join` is analogous to `(+)` and `return` to `0`.
+
+NOTE: By law `>>` = `*>`. Consequently `mapM_` =  `traverse_`.
+
+- Side-Effect
+- Environment
+- Error
+- Indeterminism
+
+== Free
+
+A free construction is a real instance of that construction that hold no extra property. It is the least special possible instance.
+A free monad is just substitution (fmap) with the minimum amount of renormalization needed to pass the monad laws.
+
+It is perfect to separate syntax (data, ast, parsing) from semantics (interpretation)
+
+> The free monad is guaranteed to be the formulation that gives you the most flexibility how to interpret it, since it is purely syntactic.
+
+```haskell
+data Free f a = Pure a | Free (f (Free f a))
+```
+
+The fixed point of a function is generally just the repeated application of that function:
+fix f = f (f (f (f (f (f (f (f (f (f (f (f (f ... ))))))))))))
+or
+fix f = f (fix f)
+
+====
+""
+A Monad n is a free Monad for f if every Monad homomorphism from n to another monad m is equivalent to a natural transformation from f to m.
+""
+====
+  
+== ByteString
+
+* Word8 is Haskell's standard representation of a byte
+* ByeString character functions (`Data.ByteString.Char8`) only work with ASCII text, hence the Char8 in the package name
+  -> if you are working with unicode, you should use the Text package
+* In general we use strict bytestring when you have control about the message. Lazy bytestring is a bit more flexible and used for streaming.
+
+https://www.fpcomplete.com/school/pick-of-the-week/bytestring-bits-and-pieces?show=tutorials[FP tutorial]
+
+
+
+== Mind blowing
+
+```haskell
+instance Monoid r => Monoid (Managed r) where
+    mempty = pure mempty
+    mappend = liftA2 mappend
+```
+
+```
+xs = 1 : [x + 1 | x <- xs] --> [1,2,3 ...]
+```
+
+```
+Right cfg -> return . Right . query cfg fp =<< F.newFileCache
+```
+
+== UI
+
+* HsQML (qt 5)
+* SDL2/gl for game
+* Web (ghcjs, threepenny, ...)
+
+
+== Useful
+
+`-fdefer-type-errors`
+
+== Common functions
+
+```
+-- give a default and always get an a from a maybe value
+maybe:: a -> Maybe a -> a
+```

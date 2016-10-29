@@ -1,38 +1,27 @@
-= Pipes
-Pierre Radermecker <pierrer@pi3r.be>
-2014
-:imagesdir: img
-:data-uri:
-:language: haskell
-:source-highlighter: pygments
-:icons: font
+# Pipes
 
-.StateT
-[NOTE]
+## Primitives
+
 ====
-```
+.StateT
+```haskell
 newtype StateT s m a = StateT {
     runStateT :: s -> m (a, s)
 }
 ```
-====
 
 .Free Monad
-[NOTE]
-====
-> A Monad n is a free Monad for f
-> if every Monad homomorphism from n to another monad m is equivalent to a natural transformation from f to m.
-
-```
+```haskell
 data Free f a = Free (f (Free f a)) | Pure a
 
 liftF :: Functor f => f a -> Free f a
 ```
+
+.Void
+is the inhabited type and denote a closed *output*
 ====
 
-== Primitives
-
-Void is the inhabited type and denote a closed *output*
+### Proxy
 
 Pipes defines a single type `Proxy` which is a monad transformer:
 
@@ -57,7 +46,7 @@ runEffect :: (Monad m) => Effect m r -> m r
 Effect is a proxy that never yield or wait.
 The default API exposes a pull-based unidirectional flow.
 
-=== Producer
+### Producer
 
 A Producer is a monad transformer that extends any base monad with a yield command. `yield` emits a value, suspending the current Producer until the value is consumed. If nobody consumes the value (which is possible) then yield never returns.
 
@@ -72,7 +61,7 @@ Void <==       <== ()
      +---------+
 ....
 
-```
+```haskell
 yield :: (Monad m) => b -> Producer' b m ()
 
 for :: (Monad m)
@@ -100,7 +89,7 @@ Think of `next` as pattern matching on the head of the Producer. This Either ret
 next :: Monad m => Producer a m r -> m (Either r (a, Producer a m r))
 ```
 
-=== Consumer
+##= Consumer
 
 A consumer represents an "exhaustible" (it may refuse to accept new values) and possibly effectful sink of values. An example of an exhaustible sink is `toOutput` from `pipes-concurrency`, which will terminate if the `Output` it writes to has been sealed.
 
@@ -125,7 +114,7 @@ Repeatedly feeds `await` in the consumer with the action passed as the first par
 This allows consumer composition
 
 .Examples
-```
+```haskell
 runEffect $ lift getLine >~ stdoutLn
 ```
 ....
@@ -144,7 +133,7 @@ runEffect $ lift getLine >~ stdoutLn
 TIP: `(>~)` and `await` form a Category  where `await` is the identity.
 
 
-=== Pipe
+### Pipe
 
 ....
 type Pipe a b = Proxy () a () b
@@ -171,25 +160,25 @@ cat = forever $ do
 TIP: `(>->)` and `cat` form a Category where `cat` is the identity.
 
 
-=== Bidirectional API
+### Bidirectional API
 
 .The response category
-```
+```haskell
 yield = respond
 for = (//>)
 (~>) = (/>/)
 ```
 
 .The reply category
-```
+```haskell
 await = request ()
 ```
 
-== Lift
+## Lift
 
 .StateP
 Run `StateT` in the base monad of the Proxy passed as a second argument.
-```
+```haskell
 runStateP
     :: (Monad m)
     => s -- state (usually of type proxy)
@@ -216,7 +205,7 @@ runStateP p $ do -- p will be used to feed the underlying proxy
                                                                 --
 ```
 
-== Concurrent API
+## Concurrent API
 
 You have got a mailbox !
 
@@ -235,7 +224,7 @@ newtype Input a = Input { recv :: S.STM (Maybe a) }
 ```
 
 
-== Pipes-Handle
+## Pipes-Handle
 
 Pipes-handle models the input/output stream analogy. An output stream accepts bytes (you write into it) whereas you read from an inputstream. The proxy that can "read from" in the pipes ecosystem is the consumer.
 By analogy, an output stream accepts output bytes and sends them to some sink. So you write into an output stream.
@@ -243,12 +232,12 @@ By analogy, an output stream accepts output bytes and sends them to some sink. S
 image::stream.png[Stream,link="http://docs.pi3r.be/stream.png"]
 
 
-== Pipes-Parse
+## Pipes-Parse
 
 .Parser
 Parser is like Consumers but with the ability to keep the leftover
 
-```
+```haskell
 type Parser a m r = forall x . StateT (Producer a m x) m r
 
 draw :: (Monad m) => Parser a m (Maybe a)
@@ -260,7 +249,7 @@ execStateT :: Parser a m r -> Producer a m x -> m (   Producer a m x)
 
 .Lenses
 Lenses served as transformation in both directions.
-```
+```haskell
 splitAt
     :: Monad m
     => Int
@@ -269,8 +258,8 @@ splitAt
 
 .zoom
 Connect lenses to Parsers
-```
-zoom 
+```haskell
+zoom
     :: Lens' (Producer a m x) (Producer b m y)
     -> Parser b m r
     -> Parser a m r
@@ -279,13 +268,13 @@ zoom
 `Iso'`: don't provide them if there is error messages involved in encoding and decoding. Stick to `Lens'`
 
 
-== Pipes-Group
+## Pipes-Group
 
 FreeT nests each subsequent Producer within the return value of the previous Producer so that you cannot access the next Producer until you completely drain the current Producer.
 
 split / transform / join paradigm
 
-```
+```haskell
 -- A "splitter" such as `groupBy`, `chunksOf` or `splitOn`
 Producer a m ()           -> FreeT (Producer a m) m ()  ~   [a]  -> [[a]]
 
@@ -297,7 +286,7 @@ FreeT (Producer a m) m () -> Producer a m ()            ~  [[a]] ->  [a]
 ```
 
 
-== Errors management
+## Errors management
 
 .Empty Bytestring
 [WARNING]
@@ -316,22 +305,64 @@ x <- lift (next source)
 ```
 ====
 
-== Arrows and push based pipe
+### Managed
+
+You have a resource a that can be acquired and then released.
+```haskell bb
+-- | A @(Managed a)@ is a resource @(a)@ bracketed by acquisition and release
+newtype Managed a = Manage
+    { -- | Consume a managed resource
+      with :: forall x . (a -> IO x) -> IO x
+    }
+Resource ((forall b. IO b -> IO b) -> IO (Allocated a))
+```
+
+##  Arrows and push based pipe
 
 Events are discrete <- PUSH based. +
 Behaviors are continuous <- PULL based
 
 `ArrowChoice` corresponds to concurrency and `Arrow` corresponds to parallelism
 
-== Questions
+## Controller/Model/View
+
+.Controller
+Represent concurrent effectful inputs to your system. A `controller` is really just a synonym for an `Input` from `pipes-concurrency`. So you have this function:
+```
+producer :: Buffer a -> Producer a IO () -> Managed (Controller a)
+```
+
+.Model
+A pure streaming transformation from the combined controller to the combined views.
+You can test this pure kernel by swapping out controllers with predicable inputs.
+```
+asPipe :: Pipe a b (State s) () -> Model s a b
+```
+
+.View
+Handles all effectful outputs from the model.
+```
+asSink :: (a -> IO ()) -> View aa
+```
+
+.Run it
+```haskell
+runMVC ::
+  initialState
+  -> Model s a b
+  -> Managed (View b, Controller a)
+  -> IO s
+```
+
+## Questions
 
 https://github.com/Gabriel439/Haskell-Pipes-Parse-Library/blob/2.0.0/src/Pipes/Parse.hs#L236
 
-```
+```haskell
 type Producer b =                    Proxy Void () () b
 type Producer' b m r = forall x' x . Proxy x' x () b m r
 ```
 
-== Resources
+## Resources
 
 - http://stackoverflow.com/questions/23185690/event-handler-stack/23187159#23187159[Event handler (SOF)]

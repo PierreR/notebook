@@ -1,0 +1,50 @@
+= Shake
+
+== Example
+
+`shake` avoids rebuilding when it is not necessary. To achieve this goal, it needs to know about files  dependencies.
+Let's take as an example, the task of running a test suite.
+
+In the following example you will need to define dependencies in steps as such:
+
+. You need to display a test report, let's call it 'build.last'
+. Building `build.last` requires calling an external command for each nodes.
+
+```haskell
+buildDir = "_build"
+
+main = shakeArgs shakeOptions{shakeFiles=buildDir </> "_shake"} $ do
+
+  daemon <- liftIO $ initDaemon pref <1>
+
+  "test" ~> do <2>
+    content <- readFile' (buildDir <> "/build.last") <3>
+    putNormal content
+    let hasFailure = any (\i -> "x" `isPrefixOf` i) (lines content)
+    if hasFailure
+      then fail "The build has failed !"
+      else liftIO $ putDoc (dullgreen "All green." <> line)
+
+  buildDir <> "/build.last" %> \out -> do
+    Right nx <- liftIO $ runExceptT $ getNodes pdbapi QEmpty
+    let deps = [ buildDir <> "/" <> Text.unpack n <> ".node" | n <- nx ^.. traverse.nodeInfoName]
+    need deps
+    Stdout stdout <- quietly $ cmd ("cat"::String) deps
+    writeFileChanged out stdout
+
+  buildDir <> "//*.node" %> \out -> do
+    let node = dropDirectory1 (dropExtension out)
+    facts <- liftIO $ mergeFacts (pref ^. prefFactsDefault) (pref ^. prefFactsOverride) <$> F.puppetDBFacts (Text.pack node) pdbapi
+    r <- liftIO $ getCatalog daemon (Text.pack node) facts
+    deps <- liftIO $ Set.fromList .HM.keys <$> getStats (parserStats daemon)
+    need $ Text.unpack <$> Set.toList deps
+    case r of
+      S.Right _ ->
+        liftIO $ withFile out WriteMode (\h -> hPutDoc h ( dullgreen "✓" <+> text node <> line))
+      S.Left msg ->
+        liftIO $ withFile out WriteMode (\h -> hPutDoc h ( char 'x' <> space <> red (text node) <> line <> indent 2 (getError msg) <> line))
+
+```
+<1> Each build would execute this line TODO: Is there a way to avoid this ?
+<2> One of the top target. It is a phony rule because it does not produce anything.
+<3>

@@ -1,6 +1,4 @@
-= GNUPG TECHNICAL NOTE
-Pierre Radermecker
-2015
+= GNUPG
 
 ```
 cat cirb.private | ssh puppet/master_testing sudo -u puppet gpg --allow-secret-key-import --import

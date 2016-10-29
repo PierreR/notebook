@@ -1,18 +1,8 @@
 = Lenses
-TECHNICAL NOTE
-Pierre Radermecker <pierrer@pi3r.be>
-:toc: left
-:toclevels: 1
-:source-language: haskell
-:source-highlighter: pygments
-:keywords: haskell
-:numbered:
-:sectnumlevels: 1
-:nofooter:
 
 == Usage
 
-```
+```haskell
 {-# LANGUAGE TemplateHaskell #-}
 
 data Person = Person
@@ -38,7 +28,7 @@ A lens is a first-class reference to a subpart of some data type.
 
 Note that lenses are not `accessors` but `focusers`. It focus on a particular location of a structure. These are the types we want for `view`, `set` and `over/update`:
 
-```
+```haskell
 view :: Lens' s a -> s -> a
 set :: Lens' s a -> a -> s -> s
 over :: Lens' s a -> (a -> a) -> s -> s

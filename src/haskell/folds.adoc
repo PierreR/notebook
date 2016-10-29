@@ -1,12 +1,4 @@
 = Fold and Traverse
-Pierre Radermecker <pierrer@pi3r.be>
-2014
-:imagesdir: img
-:data-uri:
-:language: haskell
-:source-highlighter: pygments
-:icons: font
-
 
 == Introduction
 

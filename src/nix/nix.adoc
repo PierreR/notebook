@@ -1,15 +1,4 @@
 = Nix
-Pierre Radermecker <pierrer@pi3r.be>
-2014-2016
-:toc: left
-:toclevels: 1
-:source-language: bash
-:source-highlighter: pygments
-:icons: font
-:keywords: nix, nixos 
-:numbered:
-:sectnumlevels: 1
-:nofooter:
 
 == NixOS
 
@@ -22,7 +11,7 @@ Pierre Radermecker <pierrer@pi3r.be>
 ```
 . partition with gdisk (efi) or fdisk (noefi)
 +
-icon:info-circle[] using virtualbox you don't want/need efi
+icon:info-circle[1x] using virtualbox you don't want/need efi
 +
 ```
 → (g/f)disk /dev/sda
@@ -62,12 +51,67 @@ create 2 partitions sda1(83 default)/sda2(82)
 → nixos-rebuild boot --upgrade
 → reboot
 ```
-. tweak config
-+
-.. install neovim, gitFull, htop, ...
-.. create a new user icon:exclamation-circle[] +
+. <<Configuration>>
+
+[[Configuration]]
+=== icon:wrench[] Configuration
+
+[NOTE]
+====
+Some nix properties are set up in `/etc/nix/nix.conf`
+
+for `wifi`, manually configure it by using `NetworkManager` through the `nmtui` text interface
+====
+
+./etc/nixos/configuration
+```nix
+  nixpkgs.config.allowUnfree = true;
+
+  i18n = {
+    consoleFont = "Lat2-Terminus16";
+    consoleKeyMap = "be-latin1";
+    defaultLocale = "en_US.UTF-8";
+  } ;
+
+  environment.systemPackages = with pkgs; [
+    asciidoctor <1>
+  ];
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.extraUsers.nix = { <2>
+    createHome = true;
+    home = "/home/nix";
+    isSystemUser = true;
+    extraGroups = [ "wheel" "disk" "vboxusers" "docker"];
+    shell = "/run/current-system/sw/bin/bash";
+    uid = 1000;
+  };
+
+  programs.bash.enableCompletion = true;
+  security.sudo.wheelNeedsPassword = false;
+
+  fonts = {
+    enableFontDir = true;
+    fonts = [ pkgs.source-code-pro ];
+  };
+
+  nix.extraOptions = ''
+    gc-keep-outputs = true <3>
+    gc-keep-derivations = true <3>
+  '';
+
+  virtualisation.docker.enable = true;
+  virtualisation.docker.extraOptions = "--insecure-registry x.lan --insecure-registry y.lan";
+
+  virtualisation.virtualbox.guest.enable = true; <4>
+  boot.initrd.checkJournalingFS = false; <4>
+
+```
+<1> add packages
+<2> do create a new user !  +
 (root won't be able to have a chromium session by default)
-.. use the `NetworkManager` text user interface 'nmtui' to configure wireless
+<3> prevent too much gc in developer environment
+<4> virtualbox only
 
 === icon:cog[] System management
 
@@ -92,15 +136,18 @@ stdenv.mkDerivation {
   version = "1.2.3"
   src = fetchurl {
     url = http://example.org/libfoo-1.2.3.tar.bz2;
-    md5 = "e1ec107956b6ddcb0b8b0679367e9ac9";
+    md5 = "e1ec107956b6ddcb0b8b0679367e9ac9"; <2>
   };
-  builder = ./builder.sh; <2>
-  buildInputs = [ruby]; <3>
+  builder = ./builder.sh; <3>
+  buildInputs = [ruby]; <4>
 }
 ```
 <1> mandatory `name` attr
-<2> if not provided, the generic builder is used
-<3> additional requirement needed to build the derivation
+<2> mandatory checksum for remote source
+<3> if not provided, the generic builder is used
+<4> additional requirement needed to build the derivation
+
+The output of a derivation needs to be deterministic. That's why you can fetch source remotely iff you know the hash beforehand.
 
 ====
 drv files:: specification of how to build a derivation similar to the `.o` file in C.
@@ -109,13 +156,24 @@ drv files:: specification of how to build a derivation similar to the `.o` file 
 == Channels
 
 A channel is the Nix mechanism for distributing a consistent set of Nix expressions and binaries.
-nix-channel --add 
+nix-channel --add
 
 ```
 → nix-channel --add http://nixos.org/channels/nixpkgs-unstable
 → nix-channel --update
 → nixos-rebuild switch
 ```
+
+The unstable channel is usually a few days older from `nixpkgs` master.
+For a precise status, check http://howoldis.herokuapp.com[here].
+
+You can directly use a derivation from master. For instance, after cloning `nixpkgs`, you could type:
+
+```
+→  NIX_PATH=nixpkgs=/home/vagrant/projects/nix/nixpkgs nix-env -f '<nixpkgs>' -iA haskellPackages.stack
+```
+
+NOTE: On `nixos`, you should stick to `nixos-unstable` (don't use `nixpkgs-unstable` because specific nixos sanity check won't applied)
 
 == Nix-shell
 
@@ -124,8 +182,9 @@ When Nix builds a package, it builds it in an isolated environment. It does this
 But we can ask Nix to not destroy the child shell, and instead let us use it for working iteratively on the app. This is what the `nix-shell` is about:
 
 ```
- nix-shell '<nixpkgs>' -A nvi -p ruby
+ nix-shell '<nixpkgs>' -p ruby haskellPackages.stack <1>
 ```
+<1> `p` and `-A` are mutually exclusive
 
 If a path is not given, nix-shell defaults to `shell.nix` if it exists, and `default.nix` otherwise. This allows for a nice trick. We can decribe a virtual dev environment (of any sort for any language) by decribing a derivation in `default.nix` like so:
 
@@ -158,7 +217,7 @@ with (import <nixpkgs> {}).pkgs;
 You can force any script file to run in a nix-shell as such:
 ```
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash 
+#! nix-shell -i bash
 ```
 or without a default.nix file:
 
@@ -168,9 +227,19 @@ or without a default.nix file:
 ```
 == Commands
 
-nix-env::
+==== nix-env
+
+`nix-env` is the command to use to search, install, remove packages locally in user space (or profile). These packages are installed in the `nix-store` but are only accessible inside one environment (aka user/profile).
+
+[NOTE]
+====
+`nix-env` doesn't require a starting nix expression. As a consequence, `nix-env` does not use `<nixpkgs>` as NIX_PATH. It actually uses `~/.nix-defexpr/channels`.
+If you want to use <nixpkgs>, you would explicitly use the `-f` flag on the command line.
+====
+
 - *-q* list installed derivations within a profile
 - *-qaP* list available package with the path
++
 [WARNING]
 ====
 The Haskell package set is not registered in the top-level namespace because it is huge. As a consequence, when searching for haskell  packages you need to provide the `haskellPackages` attribute:
@@ -180,43 +249,77 @@ The Haskell package set is not registered in the top-level namespace because it 
 → nix-env -qaP -A nixos.pythonPackages
 ```
 <1> together with `-A`, `-f` needs to be provided.
+
 ====
 - *-i* install derivations
 +
 ```
-→ nix-env -f "<nixpkgs>" -iA pythonPackages.pyyaml
+→ nix-env -f '<nixpkgs>' -iA pythonPackages.pyyaml
 → nix-env -e python2.7-PyYAML-3.11
+→ nix-env -f '<nixpkgs>' -i brackets -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz’ <1>
 ```
+<1> install from master directly
+
 - *-u* update
 +
 ```
 → nix-env -u '*'
 ```
-nix-build:: 
-+
+
+==== nix-build
+
+nix-build tool does two main jobs:
+
+* nix-instantiate: parse the `.nix` file and return the .drv file
+* nix-store -r: realise the .drv, which actually builds the derivation
+
 ```
 ```
 
 == Language Expressions
 
-Set::
+String::
 +
 ```nix
-let x = 123; in
-{ inherit x; <1>
-  text = "Hello";
-  y = f { bla = 456; };
-}.text or "World" <2>
+let
+  h = "Hello";
+  value = 4;
+in
+{
+  helloWorld = "${h} ${toString value} the win!"; <1>
+}
 ```
-<1> When defining a set it is often convenient to copy variables from the surrounding lexical scope
-<2> Sets accessor using `.` +
-    Default using `or`
+<1> interpolation of the `toString` builtin function to convert an int value
 
 List::
 +
 ```nix
 [ 123 ./foo.nix "abc" (f { x = y; }) ]
 ```
+
+Set::
+
++
+```nix
+let x = 12;
+    y = 34;
+    f = {n}: 5 + n;
+in
+rec {
+  r = { inherit x y; <1>
+    text = "Hello";
+    add = f { n = 56; }; <2>
+  };
+  sum = r.add + r.y;
+  hello = r.text or "World"; <3>
+  b = r ? x; <4>
+}
+```
+<1> when defining a set it is often convenient to copy variables from the surrounding lexical scope
+<2> all `;` are mandatory
+<3> Sets accessor using `.` +
+    Default using `or`
+<4> does the record 'r' contains an attribute 'x' `?`
 
 Function::
 +
@@ -225,20 +328,22 @@ pattern: body
 ```
 +
 ```nix
-negate = x: !x; <1>
+# `min` and `max` are available in stdenv.lib
+min = x: y: if x < y then x else y; <1>
 ```
-<1> pattern is a single identifier 'x'
+<1> pattern is a func returning a func (2 arguments)
 +
 ```nix
-{stdenv, fetchurl, perl }: <1>
+{stdenv, fetchurl, perl, ... }: <1>
 
   stdenv.mkDerivation { <2>
     name = "hello-2.1.1";
 	...
   };
 ```
-<1> pattern is a set of arguments
-<2> function call
+<1> pattern is a set of arguments +
+the 'ellipsis' (`...`) allows the passing of a bigger set, one that contains more than the 3 required arguments.
+<2> function call passing a set as argument
 
 With::
 +
@@ -249,7 +354,8 @@ Introduces all attributes of the set `e1` into the lexical scope of the expressi
 +
 ```nix
 let as = { x = "foo"; y = "bar"; };
-in with as; x + y
+in
+foobar = with as; x + y
 ```
 
 Optional argument::
@@ -269,27 +375,78 @@ e1 // e2 # merge e1 and e2 with e2 taking precedence in case of equally named at
 
 Override pkgs derivations::
 +
-```nix
+[source, nix, highlight="2"]
+----
 pkgs.overridePackages (self: super: {
-  foo = super.foo.override { barSupport = true ; };
+  foo = super.foo.override { barSupport = true ; }; <1>
 })
-```
-[WARNING]
-====
-In `~/.nixpkgs/config.nix` you typically declare a `packageOverrides` function knowing it will be called to customize <nixpkgs> locally
-
+----
+<1> you may call #override# on much derivations to changes attribute value(s).
++
+Instead of using #overridePackages# in `~/.nixpkgs/config.nix` you would typically declare a #packageOverrides# function knowing it will be called to customize '<nixpkgs>' locally:
++
 .~/.nixpkgs/config.nix
-```nix
+[source, nix, highlight="2"]
+----
 {
   packageOverrides = super:
     let self = super.pkgs;
-    in {
+    in
+    {
       haskellPackages = super.haskellPackages.override {
-      ...
-      };
+        overrides = self: super: { <1>
+        ...
+        };
+    };
+}
+----
+<1> override the #overrides# attribute of haskellPackages
+
+Private packages::
++
+You can easily extend `nixpkgs` with private derivations without any forking by writing a custom file:
++
+.dotfiles.nix
+```nix
+with import <nixpkgs> {}; <1>
+
+let xmonadEnv = haskellPackages.ghcWithPackages (p: with p; [xmonad xmonad-contrib]); <2>
+in
+
+stdenv.mkDerivation {
+  name = "devbox_dotfiles-0.1";
+
+  src = fetchFromGitHub {
+    owner = "CIRB";
+    repo = "devbox-dotfiles";
+    rev = "801f66f3c7d657f5648963c60e89743d85133b1a" ;
+    sha256 = "1w4vaqp21dmdd1m5akmzq4c3alabyn0mp94s6lqzzp1qpla0sdx0" ;
+  };
+
+  buildInputs = [ xmonadEnv ];
+
+  installPhase = ''
+    ${xmonadEnv}/bin/ghc --make .xmonad/xmonad.hs -o .xmonad/xmonad-x86_64-linux <3>
+    cp -R ./. $out <4>
+  '';
+
+  meta = {
+    description = "Dot files for the devbox";
+  };
 }
 ```
-====
+<1> dependencies provided by `nixpkgs` using $NIX_PATH
+<2> ghc with module deps included
+<3> at this stage, the shell is inside a temp dir with the src included
+<4> copy the content of the current dir into $out
++
+You then build the derivation or install it in the user environment.
++
+```
+→ nix-build dotfiles.nix
+→ nix-env -f dotfiles.nix -i devbox_dotfiles <1>
+```
+<1> `nix-env -i` takes the name attribute and strip the version (first numeric after `-`)
 
 Override pattern::
 +
@@ -313,6 +470,20 @@ f = self: super:
 (fix ps).foobar # "foobar"
 
 (fix (extend ps f)).foobar # "oofbar"
+```
+
+Pinned a version of nixpkgs::
++
+```
+  nixpkgs = (import <nixpkgs> {}).pkgs.fetchgit {
+              url = "https://github.com/nixos/nixpkgs-channels";
+              rev = "f93a8ee1105f4cc3770ce339a8c1a4acea3b2fb6";
+              sha256 = "01fnyw711p6kf9qpdabys9im10hlih1l1pxwp06wkq7b9wsljawd";
+            };
+
+in
+
+with import nixpkgs {};
 ```
 
 == Bootstrap
@@ -349,3 +520,5 @@ rec {
 == References
 
 - http://lethalman.blogspot.be/search/label/nixpills[nix pills]
+- http://sandervanderburg.blogspot.be/2014/07/managing-private-nix-packages-outside.html[private packages]
+- https://nixcloud.io/tour/?id=1

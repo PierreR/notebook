@@ -1,0 +1,54 @@
+# Notebook
+Pierre Radermecker <pierrer@pi3r.be>
+:toc: left
+:toclevels: 2
+:imagesdir: ../img
+:source-language: bash
+:source-highlighter: pygments
+:icons: font
+:keywords: nix, nixos
+:nofooter:
+:docinfo1:
+:toc-title: Notebook
+
+:leveloffset: 1
+
+include::nix/nix.adoc[]
+
+# Haskell
+
+:leveloffset: 2
+
+include::haskell/concepts.adoc[]
+
+include::haskell/folds.adoc[]
+
+include::haskell/lens.adoc[]
+
+include::haskell/monad.adoc[]
+
+include::haskell/shake.adoc[]
+
+include::haskell/pipes.adoc[]
+
+include::haskell/convention.adoc[]
+
+include::haskell/includes.adoc[]
+
+:leveloffset: 1
+
+include::spacemacs.adoc[]
+
+include::category-theory.adoc[]
+
+include::git/git.adoc[]
+
+include::linux/linux.adoc[]
+
+include::postgres/postgres.adoc[]
+
+include::programming-notes.adoc[]
+
+include::elasticsearch/es.adoc[]
+
+:leveloffset: 0
