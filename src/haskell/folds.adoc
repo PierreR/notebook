@@ -49,7 +49,7 @@ The strict version `foldl'` should always be used instead of foldl (don't ever u
 image::left-fold-transformation.png[Foldl]
 
 
-== Foldl package
+## Foldl package
 
 To get a better representation for fold we need to transform the function into data.
 
@@ -91,11 +91,19 @@ genericLength = Fold (\n _ -> n + 1) 0 id
 λ> fold average [1..10000000]
 ```
 
-NOTE:
+NOTE: `Fold` is also a profunctor and a comonad.
 
-- `Fold` is also a profunctor and a comonad.
+### Alternative monoid definition
 
-=== FoldM
+As explained in https://github.com/Gabriel439/slides/blob/master/munihac/foldmap.md[Gabriel's beautiful fold talk], #Fold# can similarly be defined as
+
+```
+data Fold i o = forall m . Monoid m => Fold (i -> m) (m -> o)
+```
+This approach can express parallel computation but it won't encode stateful folds.
+
+
+### FoldM
 
 ```
 data FoldM m a b =
@@ -113,7 +121,7 @@ generalize :: Monad m => Fold a b -> FoldM m a b
 NOTE: In the `turtle` library, `FoldM` plays the role of a consumer and `Shell` the role of a Producer. `fold` is how you connect them together.
 
 
-== Foldable/Traversable
+## Foldable/Traversable
 
 Fold::
 `fold` from the `foldl` take as an argument any `Foldable` structure. `Foldable` are structures that we can **reduce** into a single result.

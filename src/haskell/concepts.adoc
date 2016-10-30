@@ -1,38 +1,6 @@
 = Concepts
 
 
-== Lazyness
-
-Reduction is done using outermost reduction. For instance:
-```
-loop = tail loop
-
-fst (1, loop)
--- innermost reduction gives:
--- fst (1, (tail loop))
--- fst (1, (tail (tail loop))) and never terminates
--- but outermost reduction gives:
--- fst (1, loop) = 1 and terminates
-```
-
-=== Redex
-```
--- only one redex (2*3) both innermost and outermost
-1 + (2 * 3)
-
--- 2 redexes :
--- (\x -> 1 + x ) (2 * 3) outermost
--- (2 * 3) innermost
-(\x -> 1 + x ) (2 * 3)
-
-```
-
-== Existential classes
-
-> When someone defines a universal type ∀X they're saying: You can plug in whatever type you want, I don't need to know anything about the type to do my job, I'll only refer to it opaquely as X.
-
-> When someone defines an existential type ∃X they're saying: I'll use whatever type I want here; you wont know anything about the type, so you can only refer to it opaquely as X
-
 == Type class
 
 Type class enables a (de)limited form of `adhoc polymorphism` or `overloading`.
@@ -42,14 +10,14 @@ The `adhoc polymporphism` needs to be delimited as such to play well with `param
 
 Type class are not first class in Haskell. They cannot be used in place of type (as you would in Java with interface).
 
-It is *dictionnary passing*: Ghc puts the methods of the instance in a dictionary and passes that implicitly to any functions having a (Class a) constraint.
+It is internally implemented as *_dictionnary passing_*: `ghc` puts the methods of the instance in a dictionary and passes that implicitly to any functions having a class constraint.
 
 It is best to look at them as a set of constraints on type.
 One notable drawback is that each type can have at most one implementation of the type class.
 
-`Eq` is the classical example.
+#Eq#, #Num#, #Show# are classical examples.
 
-In Scala, type-classes are types themselves, and instances are first class values.
+icon:info-circle[1x] In Scala, type-classes are types themselves, and instances are first class values.
 
 == Type Family
 
@@ -64,13 +32,9 @@ type instance Add (Succ x) y = Succ (Add x y)
 
 ```
 
-== Determinic parallel programming
-
-A set of states with an order attached to it is known as a lattice
-
 == Typeable
 
-The `Typeable` class be used to create runtime type information for arbitrary types:
+The #Typeable# class is used to create runtime type information for arbitrary types:
 
 ```haskell
 {-# LANGUAGE DeriveDataTypeable #-}
@@ -85,7 +49,7 @@ example = typeRep (Zoo [Cat, Dog]) <2>
 -- Zoo Animal
 ```
 <1> Runtime representation of the type of the value
-<2> `typeRep` correspond to `typeOf` which is kept for backwards-compatibility
+<2> #typeRep# correspond to `typeOf` which is kept for backwards-compatibility
 
 ```
 class Typeable a where
@@ -117,7 +81,9 @@ You can think of it like a database, file, or other external data store.
 
 == Functor
 
+====
 > A functor is a structure-preserving mapping (or homomorphism) between 2 categories.
+====
 
 This means that :
 
@@ -134,10 +100,14 @@ class Functor f where
 The functor defines the action of an arbitrary function (a -> b) on a structure (f a) of elements of type a resulting in the same structure but full of elements of type b.
 
 .Laws:
+====
 ```
 fmap id = id
+
 fmap (g . h) = fmap g . fmap h
 ```
+====
+
 .Example:
 ```haskell
 instance Functor ((->) r) where
@@ -148,7 +118,7 @@ Another intuition is to look at functors as producers of output that can have it
 
 Whenever you have producer of outputs, you might also have the dual consumer of inputs. This is where Contravariant comes in. The intuition behind a Contravariant is that it reflects a sort of "consumer of input" that can have the type of accepted input adapted.
 
-```
+```haskell
 class Contravariant f where
   contramap :: (b -> a) -> f a -> f b
 ```
@@ -156,52 +126,54 @@ class Contravariant f where
 So here we can adapt the *input* to go from a consumer of input 'a' to a consumer of input 'b'. But to go there you need to provide a function from 'b' to 'a'
 
 
-== Isomorphisms
+## Isomorphisms
 
 Category theory allows us to give a precise, abstract (works for all categories) and self-contained definition of an isomorphism:
 
 An arrow/morphism f: A -> B is called an isomorphism in *C* if there is an arrow g that goes from B to A such that: +
 g ∘ f = 1A and f ∘ g = 1B
 
-== Applicative
+## Applicative
 
 With a functor f it is not possible to apply a function wrapped by the structure `f` to a value wrapped by f. This is given by Applicative:
 
+```haskell
+class Functor f => Applicative f where
+  pure :: a -> f a
+ (<*>) :: f (a -> b) -> f a -> f b
 ```
-class Functor f ⇒ Applicative f where
-  pure :: a → f a
- (<*>) :: f (a → b) → f a → f b
-```
-(<*>) is just function application within a computational context.
+#<*># is just function application within a computational context.
 
 As soon as you want to define the type `(a -> b -> c) -> f a -> f b -> f c` you need the applicative construction:
 
-```
+```haskell
 liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
 liftA2 f a b = fmap f a <*> b
 ```
 It is not that hard to convince yourself that an applicative functor is just a functor that knows how to lift functions of arbitrary arities.
 
-.Laws:
-----
+.Law
+====
+```
 fmap g x = pure g <*> x
-----
+```
+====
 
 Applicative functors are to be preferred to monads when the structure of a computation is fixed a priori.
 That makes it possible to perform certain kinds of static analysis on applicative values.
 
-=== Alternative
+### Alternative
 
 An Alternative instance gives an applicative functor the structure of a monoid,
 with empty as the unit element, and <|> as the binary operation.
 
-```
-class Applicative f ⇒ Alternative f where
+```haskell
+class Applicative f => Alternative f where
   empty :: f a
- (<|>) :: f a → f a → f a
+ (<|>) :: f a -> f a -> f a
 ```
 
-== Monad
+## Monad
 
 ```haskell
 class Applicative m => Monad m where
@@ -211,10 +183,12 @@ class Applicative m => Monad m where
 ```
 <1> The signature of `bind` allows the second computation to depend on the value of the first one.
 
+====
 > Monadic values are produced in a context. Monads provide both substitution (fmap) and renormalization (join).
 ```
 m >>= f = join (fmap f m)
 ```
+====
 
 Even if a monad is strictly more powerful than an Applicative, there are situations for which an applicative is the only valid choice.
 Indeed `<*>` lets you explore both arguments by pattern matching but with `ap` the right hand side cannot be evaluated without the result from the left.
@@ -237,7 +211,9 @@ A free monad is just substitution (fmap) with the minimum amount of renormalizat
 
 It is perfect to separate syntax (data, ast, parsing) from semantics (interpretation)
 
+====
 > The free monad is guaranteed to be the formulation that gives you the most flexibility how to interpret it, since it is purely syntactic.
+====
 
 ```haskell
 data Free f a = Pure a | Free (f (Free f a))
@@ -248,12 +224,17 @@ fix f = f (f (f (f (f (f (f (f (f (f (f (f (f ... ))))))))))))
 or
 fix f = f (fix f)
 
+> A Monad n is a free Monad for f if every Monad homomorphism from n to another monad m is equivalent to a natural transformation from f to m.
+
+== Existential classes
 ====
 ""
-A Monad n is a free Monad for f if every Monad homomorphism from n to another monad m is equivalent to a natural transformation from f to m.
+When someone defines a universal type ∀X they're saying: you can plug in whatever type you want, I don't need to know anything about the type to do my job, I'll only refer to it opaquely as X.
+
+When someone defines an existential type ∃X they're saying: I'll use whatever type I want here; you won't know anything about the type, so you can only refer to it opaquely as X
 ""
 ====
-  
+
 == ByteString
 
 * Word8 is Haskell's standard representation of a byte
@@ -264,6 +245,31 @@ A Monad n is a free Monad for f if every Monad homomorphism from n to another mo
 https://www.fpcomplete.com/school/pick-of-the-week/bytestring-bits-and-pieces?show=tutorials[FP tutorial]
 
 
+== Lazyness
+
+Reduction is done using outermost reduction. For instance:
+```
+loop = tail loop
+
+fst (1, loop)
+-- innermost reduction gives:
+-- fst (1, (tail loop))
+-- fst (1, (tail (tail loop))) and never terminates
+-- but outermost reduction gives:
+-- fst (1, loop) = 1 and terminates
+```
+
+=== Redex
+```
+-- only one redex (2*3) both innermost and outermost
+1 + (2 * 3)
+
+-- 2 redexes :
+-- (\x -> 1 + x ) (2 * 3) outermost
+-- (2 * 3) innermost
+(\x -> 1 + x ) (2 * 3)
+
+```
 
 == Mind blowing
 
@@ -291,10 +297,3 @@ Right cfg -> return . Right . query cfg fp =<< F.newFileCache
 == Useful
 
 `-fdefer-type-errors`
-
-== Common functions
-
-```
--- give a default and always get an a from a maybe value
-maybe:: a -> Maybe a -> a
-```

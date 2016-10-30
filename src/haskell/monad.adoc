@@ -20,14 +20,17 @@ This means it uses system trickery to ensure that mutable data can't escape the 
 ST actions have the form:
 
 ```
-newtype ST s a = ST (Store s -> (a, Store s)) -- an ST action returning a value of type a in state t
-data STRef s a = STRef (MutVar# s a) -- a mutable variable in thread s
+-- an ST action returning a value of type a in state t
+newtype ST s a = ST (Store s -> (a, Store s))
+ -- a mutable variable in thread s
+data STRef s a = STRef (MutVar# s a)
+
 newSTRef :: a -> ST s (STRef s a)
 readSTRef :: STRef s a -> ST s a
 writeSTRef :: STRef s a -> a -> ST s ()
 ```
 
-The reason ST is interesting is that it's a primitive monad like IO, allowing computations to perform low-level manipulations on bytearrays and pointers.
+The reason #ST# is interesting is that it's a primitive monad like IO, allowing computations to perform low-level manipulations on bytearrays and pointers.
 This means that ST can provide a pure interface while using low-level operations on mutable data, meaning it's very fast. From the perspective of the program, it's as if the ST computation runs in a separate thread with thread-local storage.
 
 == MonadPlus
@@ -42,7 +45,7 @@ msum = foldr mplus mzero
 ```
 
 In a list, a monadplus will give you the first successful computation or the last zero value. With failures, it really disregards them striving for success:
-```
+```shell
 [Just 1, Just 2, Nothing]              -> Just 1
 [Left "Failing", Right()]              -> Right ()
 [Left "Failing", Left "Failing again"] -> Left "Failing again"

@@ -28,7 +28,7 @@ A lens is a first-class reference to a subpart of some data type.
 
 Note that lenses are not `accessors` but `focusers`. It focus on a particular location of a structure. These are the types we want for `view`, `set` and `over/update`:
 
-```haskell
+```
 view :: Lens' s a -> s -> a
 set :: Lens' s a -> a -> s -> s
 over :: Lens' s a -> (a -> a) -> s -> s
@@ -82,7 +82,7 @@ Note how the monoid instance of String allows us to get a native String from thi
 ""
 ....
 But without a monoid instance it cannot work and the `(^?)` is necessary:
-```
+```shell
 > s = (Left 5, 5)
 > s ^? _1._Left
 Just 5

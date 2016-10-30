@@ -1,3 +1,10 @@
+# Common functions
+
+```
+-- give a default and always get an a from a maybe value
+maybe:: a -> Maybe a -> a
+```
+
 # GATS
 
 GADTs let you associate different type parameters for different data constructors of a type.

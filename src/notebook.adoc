@@ -1,24 +1,26 @@
 # Notebook
 Pierre Radermecker <pierrer@pi3r.be>
 :toc: left
-:toclevels: 2
+:toclevels: 3
 :imagesdir: img
-:source-language: bash
 :source-highlighter: pygments
 :icons: font
 :keywords: nix, nixos
 :nofooter:
 :docinfo1:
 :toc-title: Notebook
+:page-layout: docs
+:example-caption!:
 
 :leveloffset: 1
+:source-language: bash
 
 include::nix/nix.adoc[]
 
 # Haskell
 
+:source-language: haskell
 :leveloffset: 2
-
 include::haskell/concepts.adoc[]
 
 include::haskell/folds.adoc[]
@@ -36,7 +38,7 @@ include::haskell/convention.adoc[]
 include::haskell/includes.adoc[]
 
 :leveloffset: 1
-
+:source-language: bash
 include::spacemacs.adoc[]
 
 include::category-theory.adoc[]

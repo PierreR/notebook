@@ -485,15 +485,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .listingblock .pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
 </style>
 <style>
- .admonitionblock .icon {
-     font-size: smaller;
+table tr th, table tr td {
+    padding: .45em .6em !important;
+}
+ul.sectlevel1 > li > a  {
+    font-weight: bold !important;
  }
- h3 .icon {
-     font-size: smaller !important;
- }
+
+div#toctitle {
+    color: #1d4b8f !important;
+    font-size: 1.45em !important;
+    font-weight: 500 !important;
+
+}
+.admonitionblock .icon {
+    font-size: smaller !important;
+}
+ h3 .icon, h4 .icon {
+    font-size: smaller !important;
+}
 .conum[data-value] {
-     font-size: .65em !important;
- }
+    font-size: .65em !important;
+}
 mark {
     color: inherit !important;
     background-color: inherit !important;
@@ -503,6 +516,7 @@ mark {
     margin-right: 3px;
     padding-left: 5px;
     padding-right: 5px;
+    padding-bottom: 1px;
 }
 
 .quoteblock blockquote:before {
@@ -525,11 +539,22 @@ mark {
 <ul class="sectlevel1">
 <li><a href="#_nix">Nix</a>
 <ul class="sectlevel2">
-<li><a href="#_nixos">NixOS</a></li>
+<li><a href="#_nixos">NixOS</a>
+<ul class="sectlevel3">
+<li><a href="#__span_class_icon_i_class_fa_fa_tasks_i_span_install"><span class="icon"><i class="fa fa-tasks"></i></span> Install</a></li>
+<li><a href="#Configuration"><span class="icon"><i class="fa fa-wrench"></i></span> Configuration</a></li>
+<li><a href="#__span_class_icon_i_class_fa_fa_cog_i_span_system_management"><span class="icon"><i class="fa fa-cog"></i></span> System management</a></li>
+</ul>
+</li>
 <li><a href="#_derivation">Derivation</a></li>
 <li><a href="#_channels">Channels</a></li>
 <li><a href="#_nix_shell">Nix-shell</a></li>
-<li><a href="#_commands">Commands</a></li>
+<li><a href="#_commands">Commands</a>
+<ul class="sectlevel4">
+<li><a href="#_nix_env">nix-env</a></li>
+<li><a href="#_nix_build">nix-build</a></li>
+</ul>
+</li>
 <li><a href="#_language_expressions">Language Expressions</a></li>
 <li><a href="#_idioms">Idioms</a></li>
 <li><a href="#_bootstrap">Bootstrap</a></li>
@@ -539,15 +564,84 @@ mark {
 </li>
 <li><a href="#_haskell">Haskell</a>
 <ul class="sectlevel2">
-<li><a href="#_concepts">Concepts</a></li>
-<li><a href="#_fold_and_traverse">Fold and Traverse</a></li>
-<li><a href="#_lenses">Lenses</a></li>
-<li><a href="#_monads">Monads</a></li>
-<li><a href="#_shake">Shake</a></li>
-<li><a href="#_pipes">Pipes</a></li>
-<li><a href="#_naming_convention">Naming &amp; convention</a></li>
+<li><a href="#_concepts">Concepts</a>
+<ul class="sectlevel3">
+<li><a href="#_type_class">Type class</a></li>
+<li><a href="#_type_family">Type Family</a></li>
+<li><a href="#_typeable">Typeable</a></li>
+<li><a href="#_ref_state_primitives">Ref/State Primitives</a></li>
+<li><a href="#_functor">Functor</a></li>
+<li><a href="#_isomorphisms">Isomorphisms</a></li>
+<li><a href="#_applicative">Applicative</a></li>
+<li><a href="#_monad">Monad</a></li>
+<li><a href="#_free">Free</a></li>
+<li><a href="#_existential_classes">Existential classes</a></li>
+<li><a href="#_bytestring">ByteString</a></li>
+<li><a href="#_lazyness">Lazyness</a></li>
+<li><a href="#_mind_blowing">Mind blowing</a></li>
+<li><a href="#_ui">UI</a></li>
+<li><a href="#_useful">Useful</a></li>
+</ul>
+</li>
+<li><a href="#_fold_and_traverse">Fold and Traverse</a>
+<ul class="sectlevel3">
+<li><a href="#_introduction">Introduction</a></li>
+<li><a href="#_foldl_foldr">foldl/foldr</a></li>
+<li><a href="#_foldl_package">Foldl package</a></li>
+<li><a href="#_foldable_traversable">Foldable/Traversable</a></li>
+</ul>
+</li>
+<li><a href="#_lenses">Lenses</a>
+<ul class="sectlevel3">
+<li><a href="#_usage">Usage</a></li>
+<li><a href="#_lens">Lens</a></li>
+<li><a href="#_prims">Prims</a></li>
+<li><a href="#_traverse">Traverse</a></li>
+<li><a href="#_utils">Utils</a></li>
+</ul>
+</li>
+<li><a href="#_monads">Monads</a>
+<ul class="sectlevel3">
+<li><a href="#_reader">Reader</a></li>
+<li><a href="#_state">State</a></li>
+<li><a href="#_st">ST</a></li>
+<li><a href="#_monadplus">MonadPlus</a></li>
+</ul>
+</li>
+<li><a href="#_shake">Shake</a>
+<ul class="sectlevel3">
+<li><a href="#_example">Example</a></li>
+</ul>
+</li>
+<li><a href="#_pipes">Pipes</a>
+<ul class="sectlevel3">
+<li><a href="#_primitives">Primitives</a></li>
+<li><a href="#_lift">Lift</a></li>
+<li><a href="#_concurrent_api">Concurrent API</a></li>
+<li><a href="#_pipes_handle">Pipes-Handle</a></li>
+<li><a href="#_pipes_parse">Pipes-Parse</a></li>
+<li><a href="#_pipes_group">Pipes-Group</a></li>
+<li><a href="#_errors_management">Errors management</a></li>
+<li><a href="#_arrows_and_push_based_pipe">Arrows and push based pipe</a></li>
+<li><a href="#_controller_model_view">Controller/Model/View</a></li>
+<li><a href="#_questions">Questions</a></li>
+<li><a href="#_resources">Resources</a></li>
+</ul>
+</li>
+<li><a href="#_naming_convention">Naming convention</a>
+<ul class="sectlevel3">
+<li><a href="#_algebraic_data_type">Algebraic Data Type</a></li>
+<li><a href="#_record">Record</a></li>
+<li><a href="#_module">Module</a></li>
+</ul>
+</li>
+<li><a href="#_common_functions">Common functions</a></li>
 <li><a href="#_gats">GATS</a></li>
-<li><a href="#_haxl">Haxl</a></li>
+<li><a href="#_haxl">Haxl</a>
+<ul class="sectlevel3">
+<li><a href="#_primitives_2">Primitives</a></li>
+</ul>
+</li>
 <li><a href="#_operational">Operational</a></li>
 <li><a href="#_operator_colloquial_name">Operator colloquial name</a></li>
 <li><a href="#_developments">Developments</a></li>
@@ -555,8 +649,20 @@ mark {
 </li>
 <li><a href="#_spacemacs">Spacemacs</a>
 <ul class="sectlevel2">
-<li><a href="#_cheatsheet">Cheatsheet</a></li>
-<li><a href="#_surround">Surround</a></li>
+<li><a href="#_cheatsheet">Cheatsheet</a>
+<ul class="sectlevel3">
+<li><a href="#_magit">Magit</a></li>
+<li><a href="#_helm">Helm</a></li>
+<li><a href="#_ido">Ido</a></li>
+<li><a href="#_search">Search</a></li>
+<li><a href="#_misc">Misc</a></li>
+</ul>
+</li>
+<li><a href="#_surround">Surround</a>
+<ul class="sectlevel3">
+<li><a href="#_tramp">Tramp</a></li>
+</ul>
+</li>
 <li><a href="#_replace_on_multiple_files">Replace on multiple files</a></li>
 </ul>
 </li>
@@ -582,7 +688,11 @@ mark {
 <li><a href="#_architecture">Architecture</a></li>
 <li><a href="#_cluster">Cluster</a></li>
 <li><a href="#_exercices">Exercices</a></li>
-<li><a href="#_backup_recovery">Backup &amp; Recovery</a></li>
+<li><a href="#_backup_recovery">Backup &amp; Recovery</a>
+<ul class="sectlevel3">
+<li><a href="#_restore">Restore</a></li>
+</ul>
+</li>
 <li><a href="#_migration">Migration</a></li>
 <li><a href="#_replication">Replication</a></li>
 <li><a href="#_shell_utils_practices">Shell utils practices</a></li>
@@ -1512,55 +1622,6 @@ with import nixpkgs <span class="tok-o">{}</span><span class="tok-p">;</span></c
 <div class="sect2">
 <h3 id="_concepts">Concepts</h3>
 <div class="sect3">
-<h4 id="_lazyness">Lazyness</h4>
-<div class="paragraph">
-<p>Reduction is done using outermost reduction. For instance:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">loop</span> <span class="tok-o">=</span> tail loop
-
-fst <span class="tok-o">(</span>1, loop<span class="tok-o">)</span>
--- innermost reduction gives:
--- fst <span class="tok-o">(</span>1, <span class="tok-o">(</span>tail loop<span class="tok-o">))</span>
--- fst <span class="tok-o">(</span>1, <span class="tok-o">(</span>tail <span class="tok-o">(</span>tail loop<span class="tok-o">)))</span> and never terminates
--- but outermost reduction gives:
--- fst <span class="tok-o">(</span>1, loop<span class="tok-o">)</span> <span class="tok-o">=</span> <span class="tok-m">1</span> and terminates</code></pre>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_redex">Redex</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="bash">-- only one redex <span class="tok-o">(</span>2*3<span class="tok-o">)</span> both innermost and outermost
-<span class="tok-m">1</span> + <span class="tok-o">(</span><span class="tok-m">2</span> * 3<span class="tok-o">)</span>
-
--- <span class="tok-m">2</span> redexes :
--- <span class="tok-o">(</span><span class="tok-se">\x</span> -&gt; <span class="tok-m">1</span> + x <span class="tok-o">)</span> <span class="tok-o">(</span><span class="tok-m">2</span> * 3<span class="tok-o">)</span> outermost
--- <span class="tok-o">(</span><span class="tok-m">2</span> * 3<span class="tok-o">)</span> innermost
-<span class="tok-o">(</span><span class="tok-se">\x</span> -&gt; <span class="tok-m">1</span> + x <span class="tok-o">)</span> <span class="tok-o">(</span><span class="tok-m">2</span> * 3<span class="tok-o">)</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_existential_classes">Existential classes</h4>
-<div class="quoteblock">
-<blockquote>
-<div class="paragraph">
-<p>When someone defines a universal type ∀X they&#8217;re saying: You can plug in whatever type you want, I don&#8217;t need to know anything about the type to do my job, I&#8217;ll only refer to it opaquely as X.</p>
-</div>
-</blockquote>
-</div>
-<div class="quoteblock">
-<blockquote>
-<div class="paragraph">
-<p>When someone defines an existential type ∃X they&#8217;re saying: I&#8217;ll use whatever type I want here; you wont know anything about the type, so you can only refer to it opaquely as X</p>
-</div>
-</blockquote>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_type_class">Type class</h4>
 <div class="paragraph">
 <p>Type class enables a (de)limited form of <code>adhoc polymorphism</code> or <code>overloading</code>.
@@ -1573,17 +1634,17 @@ Each instance implements the same function differently or to say it diffently on
 <p>Type class are not first class in Haskell. They cannot be used in place of type (as you would in Java with interface).</p>
 </div>
 <div class="paragraph">
-<p>It is <strong>dictionnary passing</strong>: Ghc puts the methods of the instance in a dictionary and passes that implicitly to any functions having a (Class a) constraint.</p>
+<p>It is internally implemented as <strong><em>dictionnary passing</em></strong>: <code>ghc</code> puts the methods of the instance in a dictionary and passes that implicitly to any functions having a class constraint.</p>
 </div>
 <div class="paragraph">
 <p>It is best to look at them as a set of constraints on type.
 One notable drawback is that each type can have at most one implementation of the type class.</p>
 </div>
 <div class="paragraph">
-<p><code>Eq</code> is the classical example.</p>
+<p><mark>Eq</mark>, <mark>Num</mark>, <mark>Show</mark> are classical examples.</p>
 </div>
 <div class="paragraph">
-<p>In Scala, type-classes are types themselves, and instances are first class values.</p>
+<p><span class="icon"><i class="fa fa-info-circle fa-1x"></i></span> In Scala, type-classes are types themselves, and instances are first class values.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1601,15 +1662,9 @@ One notable drawback is that each type can have at most one implementation of th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_determinic_parallel_programming">Determinic parallel programming</h4>
-<div class="paragraph">
-<p>A set of states with an order attached to it is known as a lattice</p>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_typeable">Typeable</h4>
 <div class="paragraph">
-<p>The <code>Typeable</code> class be used to create runtime type information for arbitrary types:</p>
+<p>The <mark>Typeable</mark> class is used to create runtime type information for arbitrary types:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1633,14 +1688,14 @@ One notable drawback is that each type can have at most one implementation of th
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>typeRep</code> correspond to <code>typeOf</code> which is kept for backwards-compatibility</td>
+<td><mark>typeRep</mark> correspond to <code>typeOf</code> which is kept for backwards-compatibility</td>
 </tr>
 </table>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">class Typeable a where
-  typeRep :: Proxy a -&gt; TypeRep <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">Typeable</span> <span class="tok-n">a</span> <span class="tok-kr">where</span>
+  <span class="tok-n">typeRep</span> <span class="tok-ow">::</span> <span class="tok-kt">Proxy</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">TypeRep</span> <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1684,12 +1739,16 @@ You can think of it like a database, file, or other external data store.
 </div>
 <div class="sect3">
 <h4 id="_functor">Functor</h4>
+<div class="exampleblock">
+<div class="content">
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
 <p>A functor is a structure-preserving mapping (or homomorphism) between 2 categories.</p>
 </div>
 </blockquote>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>This means that :</p>
@@ -1716,11 +1775,16 @@ You can think of it like a database, file, or other external data store.
 <div class="paragraph">
 <p>The functor defines the action of an arbitrary function (a &#8594; b) on a structure (f a) of elements of type a resulting in the same structure but full of elements of type b.</p>
 </div>
-<div class="listingblock">
+<div class="exampleblock">
 <div class="title">Laws:</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">fmap <span class="tok-nv">id</span> <span class="tok-o">=</span> id
-fmap <span class="tok-o">(</span>g . h<span class="tok-o">)</span> <span class="tok-o">=</span> fmap g . fmap h</code></pre>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">fmap</span> <span class="tok-n">id</span> <span class="tok-ow">=</span> <span class="tok-n">id</span>
+
+<span class="tok-nf">fmap</span> <span class="tok-p">(</span><span class="tok-n">g</span> <span class="tok-o">.</span> <span class="tok-n">h</span><span class="tok-p">)</span> <span class="tok-ow">=</span> <span class="tok-n">fmap</span> <span class="tok-n">g</span> <span class="tok-o">.</span> <span class="tok-n">fmap</span> <span class="tok-n">h</span></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock">
@@ -1738,8 +1802,8 @@ fmap <span class="tok-o">(</span>g . h<span class="tok-o">)</span> <span class="
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">class Contravariant f where
-  contramap :: <span class="tok-o">(</span>b -&gt; a<span class="tok-o">)</span> -&gt; f a -&gt; f b</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">Contravariant</span> <span class="tok-n">f</span> <span class="tok-kr">where</span>
+  <span class="tok-n">contramap</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">b</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1763,30 +1827,34 @@ g ∘ f = 1A and f ∘ g = 1B</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">class Functor f ⇒ Applicative f where
-  pure :: a → f a
- <span class="tok-o">(</span>&lt;*&gt;<span class="tok-o">)</span> :: f <span class="tok-o">(</span>a → b<span class="tok-o">)</span> → f a → f b</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">Functor</span> <span class="tok-n">f</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Applicative</span> <span class="tok-n">f</span> <span class="tok-kr">where</span>
+  <span class="tok-n">pure</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span>
+ <span class="tok-p">(</span><span class="tok-o">&lt;*&gt;</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-n">f</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">b</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>(&lt;*&gt;) is just function application within a computational context.</p>
+<p><mark>&lt;*&gt;</mark> is just function application within a computational context.</p>
 </div>
 <div class="paragraph">
 <p>As soon as you want to define the type <code>(a &#8594; b &#8594; c) &#8594; f a &#8594; f b &#8594; f c</code> you need the applicative construction:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">liftA2 :: Applicative <span class="tok-nv">f</span> <span class="tok-o">=</span>&gt; <span class="tok-o">(</span>a -&gt; b -&gt; c<span class="tok-o">)</span> -&gt; f a -&gt; f b -&gt; f c
-liftA2 f a <span class="tok-nv">b</span> <span class="tok-o">=</span> fmap f a &lt;*&gt; b</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">liftA2</span> <span class="tok-ow">::</span> <span class="tok-kt">Applicative</span> <span class="tok-n">f</span> <span class="tok-ow">=&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">c</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">c</span>
+<span class="tok-nf">liftA2</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-ow">=</span> <span class="tok-n">fmap</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-o">&lt;*&gt;</span> <span class="tok-n">b</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>It is not that hard to convince yourself that an applicative functor is just a functor that knows how to lift functions of arbitrary arities.</p>
 </div>
-<div class="listingblock">
-<div class="title">Laws:</div>
+<div class="exampleblock">
+<div class="title">Law</div>
 <div class="content">
-<pre>fmap g x = pure g &lt;*&gt; x</pre>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">fmap</span> <span class="tok-n">g</span> <span class="tok-n">x</span> <span class="tok-ow">=</span> <span class="tok-n">pure</span> <span class="tok-n">g</span> <span class="tok-o">&lt;*&gt;</span> <span class="tok-n">x</span></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1801,9 +1869,9 @@ with empty as the unit element, and &lt;|&gt; as the binary operation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">class Applicative f ⇒ Alternative f where
-  empty :: f a
- <span class="tok-o">(</span>&lt;<span class="tok-p">|</span>&gt;<span class="tok-o">)</span> :: f a → f a → f a</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">Applicative</span> <span class="tok-n">f</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Alternative</span> <span class="tok-n">f</span> <span class="tok-kr">where</span>
+  <span class="tok-n">empty</span> <span class="tok-ow">::</span> <span class="tok-n">f</span> <span class="tok-n">a</span>
+ <span class="tok-p">(</span><span class="tok-o">&lt;|&gt;</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span></code></pre>
 </div>
 </div>
 </div>
@@ -1826,6 +1894,8 @@ with empty as the unit element, and &lt;|&gt; as the binary operation.</p>
 </tr>
 </table>
 </div>
+<div class="exampleblock">
+<div class="content">
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -1835,7 +1905,9 @@ with empty as the unit element, and &lt;|&gt; as the binary operation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">m &gt;&gt;<span class="tok-o">=</span> <span class="tok-nv">f</span> <span class="tok-o">=</span> join <span class="tok-o">(</span>fmap f m<span class="tok-o">)</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">m</span> <span class="tok-o">&gt;&gt;=</span> <span class="tok-n">f</span> <span class="tok-ow">=</span> <span class="tok-n">join</span> <span class="tok-p">(</span><span class="tok-n">fmap</span> <span class="tok-n">f</span> <span class="tok-n">m</span><span class="tok-p">)</span></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1890,12 +1962,16 @@ A free monad is just substitution (fmap) with the minimum amount of renormalizat
 <div class="paragraph">
 <p>It is perfect to separate syntax (data, ast, parsing) from semantics (interpretation)</p>
 </div>
+<div class="exampleblock">
+<div class="content">
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
 <p>The free monad is guaranteed to be the formulation that gives you the most flexibility how to interpret it, since it is purely syntactic.</p>
 </div>
 </blockquote>
+</div>
+</div>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1908,12 +1984,25 @@ fix f = f (f (f (f (f (f (f (f (f (f (f (f (f &#8230;&#8203; ))))))))))))
 or
 fix f = f (fix f)</p>
 </div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>A Monad n is a free Monad for f if every Monad homomorphism from n to another monad m is equivalent to a natural transformation from f to m.</p>
+</div>
+</blockquote>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_existential_classes">Existential classes</h4>
 <div class="exampleblock">
 <div class="content">
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>A Monad n is a free Monad for f if every Monad homomorphism from n to another monad m is equivalent to a natural transformation from f to m.</p>
+<p>When someone defines a universal type ∀X they&#8217;re saying: you can plug in whatever type you want, I don&#8217;t need to know anything about the type to do my job, I&#8217;ll only refer to it opaquely as X.</p>
+</div>
+<div class="paragraph">
+<p>When someone defines an existential type ∃X they&#8217;re saying: I&#8217;ll use whatever type I want here; you won&#8217;t know anything about the type, so you can only refer to it opaquely as X</p>
 </div>
 </blockquote>
 </div>
@@ -1941,6 +2030,38 @@ fix f = f (fix f)</p>
 </div>
 </div>
 <div class="sect3">
+<h4 id="_lazyness">Lazyness</h4>
+<div class="paragraph">
+<p>Reduction is done using outermost reduction. For instance:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">loop</span> <span class="tok-ow">=</span> <span class="tok-n">tail</span> <span class="tok-n">loop</span>
+
+<span class="tok-nf">fst</span> <span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">,</span> <span class="tok-n">loop</span><span class="tok-p">)</span>
+<span class="tok-c1">-- innermost reduction gives:</span>
+<span class="tok-c1">-- fst (1, (tail loop))</span>
+<span class="tok-c1">-- fst (1, (tail (tail loop))) and never terminates</span>
+<span class="tok-c1">-- but outermost reduction gives:</span>
+<span class="tok-c1">-- fst (1, loop) = 1 and terminates</span></code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_redex">Redex</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-c1">-- only one redex (2*3) both innermost and outermost</span>
+<span class="tok-mi">1</span> <span class="tok-o">+</span> <span class="tok-p">(</span><span class="tok-mi">2</span> <span class="tok-o">*</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+
+<span class="tok-c1">-- 2 redexes :</span>
+<span class="tok-c1">-- (\x -&gt; 1 + x ) (2 * 3) outermost</span>
+<span class="tok-c1">-- (2 * 3) innermost</span>
+<span class="tok-p">(</span><span class="tok-nf">\</span><span class="tok-n">x</span> <span class="tok-ow">-&gt;</span> <span class="tok-mi">1</span> <span class="tok-o">+</span> <span class="tok-n">x</span> <span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-mi">2</span> <span class="tok-o">*</span> <span class="tok-mi">3</span><span class="tok-p">)</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_mind_blowing">Mind blowing</h4>
 <div class="listingblock">
 <div class="content">
@@ -1951,12 +2072,12 @@ fix f = f (fix f)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">xs</span> <span class="tok-o">=</span> <span class="tok-m">1</span> : <span class="tok-o">[</span>x + <span class="tok-m">1</span> <span class="tok-p">|</span> x &lt;- xs<span class="tok-o">]</span> --&gt; <span class="tok-o">[</span>1,2,3 ...<span class="tok-o">]</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">xs</span> <span class="tok-ow">=</span> <span class="tok-mi">1</span> <span class="tok-kt">:</span> <span class="tok-p">[</span><span class="tok-n">x</span> <span class="tok-o">+</span> <span class="tok-mi">1</span> <span class="tok-o">|</span> <span class="tok-n">x</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">xs</span><span class="tok-p">]</span> <span class="tok-o">--&gt;</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-p">,</span><span class="tok-mi">2</span><span class="tok-p">,</span><span class="tok-mi">3</span> <span class="tok-o">...</span><span class="tok-p">]</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">Right cfg -&gt; <span class="tok-k">return</span> . Right . query cfg <span class="tok-nv">fp</span> <span class="tok-o">=</span><span class="tok-s">&lt;&lt; F.newF</span>ileCache</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kt">Right</span> <span class="tok-n">cfg</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">return</span> <span class="tok-o">.</span> <span class="tok-kt">Right</span> <span class="tok-o">.</span> <span class="tok-n">query</span> <span class="tok-n">cfg</span> <span class="tok-n">fp</span> <span class="tok-o">=&lt;&lt;</span> <span class="tok-kt">F</span><span class="tok-o">.</span><span class="tok-n">newFileCache</span></code></pre>
 </div>
 </div>
 </div>
@@ -1982,15 +2103,6 @@ fix f = f (fix f)</p>
 <p><code>-fdefer-type-errors</code></p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_common_functions">Common functions</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="bash">-- give a default and always get an a from a maybe value
-maybe:: a -&gt; Maybe a -&gt; a</code></pre>
-</div>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="_fold_and_traverse">Fold and Traverse</h3>
@@ -2007,13 +2119,13 @@ maybe:: a -&gt; Maybe a -&gt; a</code></pre>
 <h4 id="_foldl_foldr">foldl/foldr</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">foldr :: <span class="tok-o">(</span>a -&gt; b -&gt; b<span class="tok-o">)</span> -&gt; b -&gt; <span class="tok-o">[</span>a<span class="tok-o">]</span> -&gt; b
-foldr f v <span class="tok-o">[]</span> <span class="tok-o">=</span> v
-foldr f v <span class="tok-o">(</span>x:xs<span class="tok-o">)</span> <span class="tok-o">=</span> f x <span class="tok-o">(</span>foldr f v xs<span class="tok-o">)</span>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">foldr</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">[</span><span class="tok-n">a</span><span class="tok-p">]</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span>
+<span class="tok-nf">foldr</span> <span class="tok-n">f</span> <span class="tok-n">v</span> <span class="tok-kt">[]</span> <span class="tok-ow">=</span> <span class="tok-n">v</span>
+<span class="tok-nf">foldr</span> <span class="tok-n">f</span> <span class="tok-n">v</span> <span class="tok-p">(</span><span class="tok-n">x</span><span class="tok-kt">:</span><span class="tok-n">xs</span><span class="tok-p">)</span> <span class="tok-ow">=</span> <span class="tok-n">f</span> <span class="tok-n">x</span> <span class="tok-p">(</span><span class="tok-n">foldr</span> <span class="tok-n">f</span> <span class="tok-n">v</span> <span class="tok-n">xs</span><span class="tok-p">)</span>
 
-foldl :: <span class="tok-o">(</span>s -&gt; a -&gt; s<span class="tok-o">)</span> -&gt; s -&gt; <span class="tok-o">[</span>a<span class="tok-o">]</span> -&gt; s
-foldl  f v <span class="tok-o">[]</span>     <span class="tok-o">=</span>  v
-foldl  f v <span class="tok-o">(</span>x:xs<span class="tok-o">)</span> <span class="tok-o">=</span>  foldl f <span class="tok-o">(</span>f v x<span class="tok-o">)</span> xs</code></pre>
+<span class="tok-nf">foldl</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-n">s</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">s</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">s</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">[</span><span class="tok-n">a</span><span class="tok-p">]</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">s</span>
+<span class="tok-nf">foldl</span>  <span class="tok-n">f</span> <span class="tok-n">v</span> <span class="tok-kt">[]</span>     <span class="tok-ow">=</span>  <span class="tok-n">v</span>
+<span class="tok-nf">foldl</span>  <span class="tok-n">f</span> <span class="tok-n">v</span> <span class="tok-p">(</span><span class="tok-n">x</span><span class="tok-kt">:</span><span class="tok-n">xs</span><span class="tok-p">)</span> <span class="tok-ow">=</span>  <span class="tok-n">foldl</span> <span class="tok-n">f</span> <span class="tok-p">(</span><span class="tok-n">f</span> <span class="tok-n">v</span> <span class="tok-n">x</span><span class="tok-p">)</span> <span class="tok-n">xs</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2030,16 +2142,16 @@ foldl  f v <span class="tok-o">(</span>x:xs<span class="tok-o">)</span> <span cl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">map</span> <span class="tok-o">=</span> foldr <span class="tok-o">(</span><span class="tok-se">\x</span> ys -&gt; f x : ys<span class="tok-o">)</span> <span class="tok-o">[]</span>
--- or map<span class="tok-s1">&#39; = foldr ((:) . f) []</span>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">map</span> <span class="tok-ow">=</span> <span class="tok-n">foldr</span> <span class="tok-p">(</span><span class="tok-nf">\</span><span class="tok-n">x</span> <span class="tok-n">ys</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">x</span> <span class="tok-kt">:</span> <span class="tok-n">ys</span><span class="tok-p">)</span> <span class="tok-kt">[]</span>
+<span class="tok-c1">-- or map&#39; = foldr ((:) . f) []</span>
 
-<span class="tok-s1">-- of course it can also be defined with recursion only</span>
-<span class="tok-s1">map&#39;</span> :: <span class="tok-o">(</span>a -&gt; b<span class="tok-o">)</span> -&gt; <span class="tok-o">[</span>a<span class="tok-o">]</span> -&gt; <span class="tok-o">[</span>b<span class="tok-o">]</span>
-map<span class="tok-s1">&#39; _ [] = []</span>
-<span class="tok-s1">map&#39;</span> f <span class="tok-o">(</span>x:xs<span class="tok-o">)</span> <span class="tok-o">=</span> f x : <span class="tok-o">(</span>map f xs<span class="tok-o">)</span>
+<span class="tok-c1">-- of course it can also be defined with recursion only</span>
+<span class="tok-nf">map&#39;</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">[</span><span class="tok-n">a</span><span class="tok-p">]</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">[</span><span class="tok-n">b</span><span class="tok-p">]</span>
+<span class="tok-nf">map&#39;</span> <span class="tok-kr">_</span> <span class="tok-kt">[]</span> <span class="tok-ow">=</span> <span class="tok-kt">[]</span>
+<span class="tok-nf">map&#39;</span> <span class="tok-n">f</span> <span class="tok-p">(</span><span class="tok-n">x</span><span class="tok-kt">:</span><span class="tok-n">xs</span><span class="tok-p">)</span> <span class="tok-ow">=</span> <span class="tok-n">f</span> <span class="tok-n">x</span> <span class="tok-kt">:</span> <span class="tok-p">(</span><span class="tok-n">map</span> <span class="tok-n">f</span> <span class="tok-n">xs</span><span class="tok-p">)</span>
 
--- ex
-takeWhile <span class="tok-o">(</span>&lt; 12<span class="tok-o">)</span> <span class="tok-nv">$ </span>map <span class="tok-o">(</span>*2<span class="tok-o">)</span> <span class="tok-o">[</span>1..<span class="tok-o">]</span></code></pre>
+<span class="tok-c1">-- ex</span>
+<span class="tok-nf">takeWhile</span> <span class="tok-p">(</span><span class="tok-o">&lt;</span> <span class="tok-mi">12</span><span class="tok-p">)</span> <span class="tok-o">$</span> <span class="tok-n">map</span> <span class="tok-p">(</span><span class="tok-o">*</span><span class="tok-mi">2</span><span class="tok-p">)</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-o">..</span><span class="tok-p">]</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2047,7 +2159,7 @@ takeWhile <span class="tok-o">(</span>&lt; 12<span class="tok-o">)</span> <span 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">reverse</span> <span class="tok-o">=</span> foldl<span class="tok-err">&#39;</span> <span class="tok-o">(</span>flip <span class="tok-o">(</span>:<span class="tok-o">))</span> <span class="tok-o">[]</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">reverse</span> <span class="tok-ow">=</span> <span class="tok-n">foldl&#39;</span> <span class="tok-p">(</span><span class="tok-n">flip</span> <span class="tok-p">(</span><span class="tok-kt">:</span><span class="tok-p">))</span> <span class="tok-kt">[]</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2066,15 +2178,15 @@ takeWhile <span class="tok-o">(</span>&lt; 12<span class="tok-o">)</span> <span 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-o">{</span>-# LANGUAGE ExistentialQuantification <span class="tok-c">#-}</span>
--- existential datatype <span class="tok-o">(</span>note that <span class="tok-sb">`</span>x<span class="tok-sb">`</span> does not appear on the left side<span class="tok-o">)</span>
-data Fold a b
---                    step func      initial acc     extract func <span class="tok-o">(</span><span class="tok-k">done</span><span class="tok-o">)</span>
- <span class="tok-o">=</span> forall x . Fold  <span class="tok-o">(</span>x -&gt; a -&gt; x<span class="tok-o">)</span>       x             <span class="tok-o">(</span>x -&gt; b<span class="tok-o">)</span>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-cm">{-# LANGUAGE ExistentialQuantification #-}</span>
+<span class="tok-c1">-- existential datatype (note that `x` does not appear on the left side)</span>
+<span class="tok-kr">data</span> <span class="tok-kt">Fold</span> <span class="tok-n">a</span> <span class="tok-n">b</span>
+<span class="tok-c1">--                    step func      initial acc     extract func (done)</span>
+ <span class="tok-ow">=</span> <span class="tok-n">forall</span> <span class="tok-n">x</span> <span class="tok-o">.</span> <span class="tok-kt">Fold</span>  <span class="tok-p">(</span><span class="tok-n">x</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">x</span><span class="tok-p">)</span>       <span class="tok-n">x</span>             <span class="tok-p">(</span><span class="tok-n">x</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span><span class="tok-p">)</span>
 
--- expressed as a GADT it would be:
-data Fold a b where
-  Fold :: <span class="tok-o">(</span>r -&gt; b<span class="tok-o">)</span> -&gt; <span class="tok-o">(</span>r -&gt; a -&gt; r<span class="tok-o">)</span> -&gt; r -&gt; Fold a b</code></pre>
+<span class="tok-c1">-- expressed as a GADT it would be:</span>
+<span class="tok-kr">data</span> <span class="tok-kt">Fold</span> <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-kr">where</span>
+  <span class="tok-kt">Fold</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">r</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Fold</span> <span class="tok-n">a</span> <span class="tok-n">b</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2084,11 +2196,11 @@ It is actually isomorphic to a Moore machine (see <a href="https://www.fpcomplet
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">-- <span class="tok-p">|</span> Apply a strict left <span class="tok-s1">&#39;Fold&#39;</span> to a <span class="tok-s1">&#39;Foldable&#39;</span> container
-fold :: Foldable <span class="tok-nv">f</span> <span class="tok-o">=</span>&gt; Fold a b -&gt; f a -&gt; b
-fold <span class="tok-o">(</span>Fold step begin <span class="tok-k">done</span><span class="tok-o">)</span> <span class="tok-nv">as</span> <span class="tok-o">=</span> F.foldr cons <span class="tok-k">done</span> as begin
-  where
-    cons a k <span class="tok-nv">x</span> <span class="tok-o">=</span> k <span class="tok-nv">$!</span> step x a</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-c1">-- | Apply a strict left &#39;Fold&#39; to a &#39;Foldable&#39; container</span>
+<span class="tok-nf">fold</span> <span class="tok-ow">::</span> <span class="tok-kt">Foldable</span> <span class="tok-n">f</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Fold</span> <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">b</span>
+<span class="tok-nf">fold</span> <span class="tok-p">(</span><span class="tok-kt">Fold</span> <span class="tok-n">step</span> <span class="tok-n">begin</span> <span class="tok-n">done</span><span class="tok-p">)</span> <span class="tok-n">as</span> <span class="tok-ow">=</span> <span class="tok-kt">F</span><span class="tok-o">.</span><span class="tok-n">foldr</span> <span class="tok-n">cons</span> <span class="tok-n">done</span> <span class="tok-n">as</span> <span class="tok-n">begin</span>
+  <span class="tok-kr">where</span>
+    <span class="tok-n">cons</span> <span class="tok-n">a</span> <span class="tok-n">k</span> <span class="tok-n">x</span> <span class="tok-ow">=</span> <span class="tok-n">k</span> <span class="tok-o">$!</span> <span class="tok-n">step</span> <span class="tok-n">x</span> <span class="tok-n">a</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2096,34 +2208,50 @@ fold <span class="tok-o">(</span>Fold step begin <span class="tok-k">done</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">average</span> <span class="tok-o">=</span> <span class="tok-o">(</span>/<span class="tok-o">)</span> &lt;<span class="tok-nv">$&gt;</span> sum &lt;*&gt; genericLength
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">average</span> <span class="tok-ow">=</span> <span class="tok-p">(</span><span class="tok-o">/</span><span class="tok-p">)</span> <span class="tok-o">&lt;$&gt;</span> <span class="tok-n">sum</span> <span class="tok-o">&lt;*&gt;</span> <span class="tok-n">genericLength</span>
 
-sum :: Num <span class="tok-nv">a</span> <span class="tok-o">=</span>&gt; Fold a a
-<span class="tok-nv">sum</span> <span class="tok-o">=</span> Fold <span class="tok-o">(</span>+<span class="tok-o">)</span> <span class="tok-m">0</span> id
+<span class="tok-nf">sum</span> <span class="tok-ow">::</span> <span class="tok-kt">Num</span> <span class="tok-n">a</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Fold</span> <span class="tok-n">a</span> <span class="tok-n">a</span>
+<span class="tok-nf">sum</span> <span class="tok-ow">=</span> <span class="tok-kt">Fold</span> <span class="tok-p">(</span><span class="tok-o">+</span><span class="tok-p">)</span> <span class="tok-mi">0</span> <span class="tok-n">id</span>
 
-genericLength :: Num <span class="tok-nv">b</span> <span class="tok-o">=</span>&gt; Fold a b
-<span class="tok-nv">genericLength</span> <span class="tok-o">=</span> Fold <span class="tok-o">(</span><span class="tok-se">\n</span> _ -&gt; n + 1<span class="tok-o">)</span> <span class="tok-m">0</span> id
+<span class="tok-nf">genericLength</span> <span class="tok-ow">::</span> <span class="tok-kt">Num</span> <span class="tok-n">b</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Fold</span> <span class="tok-n">a</span> <span class="tok-n">b</span>
+<span class="tok-nf">genericLength</span> <span class="tok-ow">=</span> <span class="tok-kt">Fold</span> <span class="tok-p">(</span><span class="tok-nf">\</span><span class="tok-n">n</span> <span class="tok-kr">_</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">n</span> <span class="tok-o">+</span> <span class="tok-mi">1</span><span class="tok-p">)</span> <span class="tok-mi">0</span> <span class="tok-n">id</span>
 
-λ&gt; fold average <span class="tok-o">[</span>1..10000000<span class="tok-o">]</span></code></pre>
+<span class="tok-nf">λ</span><span class="tok-o">&gt;</span> <span class="tok-n">fold</span> <span class="tok-n">average</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-o">..</span><span class="tok-mi">10000000</span><span class="tok-p">]</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>Fold</code> is also a profunctor and a comonad.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_alternative_monoid_definition">Alternative monoid definition</h5>
+<div class="paragraph">
+<p>As explained in <a href="https://github.com/Gabriel439/slides/blob/master/munihac/foldmap.md">Gabriel&#8217;s beautiful fold talk</a>, <mark>Fold</mark> can similarly be defined as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">data</span> <span class="tok-kt">Fold</span> <span class="tok-n">i</span> <span class="tok-n">o</span> <span class="tok-ow">=</span> <span class="tok-n">forall</span> <span class="tok-n">m</span> <span class="tok-o">.</span> <span class="tok-kt">Monoid</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Fold</span> <span class="tok-p">(</span><span class="tok-n">i</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">m</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">o</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>NOTE:</p>
+<p>This approach can express parallel computation but it won&#8217;t encode stateful folds.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Fold</code> is also a profunctor and a comonad.</p>
-</li>
-</ul>
 </div>
 <div class="sect4">
 <h5 id="_foldm">FoldM</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">data FoldM m a <span class="tok-nv">b</span> <span class="tok-o">=</span>
-  -- <span class="tok-p">|</span> @FoldM @ @ step @ @ initial @ @ extract@
-  forall x . FoldM <span class="tok-o">(</span>x -&gt; a -&gt; m x<span class="tok-o">)</span> <span class="tok-o">(</span>m x<span class="tok-o">)</span> <span class="tok-o">(</span>x -&gt; m b<span class="tok-o">)</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">data</span> <span class="tok-kt">FoldM</span> <span class="tok-n">m</span> <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-ow">=</span>
+  <span class="tok-c1">-- | @FoldM @ @ step @ @ initial @ @ extract@</span>
+  <span class="tok-n">forall</span> <span class="tok-n">x</span> <span class="tok-o">.</span> <span class="tok-kt">FoldM</span> <span class="tok-p">(</span><span class="tok-n">x</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">x</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">m</span> <span class="tok-n">x</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">x</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">b</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2132,7 +2260,7 @@ You use <code>generalize</code> (with no performance penalty) to get a <code>Fol
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">generalize :: Monad <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; Fold a b -&gt; FoldM m a b</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">generalize</span> <span class="tok-ow">::</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Fold</span> <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">FoldM</span> <span class="tok-n">m</span> <span class="tok-n">a</span> <span class="tok-n">b</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2161,13 +2289,13 @@ In the <code>turtle</code> library, <code>FoldM</code> plays the role of a consu
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">class Foldable t where
-  fold    :: Monoid <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; t m -&gt; m
-  foldMap :: Monoid <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; <span class="tok-o">(</span>a -&gt; m<span class="tok-o">)</span> -&gt; t a -&gt; m
-  foldMap <span class="tok-nv">g</span> <span class="tok-o">=</span> mconcat . map g
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">Foldable</span> <span class="tok-n">t</span> <span class="tok-kr">where</span>
+  <span class="tok-n">fold</span>    <span class="tok-ow">::</span> <span class="tok-kt">Monoid</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-n">t</span> <span class="tok-n">m</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span>
+  <span class="tok-n">foldMap</span> <span class="tok-ow">::</span> <span class="tok-kt">Monoid</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">t</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span>
+  <span class="tok-n">foldMap</span> <span class="tok-n">g</span> <span class="tok-ow">=</span> <span class="tok-n">mconcat</span> <span class="tok-o">.</span> <span class="tok-n">map</span> <span class="tok-n">g</span>
 
-λ&gt; foldMap Sum <span class="tok-o">[</span>1,2,3,4<span class="tok-o">]</span>
-Sum <span class="tok-o">{</span><span class="tok-nv">getSum</span> <span class="tok-o">=</span> 10<span class="tok-o">}</span></code></pre>
+<span class="tok-nf">λ</span><span class="tok-o">&gt;</span> <span class="tok-n">foldMap</span> <span class="tok-kt">Sum</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-p">,</span><span class="tok-mi">2</span><span class="tok-p">,</span><span class="tok-mi">3</span><span class="tok-p">,</span><span class="tok-mi">4</span><span class="tok-p">]</span>
+<span class="tok-kt">Sum</span> <span class="tok-p">{</span><span class="tok-n">getSum</span> <span class="tok-ow">=</span> <span class="tok-mi">10</span><span class="tok-p">}</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2187,8 +2315,8 @@ Sum <span class="tok-o">{</span><span class="tok-nv">getSum</span> <span class="
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">mapM_ :: <span class="tok-o">(</span>Foldable t, Monad m<span class="tok-o">)</span> <span class="tok-o">=</span>&gt; <span class="tok-o">(</span>a -&gt; m b<span class="tok-o">)</span> -&gt; t a -&gt; m <span class="tok-o">()</span>
-mapM_ <span class="tok-nv">f</span> <span class="tok-o">=</span> foldr <span class="tok-o">((</span>&gt;&gt;<span class="tok-o">)</span> . f<span class="tok-o">)</span> <span class="tok-o">(</span><span class="tok-k">return</span> <span class="tok-o">())</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">mapM_</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-kt">Foldable</span> <span class="tok-n">t</span><span class="tok-p">,</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span><span class="tok-p">)</span> <span class="tok-ow">=&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">t</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-nb">()</span>
+<span class="tok-nf">mapM_</span> <span class="tok-n">f</span> <span class="tok-ow">=</span> <span class="tok-n">foldr</span> <span class="tok-p">((</span><span class="tok-o">&gt;&gt;</span><span class="tok-p">)</span> <span class="tok-o">.</span> <span class="tok-n">f</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">return</span> <span class="tok-nb">()</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -2202,14 +2330,14 @@ The function <code>traverse</code> is exactly <code>mapM</code> generalized for 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">class <span class="tok-o">(</span>Functor t, Foldable t<span class="tok-o">)</span> <span class="tok-o">=</span>&gt; Traversable t where
-  traverse  :: Applicative <span class="tok-nv">f</span> <span class="tok-o">=</span>&gt; <span class="tok-o">(</span>a -&gt; f b<span class="tok-o">)</span> -&gt; t a -&gt; f <span class="tok-o">(</span>t b<span class="tok-o">)</span>
-  traverse <span class="tok-nv">f</span> <span class="tok-o">=</span> sequenceA . fmap f
-  <span class="tok-nv">mapM</span> <span class="tok-o">=</span> traverse
-  sequenceA :: Applicative <span class="tok-nv">f</span> <span class="tok-o">=</span>&gt; t <span class="tok-o">(</span>f a<span class="tok-o">)</span> -&gt; f <span class="tok-o">(</span>t a<span class="tok-o">)</span>
-  <span class="tok-nv">sequenceA</span> <span class="tok-o">=</span> traverse id
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-p">(</span><span class="tok-kt">Functor</span> <span class="tok-n">t</span><span class="tok-p">,</span> <span class="tok-kt">Foldable</span> <span class="tok-n">t</span><span class="tok-p">)</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Traversable</span> <span class="tok-n">t</span> <span class="tok-kr">where</span>
+  <span class="tok-n">traverse</span>  <span class="tok-ow">::</span> <span class="tok-kt">Applicative</span> <span class="tok-n">f</span> <span class="tok-ow">=&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">t</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-p">(</span><span class="tok-n">t</span> <span class="tok-n">b</span><span class="tok-p">)</span>
+  <span class="tok-n">traverse</span> <span class="tok-n">f</span> <span class="tok-ow">=</span> <span class="tok-n">sequenceA</span> <span class="tok-o">.</span> <span class="tok-n">fmap</span> <span class="tok-n">f</span>
+  <span class="tok-n">mapM</span> <span class="tok-ow">=</span> <span class="tok-n">traverse</span>
+  <span class="tok-n">sequenceA</span> <span class="tok-ow">::</span> <span class="tok-kt">Applicative</span> <span class="tok-n">f</span> <span class="tok-ow">=&gt;</span> <span class="tok-n">t</span> <span class="tok-p">(</span><span class="tok-n">f</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-p">(</span><span class="tok-n">t</span> <span class="tok-n">a</span><span class="tok-p">)</span>
+  <span class="tok-n">sequenceA</span> <span class="tok-ow">=</span> <span class="tok-n">traverse</span> <span class="tok-n">id</span>
 
-<span class="tok-k">for</span> <span class="tok-o">=</span> flip traverse</code></pre>
+<span class="tok-nf">for</span> <span class="tok-ow">=</span> <span class="tok-n">flip</span> <span class="tok-n">traverse</span></code></pre>
 </div>
 </div>
 </div>
@@ -2262,7 +2390,7 @@ The function <code>traverse</code> is exactly <code>mapM</code> generalized for 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nb">type </span>Lens<span class="tok-err">&#39;</span> s <span class="tok-nv">a</span> <span class="tok-o">=</span> forall f. Functor <span class="tok-nv">f</span> <span class="tok-o">=</span>&gt; <span class="tok-o">(</span>a -&gt; f a<span class="tok-o">)</span> -&gt; s -&gt; f s <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">type</span> <span class="tok-kt">Lens&#39;</span> <span class="tok-n">s</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-n">forall</span> <span class="tok-n">f</span><span class="tok-o">.</span> <span class="tok-kt">Functor</span> <span class="tok-n">f</span> <span class="tok-ow">=&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">s</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">s</span> <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2355,7 +2483,7 @@ It is defined as the reverse of <code>$</code> operator.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">&gt; <span class="tok-nv">s</span> <span class="tok-o">=</span> <span class="tok-o">(</span>Left 5, 5<span class="tok-o">)</span>
+<pre class="pygments highlight"><code data-lang="shell">&gt; s = (Left 5, 5)
 &gt; s ^? _1._Left
 Just 5
 &gt; s ^? _1._Right
@@ -2370,18 +2498,18 @@ Nothing</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nb">type </span>Traversal<span class="tok-err">&#39;</span> a <span class="tok-nv">b</span> <span class="tok-o">=</span>
-    forall f . <span class="tok-o">(</span>Applicative f<span class="tok-o">)</span> <span class="tok-o">=</span>&gt; <span class="tok-o">(</span>b -&gt; f b<span class="tok-o">)</span> -&gt; <span class="tok-o">(</span>a -&gt; f a<span class="tok-o">)</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">type</span> <span class="tok-kt">Traversal&#39;</span> <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-ow">=</span>
+    <span class="tok-n">forall</span> <span class="tok-n">f</span> <span class="tok-o">.</span> <span class="tok-p">(</span><span class="tok-kt">Applicative</span> <span class="tok-n">f</span><span class="tok-p">)</span> <span class="tok-ow">=&gt;</span> <span class="tok-p">(</span><span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">f</span> <span class="tok-n">a</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">firstOf/lastOf traverse :: Traversable <span class="tok-nv">t</span> <span class="tok-o">=</span>&gt; t a -&gt; Maybe a
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">firstOf</span><span class="tok-o">/</span><span class="tok-n">lastOf</span> <span class="tok-n">traverse</span> <span class="tok-ow">::</span> <span class="tok-kt">Traversable</span> <span class="tok-n">t</span> <span class="tok-ow">=&gt;</span> <span class="tok-n">t</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Maybe</span> <span class="tok-n">a</span>
 
-&gt; firstOf traverse <span class="tok-o">[</span>1,2,3<span class="tok-o">]</span>
-1
-&gt; <span class="tok-o">[</span>1..8<span class="tok-o">]</span> <span class="tok-p">&amp;</span> lastOf traverse
-8</code></pre>
+<span class="tok-o">&gt;</span> <span class="tok-n">firstOf</span> <span class="tok-n">traverse</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-p">,</span><span class="tok-mi">2</span><span class="tok-p">,</span><span class="tok-mi">3</span><span class="tok-p">]</span>
+<span class="tok-mi">1</span>
+<span class="tok-o">&gt;</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-o">..</span><span class="tok-mi">8</span><span class="tok-p">]</span> <span class="tok-o">&amp;</span> <span class="tok-n">lastOf</span> <span class="tok-n">traverse</span>
+<span class="tok-mi">8</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2392,9 +2520,9 @@ Nothing</code></pre>
 <h4 id="_utils">Utils</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">-- create the nested Map when it is missing:
-Map.empty <span class="tok-p">&amp;</span> at <span class="tok-s2">&quot;hello&quot;</span> . non Map.empty . at <span class="tok-s2">&quot;world&quot;</span> ?~ <span class="tok-s2">&quot;!!!&quot;</span>
--- &gt; fromList <span class="tok-o">[(</span><span class="tok-s2">&quot;hello&quot;</span>,fromList <span class="tok-o">[(</span><span class="tok-s2">&quot;world&quot;</span>,<span class="tok-s2">&quot;!!!&quot;</span><span class="tok-o">)])]</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-c1">-- create the nested Map when it is missing:</span>
+<span class="tok-kt">Map</span><span class="tok-o">.</span><span class="tok-n">empty</span> <span class="tok-o">&amp;</span> <span class="tok-n">at</span> <span class="tok-s">&quot;hello&quot;</span> <span class="tok-o">.</span> <span class="tok-n">non</span> <span class="tok-kt">Map</span><span class="tok-o">.</span><span class="tok-n">empty</span> <span class="tok-o">.</span> <span class="tok-n">at</span> <span class="tok-s">&quot;world&quot;</span> <span class="tok-o">?~</span> <span class="tok-s">&quot;!!!&quot;</span>
+<span class="tok-c1">-- &gt; fromList [(&quot;hello&quot;,fromList [(&quot;world&quot;,&quot;!!!&quot;)])]</span></code></pre>
 </div>
 </div>
 </div>
@@ -2412,7 +2540,7 @@ Map.empty <span class="tok-p">&amp;</span> at <span class="tok-s2">&quot;hello&q
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">newtype State s <span class="tok-nv">a</span> <span class="tok-o">=</span> State <span class="tok-o">{</span> runState :: s -&gt; <span class="tok-o">(</span>a, s<span class="tok-o">)</span> <span class="tok-o">}</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">newtype</span> <span class="tok-kt">State</span> <span class="tok-n">s</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">State</span> <span class="tok-p">{</span> <span class="tok-n">runState</span> <span class="tok-ow">::</span> <span class="tok-n">s</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span><span class="tok-p">,</span> <span class="tok-n">s</span><span class="tok-p">)</span> <span class="tok-p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2430,15 +2558,18 @@ This means it uses system trickery to ensure that mutable data can&#8217;t escap
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">newtype ST s <span class="tok-nv">a</span> <span class="tok-o">=</span> ST <span class="tok-o">(</span>Store s -&gt; <span class="tok-o">(</span>a, Store s<span class="tok-o">))</span> -- an ST action returning a value of <span class="tok-nb">type </span>a in state t
-data STRef s <span class="tok-nv">a</span> <span class="tok-o">=</span> STRef <span class="tok-o">(</span>MutVar# s a<span class="tok-o">)</span> -- a mutable variable in thread s
-newSTRef :: a -&gt; ST s <span class="tok-o">(</span>STRef s a<span class="tok-o">)</span>
-readSTRef :: STRef s a -&gt; ST s a
-writeSTRef :: STRef s a -&gt; a -&gt; ST s <span class="tok-o">()</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-c1">-- an ST action returning a value of type a in state t</span>
+<span class="tok-kr">newtype</span> <span class="tok-kt">ST</span> <span class="tok-n">s</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">ST</span> <span class="tok-p">(</span><span class="tok-kt">Store</span> <span class="tok-n">s</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span><span class="tok-p">,</span> <span class="tok-kt">Store</span> <span class="tok-n">s</span><span class="tok-p">))</span>
+ <span class="tok-c1">-- a mutable variable in thread s</span>
+<span class="tok-kr">data</span> <span class="tok-kt">STRef</span> <span class="tok-n">s</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">STRef</span> <span class="tok-p">(</span><span class="tok-kt">MutVar</span><span class="tok-o">#</span> <span class="tok-n">s</span> <span class="tok-n">a</span><span class="tok-p">)</span>
+
+<span class="tok-nf">newSTRef</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">ST</span> <span class="tok-n">s</span> <span class="tok-p">(</span><span class="tok-kt">STRef</span> <span class="tok-n">s</span> <span class="tok-n">a</span><span class="tok-p">)</span>
+<span class="tok-nf">readSTRef</span> <span class="tok-ow">::</span> <span class="tok-kt">STRef</span> <span class="tok-n">s</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">ST</span> <span class="tok-n">s</span> <span class="tok-n">a</span>
+<span class="tok-nf">writeSTRef</span> <span class="tok-ow">::</span> <span class="tok-kt">STRef</span> <span class="tok-n">s</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">ST</span> <span class="tok-n">s</span> <span class="tok-nb">()</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The reason ST is interesting is that it&#8217;s a primitive monad like IO, allowing computations to perform low-level manipulations on bytearrays and pointers.
+<p>The reason <mark>ST</mark> is interesting is that it&#8217;s a primitive monad like IO, allowing computations to perform low-level manipulations on bytearrays and pointers.
 This means that ST can provide a pure interface while using low-level operations on mutable data, meaning it&#8217;s very fast. From the perspective of the program, it&#8217;s as if the ST computation runs in a separate thread with thread-local storage.</p>
 </div>
 </div>
@@ -2459,7 +2590,7 @@ This means that ST can provide a pure interface while using low-level operations
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">msum</span> <span class="tok-o">=</span> foldr mplus mzero</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">msum</span> <span class="tok-ow">=</span> <span class="tok-n">foldr</span> <span class="tok-n">mplus</span> <span class="tok-n">mzero</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2467,10 +2598,10 @@ This means that ST can provide a pure interface while using low-level operations
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-o">[</span>Just 1, Just 2, Nothing<span class="tok-o">]</span>              -&gt; Just 1
-<span class="tok-o">[</span>Left <span class="tok-s2">&quot;Failing&quot;</span>, Right<span class="tok-o">()]</span>              -&gt; Right <span class="tok-o">()</span>
-<span class="tok-o">[</span>Left <span class="tok-s2">&quot;Failing&quot;</span>, Left <span class="tok-s2">&quot;Failing again&quot;</span><span class="tok-o">]</span> -&gt; Left <span class="tok-s2">&quot;Failing again&quot;</span>
-msum <span class="tok-o">[</span>Left <span class="tok-s2">&quot;F&quot;</span>, Right <span class="tok-s2">&quot;R&quot;</span><span class="tok-o">]</span>             -&gt; Right <span class="tok-s2">&quot;R&quot;</span></code></pre>
+<pre class="pygments highlight"><code data-lang="shell">[Just 1, Just 2, Nothing]              -&gt; Just 1
+[Left &quot;Failing&quot;, Right()]              -&gt; Right ()
+[Left &quot;Failing&quot;, Left &quot;Failing again&quot;] -&gt; Left &quot;Failing again&quot;
+msum [Left &quot;F&quot;, Right &quot;R&quot;]             -&gt; Right &quot;R&quot;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2621,8 +2752,8 @@ Let&#8217;s take as an example, the task of running a test suite.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nb">type </span><span class="tok-nv">Effect</span> <span class="tok-o">=</span> Proxy X <span class="tok-o">()</span> <span class="tok-o">()</span> X
-runEffect :: <span class="tok-o">(</span>Monad m<span class="tok-o">)</span> <span class="tok-o">=</span>&gt; Effect m r -&gt; m r</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">type</span> <span class="tok-kt">Effect</span> <span class="tok-ow">=</span> <span class="tok-kt">Proxy</span> <span class="tok-kt">X</span> <span class="tok-nb">()</span> <span class="tok-nb">()</span> <span class="tok-kt">X</span>
+<span class="tok-nf">runEffect</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-kt">Monad</span> <span class="tok-n">m</span><span class="tok-p">)</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Effect</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">r</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2685,7 +2816,7 @@ Void &lt;==       &lt;== ()
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">next :: Monad <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; Producer a m r -&gt; m <span class="tok-o">(</span>Either r <span class="tok-o">(</span>a, Producer a m r<span class="tok-o">))</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">next</span> <span class="tok-ow">::</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Producer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-p">(</span><span class="tok-kt">Either</span> <span class="tok-n">r</span> <span class="tok-p">(</span><span class="tok-n">a</span><span class="tok-p">,</span> <span class="tok-kt">Producer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">r</span><span class="tok-p">))</span></code></pre>
 </div>
 </div>
 </div>
@@ -2711,7 +2842,7 @@ Void &lt;==       &lt;== ()
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">await :: Monad <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; Consumer<span class="tok-err">&#39;</span> a m a</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">await</span> <span class="tok-ow">::</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Consumer&#39;</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">a</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2734,10 +2865,10 @@ This allows consumer composition</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-o">(</span>&gt;~<span class="tok-o">)</span> :: Effect m b       -&gt; Consumer b m c   -&gt; Effect m c
-<span class="tok-o">(</span>&gt;~<span class="tok-o">)</span> :: Consumer a m b   -&gt; Consumer b m c   -&gt; Consumer a m c
-<span class="tok-o">(</span>&gt;~<span class="tok-o">)</span> :: Producer y m b   -&gt; Pipe     b y m c -&gt; Producer   y m c
-<span class="tok-o">(</span>&gt;~<span class="tok-o">)</span> :: Pipe     a y m b -&gt; Pipe     b y m c -&gt; Pipe     a y m c</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-p">(</span><span class="tok-o">&gt;~</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Effect</span> <span class="tok-n">m</span> <span class="tok-n">b</span>       <span class="tok-ow">-&gt;</span> <span class="tok-kt">Consumer</span> <span class="tok-n">b</span> <span class="tok-n">m</span> <span class="tok-n">c</span>   <span class="tok-ow">-&gt;</span> <span class="tok-kt">Effect</span> <span class="tok-n">m</span> <span class="tok-n">c</span>
+<span class="tok-p">(</span><span class="tok-o">&gt;~</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Consumer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">b</span>   <span class="tok-ow">-&gt;</span> <span class="tok-kt">Consumer</span> <span class="tok-n">b</span> <span class="tok-n">m</span> <span class="tok-n">c</span>   <span class="tok-ow">-&gt;</span> <span class="tok-kt">Consumer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">c</span>
+<span class="tok-p">(</span><span class="tok-o">&gt;~</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Producer</span> <span class="tok-n">y</span> <span class="tok-n">m</span> <span class="tok-n">b</span>   <span class="tok-ow">-&gt;</span> <span class="tok-kt">Pipe</span>     <span class="tok-n">b</span> <span class="tok-n">y</span> <span class="tok-n">m</span> <span class="tok-n">c</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Producer</span>   <span class="tok-n">y</span> <span class="tok-n">m</span> <span class="tok-n">c</span>
+<span class="tok-p">(</span><span class="tok-o">&gt;~</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Pipe</span>     <span class="tok-n">a</span> <span class="tok-n">y</span> <span class="tok-n">m</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Pipe</span>     <span class="tok-n">b</span> <span class="tok-n">y</span> <span class="tok-n">m</span> <span class="tok-n">c</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Pipe</span>     <span class="tok-n">a</span> <span class="tok-n">y</span> <span class="tok-n">m</span> <span class="tok-n">c</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -2769,15 +2900,15 @@ This allows consumer composition</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-o">(</span>&gt;-&gt;<span class="tok-o">)</span> :: Monad <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; Producer a m r -&gt; Consumer a m r -&gt; Effect m r
-<span class="tok-o">(</span>&gt;-&gt;<span class="tok-o">)</span> :: Monad <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; Producer a m r -&gt; Pipe   a b m r -&gt; Producer b m r
-<span class="tok-o">(</span>&gt;-&gt;<span class="tok-o">)</span> :: Monad <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; Pipe   a b m r -&gt; Consumer b m r -&gt; Consumer a m r
-<span class="tok-o">(</span>&gt;-&gt;<span class="tok-o">)</span> :: Monad <span class="tok-nv">m</span> <span class="tok-o">=</span>&gt; Pipe   a b m r -&gt; Pipe   b c m r -&gt; Pipe   a c m r
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-p">(</span><span class="tok-o">&gt;-&gt;</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Producer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Consumer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Effect</span> <span class="tok-n">m</span> <span class="tok-n">r</span>
+<span class="tok-p">(</span><span class="tok-o">&gt;-&gt;</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Producer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Pipe</span>   <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Producer</span> <span class="tok-n">b</span> <span class="tok-n">m</span> <span class="tok-n">r</span>
+<span class="tok-p">(</span><span class="tok-o">&gt;-&gt;</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Pipe</span>   <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Consumer</span> <span class="tok-n">b</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Consumer</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">r</span>
+<span class="tok-p">(</span><span class="tok-o">&gt;-&gt;</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Pipe</span>   <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Pipe</span>   <span class="tok-n">b</span> <span class="tok-n">c</span> <span class="tok-n">m</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Pipe</span>   <span class="tok-n">a</span> <span class="tok-n">c</span> <span class="tok-n">m</span> <span class="tok-n">r</span>
 
-cat :: <span class="tok-o">(</span>Monad m<span class="tok-o">)</span> <span class="tok-o">=</span>&gt; Pipe a a m r
-<span class="tok-nv">cat</span> <span class="tok-o">=</span> forever <span class="tok-nv">$ </span><span class="tok-k">do</span>
-    x &lt;- await
-    yield x</code></pre>
+<span class="tok-nf">cat</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-kt">Monad</span> <span class="tok-n">m</span><span class="tok-p">)</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Pipe</span> <span class="tok-n">a</span> <span class="tok-n">a</span> <span class="tok-n">m</span> <span class="tok-n">r</span>
+<span class="tok-nf">cat</span> <span class="tok-ow">=</span> <span class="tok-n">forever</span> <span class="tok-o">$</span> <span class="tok-kr">do</span>
+    <span class="tok-n">x</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">await</span>
+    <span class="tok-n">yield</span> <span class="tok-n">x</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -2829,21 +2960,21 @@ cat :: <span class="tok-o">(</span>Monad m<span class="tok-o">)</span> <span cla
 <div class="listingblock">
 <div class="title">Example</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">-- !! this <span class="tok-k">return</span> a Producer a m <span class="tok-o">(</span>Maybe r, Producer a m r<span class="tok-o">)</span> !!
--- This makes sense you are actually running the StateT monad from Producer a <span class="tok-o">(</span>StateT <span class="tok-o">(</span>Producer a m r<span class="tok-o">)</span> m r<span class="tok-o">)</span> r
--- r is either Just which means the original Producer is empty or Nothing which mean you should go on drawing from the original Producer
--- The top producer accumulates your split, <span class="tok-k">then</span> you have a pair of a Maybe r and your original Producer
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-c1">-- !! this return a Producer a m (Maybe r, Producer a m r) !!</span>
+<span class="tok-c1">-- This makes sense you are actually running the StateT monad from Producer a (StateT (Producer a m r) m r) r</span>
+<span class="tok-c1">-- r is either Just which means the original Producer is empty or Nothing which mean you should go on drawing from the original Producer</span>
+<span class="tok-c1">-- The top producer accumulates your split, then you have a pair of a Maybe r and your original Producer</span>
 
-runStateP p <span class="tok-nv">$ </span><span class="tok-k">do</span> -- p will be used to feed the underlying proxy
-    -- entering a monad of the form: <span class="tok-o">(</span>Proxy <span class="tok-o">(</span>&lt;- StateT monad &lt;- Proxy<span class="tok-o">))</span>
-    -- All computation happens inside the underlying monad that is initially fed up by the param p
-    x &lt;- lift draw -- lift the next value of the underlying proxy
-    <span class="tok-k">case</span> x of -- Left <span class="tok-k">if</span> the underlying proxy is empty or Right with the drawn element
-        Left  r -&gt; <span class="tok-k">return</span> <span class="tok-o">(</span>Just r<span class="tok-o">)</span>
-        Right a -&gt; <span class="tok-k">do</span>
-            yield a -- push <span class="tok-sb">`</span>a onto the top proxy
-            <span class="tok-o">(</span>Just &lt;<span class="tok-nv">$&gt;</span> input<span class="tok-o">)</span> &gt;-&gt; <span class="tok-o">(</span>Nothing &lt;<span class="tok-nv">$ </span>takeWhile <span class="tok-o">(==</span> a<span class="tok-o">))</span>  -- start streaming values from the underlying proxy
-                                                                --</code></pre>
+<span class="tok-nf">runStateP</span> <span class="tok-n">p</span> <span class="tok-o">$</span> <span class="tok-kr">do</span> <span class="tok-c1">-- p will be used to feed the underlying proxy</span>
+    <span class="tok-c1">-- entering a monad of the form: (Proxy (&lt;- StateT monad &lt;- Proxy))</span>
+    <span class="tok-c1">-- All computation happens inside the underlying monad that is initially fed up by the param p</span>
+    <span class="tok-n">x</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">lift</span> <span class="tok-n">draw</span> <span class="tok-c1">-- lift the next value of the underlying proxy</span>
+    <span class="tok-kr">case</span> <span class="tok-n">x</span> <span class="tok-kr">of</span> <span class="tok-c1">-- Left if the underlying proxy is empty or Right with the drawn element</span>
+        <span class="tok-kt">Left</span>  <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">return</span> <span class="tok-p">(</span><span class="tok-kt">Just</span> <span class="tok-n">r</span><span class="tok-p">)</span>
+        <span class="tok-kt">Right</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kr">do</span>
+            <span class="tok-n">yield</span> <span class="tok-n">a</span> <span class="tok-c1">-- push `a onto the top proxy</span>
+            <span class="tok-p">(</span><span class="tok-kt">Just</span> <span class="tok-o">&lt;$&gt;</span> <span class="tok-n">input</span><span class="tok-p">)</span> <span class="tok-o">&gt;-&gt;</span> <span class="tok-p">(</span><span class="tok-kt">Nothing</span> <span class="tok-o">&lt;$</span> <span class="tok-n">takeWhile</span> <span class="tok-p">(</span><span class="tok-o">==</span> <span class="tok-n">a</span><span class="tok-p">))</span>  <span class="tok-c1">-- start streaming values from the underlying proxy</span>
+                                                                <span class="tok-c1">--</span></code></pre>
 </div>
 </div>
 </div>
@@ -2854,7 +2985,7 @@ runStateP p <span class="tok-nv">$ </span><span class="tok-k">do</span> -- p wil
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-o">(</span>output, input<span class="tok-o">)</span> &lt;- spawn Unbounded</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-p">(</span><span class="tok-n">output</span><span class="tok-p">,</span> <span class="tok-n">input</span><span class="tok-p">)</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">spawn</span> <span class="tok-kt">Unbounded</span></code></pre>
 </div>
 </div>
 <div class="literalblock">
@@ -2868,7 +2999,7 @@ Read from the mailbox using <code>fromInput input</code> (input is able to recei
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">newtype Input <span class="tok-nv">a</span> <span class="tok-o">=</span> Input <span class="tok-o">{</span> recv :: S.STM <span class="tok-o">(</span>Maybe a<span class="tok-o">)</span> <span class="tok-o">}</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">newtype</span> <span class="tok-kt">Input</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">Input</span> <span class="tok-p">{</span> <span class="tok-n">recv</span> <span class="tok-ow">::</span> <span class="tok-kt">S</span><span class="tok-o">.</span><span class="tok-kt">STM</span> <span class="tok-p">(</span><span class="tok-kt">Maybe</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-p">}</span></code></pre>
 </div>
 </div>
 </div>
@@ -2966,14 +3097,14 @@ Indeed <code>pipes-bytestring</code> operations don&#8217;t guarantee that they 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">-- first take the next elem of the <span class="tok-nb">source</span>
-x &lt;- lift <span class="tok-o">(</span>next <span class="tok-nb">source</span><span class="tok-o">)</span>
-        <span class="tok-k">case</span> x of
-            Left <span class="tok-o">()</span> -&gt; feedParser <span class="tok-o">(</span>k B.empty<span class="tok-o">)</span> <span class="tok-o">(</span><span class="tok-k">return</span> <span class="tok-o">())</span>
-            Right <span class="tok-o">(</span>bs, <span class="tok-nb">source</span><span class="tok-s1">&#39;) -&gt;</span>
-<span class="tok-s1">                if (B.null bs)</span>
-<span class="tok-s1">                then continue k source&#39;</span>
-                <span class="tok-k">else</span> feedParser <span class="tok-o">(</span>k bs<span class="tok-o">)</span> <span class="tok-nb">source</span><span class="tok-err">&#39;</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-c1">-- first take the next elem of the source</span>
+<span class="tok-nf">x</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">lift</span> <span class="tok-p">(</span><span class="tok-n">next</span> <span class="tok-n">source</span><span class="tok-p">)</span>
+        <span class="tok-kr">case</span> <span class="tok-n">x</span> <span class="tok-kr">of</span>
+            <span class="tok-kt">Left</span> <span class="tok-nb">()</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">feedParser</span> <span class="tok-p">(</span><span class="tok-n">k</span> <span class="tok-kt">B</span><span class="tok-o">.</span><span class="tok-n">empty</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">return</span> <span class="tok-nb">()</span><span class="tok-p">)</span>
+            <span class="tok-kt">Right</span> <span class="tok-p">(</span><span class="tok-n">bs</span><span class="tok-p">,</span> <span class="tok-n">source&#39;</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span>
+                <span class="tok-kr">if</span> <span class="tok-p">(</span><span class="tok-kt">B</span><span class="tok-o">.</span><span class="tok-n">null</span> <span class="tok-n">bs</span><span class="tok-p">)</span>
+                <span class="tok-kr">then</span> <span class="tok-n">continue</span> <span class="tok-n">k</span> <span class="tok-n">source&#39;</span>
+                <span class="tok-kr">else</span> <span class="tok-n">feedParser</span> <span class="tok-p">(</span><span class="tok-n">k</span> <span class="tok-n">bs</span><span class="tok-p">)</span> <span class="tok-n">source&#39;</span></code></pre>
 </div>
 </div>
 </td>
@@ -3015,7 +3146,7 @@ Behaviors are continuous &#8592; PULL based</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">producer :: Buffer a -&gt; Producer a IO <span class="tok-o">()</span> -&gt; Managed <span class="tok-o">(</span>Controller a<span class="tok-o">)</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">producer</span> <span class="tok-ow">::</span> <span class="tok-kt">Buffer</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Producer</span> <span class="tok-n">a</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Managed</span> <span class="tok-p">(</span><span class="tok-kt">Controller</span> <span class="tok-n">a</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3025,7 +3156,7 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">asPipe :: Pipe a b <span class="tok-o">(</span>State s<span class="tok-o">)</span> <span class="tok-o">()</span> -&gt; Model s a b</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">asPipe</span> <span class="tok-ow">::</span> <span class="tok-kt">Pipe</span> <span class="tok-n">a</span> <span class="tok-n">b</span> <span class="tok-p">(</span><span class="tok-kt">State</span> <span class="tok-n">s</span><span class="tok-p">)</span> <span class="tok-nb">()</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Model</span> <span class="tok-n">s</span> <span class="tok-n">a</span> <span class="tok-n">b</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3034,7 +3165,7 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">asSink :: <span class="tok-o">(</span>a -&gt; IO <span class="tok-o">())</span> -&gt; View aa</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">asSink</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">View</span> <span class="tok-n">aa</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -3072,7 +3203,7 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 </div>
 </div>
 <div class="sect2">
-<h3 id="_naming_convention">Naming &amp; convention</h3>
+<h3 id="_naming_convention">Naming convention</h3>
 <div class="sect3">
 <h4 id="_algebraic_data_type">Algebraic Data Type</h4>
 <div class="paragraph">
@@ -3090,8 +3221,8 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">data <span class="tok-nv">MySum</span> <span class="tok-o">=</span> A <span class="tok-p">|</span> B
-data <span class="tok-nv">MyProduct</span> <span class="tok-o">=</span> MyProduct Int String</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">data</span> <span class="tok-kt">MySum</span> <span class="tok-ow">=</span> <span class="tok-kt">A</span> <span class="tok-o">|</span> <span class="tok-kt">B</span>
+<span class="tok-kr">data</span> <span class="tok-kt">MyProduct</span> <span class="tok-ow">=</span> <span class="tok-kt">MyProduct</span> <span class="tok-kt">Int</span> <span class="tok-kt">String</span></code></pre>
 </div>
 </div>
 </div>
@@ -3135,6 +3266,15 @@ data <span class="tok-nv">MyProduct</span> <span class="tok-o">=</span> MyProduc
 </div>
 </div>
 <div class="sect2">
+<h3 id="_common_functions">Common functions</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-c1">-- give a default and always get an a from a maybe value</span>
+<span class="tok-nf">maybe</span><span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Maybe</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_gats">GATS</h3>
 <div class="paragraph">
 <p>GADTs let you associate different type parameters for different data constructors of a type.</p>
@@ -3155,7 +3295,7 @@ data <span class="tok-nv">MyProduct</span> <span class="tok-o">=</span> MyProduc
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">ExprAnd <span class="tok-o">(</span>ExprInt 5<span class="tok-o">)</span> <span class="tok-o">(</span>ExprBool True<span class="tok-o">)</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kt">ExprAnd</span> <span class="tok-p">(</span><span class="tok-kt">ExprInt</span> <span class="tok-mi">5</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-kt">ExprBool</span> <span class="tok-kt">True</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3211,10 +3351,10 @@ i.e:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-k">case</span> myLenList of
-  Nil       -&gt; ... -- ^ the <span class="tok-nb">type </span>of myLenList in this <span class="tok-k">case</span> is inferred to <span class="tok-o">(</span>LenList <span class="tok-m">0</span> a<span class="tok-o">)</span>
-  Cons x xs -&gt; ... -- ^ the <span class="tok-nb">type </span>of myLenList in this <span class="tok-k">case</span> is inferred to
-                   <span class="tok-o">(</span>LenList <span class="tok-o">(</span><span class="tok-m">1</span> + n<span class="tok-o">)</span> a<span class="tok-o">)</span> and the <span class="tok-nb">type </span>of xs is inferred to <span class="tok-o">(</span>LenList n a<span class="tok-o">)</span></code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">case</span> <span class="tok-n">myLenList</span> <span class="tok-kr">of</span>
+  <span class="tok-kt">Nil</span>       <span class="tok-ow">-&gt;</span> <span class="tok-o">...</span> <span class="tok-c1">-- ^ the type of myLenList in this case is inferred to (LenList 0 a)</span>
+  <span class="tok-kt">Cons</span> <span class="tok-n">x</span> <span class="tok-n">xs</span> <span class="tok-ow">-&gt;</span> <span class="tok-o">...</span> <span class="tok-c1">-- ^ the type of myLenList in this case is inferred to</span>
+                   <span class="tok-p">(</span><span class="tok-kt">LenList</span> <span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-o">+</span> <span class="tok-n">n</span><span class="tok-p">)</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-n">and</span> <span class="tok-n">the</span> <span class="tok-kr">type</span> <span class="tok-kr">of</span> <span class="tok-n">xs</span> <span class="tok-n">is</span> <span class="tok-n">inferred</span> <span class="tok-n">to</span> <span class="tok-p">(</span><span class="tok-kt">LenList</span> <span class="tok-n">n</span> <span class="tok-n">a</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="literalblock">
@@ -3437,7 +3577,7 @@ When you pattern-match your GADT constructor, the instance implicitly comes into
 <div class="listingblock">
 <div class="title">generate TAGS</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">hasktags -e src</code></pre>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">hasktags</span> <span class="tok-o">-</span><span class="tok-n">e</span> <span class="tok-n">src</span></code></pre>
 </div>
 </div>
 </div>
