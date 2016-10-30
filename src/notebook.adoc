@@ -2,7 +2,7 @@
 Pierre Radermecker <pierrer@pi3r.be>
 :toc: left
 :toclevels: 2
-:imagesdir: ../img
+:imagesdir: img
 :source-language: bash
 :source-highlighter: pygments
 :icons: font

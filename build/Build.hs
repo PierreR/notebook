@@ -4,13 +4,12 @@ import Development.Shake.Command
 import Development.Shake.FilePath
 import Development.Shake.Util
 
-buildDir = "out"
 srcDir = "src"
 
 -- | Exec the asciidoc command to produce html or pdf
 callCmd prg out = do
   -- find back the adoc source file by dropping the `out` prefix and the extension directory
-  let  srcfile = srcDir </> dropDirectory1  (out -<.> "adoc")
+  let  srcfile = srcDir </> (out -<.> "adoc")
   -- require the source file so the rule is only fired when the source changes
   need [srcfile]
   need =<< getDirectoryFiles "" ["src/**/*.adoc"]
@@ -21,17 +20,16 @@ callCmd prg out = do
 main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
 
-  want [buildDir </> "notebook.html", buildDir </> "notebook.pdf"]
+  want [ "notebook.html", "tutorial.pdf"]
 
-  buildDir </> "notebook.html" %> callCmd "asciidoctor"
+  "notebook.html" %> callCmd "asciidoctor"
 
-  buildDir </> "notebook.pdf" %> callCmd "asciidoctor-pdf"
+  "notebook.pdf" %> callCmd "asciidoctor-pdf"
 
   "clean" ~> do
-    putNormal ("Cleaning files in " <> buildDir)
-    removeFilesAfter buildDir ["/*.html"]
-    removeFilesAfter buildDir ["/*.pdf"]
+    removeFilesAfter "" ["notebook.html"]
+    removeFilesAfter "" ["notebook.pdf"]
 
-  "html" ~> need [ buildDir </> "notebook.html"]
+  "html" ~> need [ "notebook.html"]
 
-  "pdf" ~> need [ buildDir </> "notebook.pdf"]
+  "pdf" ~> need [ "notebook.pdf"]
