@@ -485,46 +485,54 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .listingblock .pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
 </style>
 <style>
-table tr th, table tr td {
-    padding: .45em .6em !important;
-}
-ul.sectlevel1 > li > a  {
-    font-weight: bold !important;
+ table tr th, table tr td {
+     padding: .45em .6em !important;
+ }
+ ul.sectlevel1 > li > a  {
+     font-weight: bold !important;
  }
 
-div#toctitle {
-    color: #1d4b8f !important;
-    font-size: 1.45em !important;
-    font-weight: 500 !important;
+ div#toctitle {
+     color: #1d4b8f !important;
+     font-size: 1.45em !important;
+     font-weight: 500 !important;
 
-}
-.admonitionblock .icon {
-    font-size: smaller !important;
-}
+ }
+ .admonitionblock .icon {
+     font-size: smaller !important;
+ }
  h3 .icon, h4 .icon {
-    font-size: smaller !important;
-}
-.conum[data-value] {
-    font-size: .65em !important;
-}
-mark {
-    color: inherit !important;
-    background-color: inherit !important;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-left: 3px;
-    margin-right: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-bottom: 1px;
-}
+     font-size: smaller !important;
+ }
+ .conum[data-value] {
+     font-size: .65em !important;
+ }
+ mark {
+     color: inherit !important;
+     background-color: inherit !important;
+     border: 1px solid #ccc;
+     border-radius: 8px;
+     margin-left: 3px;
+     margin-right: 3px;
+     padding-left: 5px;
+     padding-right: 5px;
+     padding-bottom: 1px;
+ }
 
-.quoteblock blockquote:before {
-    font-size: 1.75em !important;
-}
-.quoteblock blockquote, .quoteblock blockquote p {
-    font-size: 1rem !important;
-}
+ .quoteblock blockquote:before {
+     font-size: 1.75em !important;
+ }
+ .quoteblock blockquote, .quoteblock blockquote p {
+     font-size: 1rem !important;
+ }
+ .sidebarblock {
+     font-size: small;
+     border-style: dotted;
+     background: #fdfbfb;
+ }
+ .sidebarblock .literalblock  pre {
+     background: #fdfbfb;
+ }
 </style>
 </head>
 <body class="article toc2 toc-left">
@@ -556,7 +564,7 @@ mark {
 </ul>
 </li>
 <li><a href="#_language_expressions">Language Expressions</a></li>
-<li><a href="#_idioms">Idioms</a></li>
+<li><a href="#_tips_and_tricks">Tips and tricks</a></li>
 <li><a href="#_bootstrap">Bootstrap</a></li>
 <li><a href="#_ruby">Ruby</a></li>
 <li><a href="#_references">References</a></li>
@@ -922,7 +930,7 @@ mark {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="nix">stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
+<pre class="pygments highlight"><code data-lang="nix">stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-k">rec</span> <span class="tok-p">{</span>
   <span class="tok-ss">name =</span> <span class="tok-s2">&quot;libfoo-</span><span class="tok-si">${</span>version<span class="tok-si">}</span><span class="tok-s2">&quot;</span><span class="tok-p">;</span> <i class="conum" data-value="1"></i><b>(1)</b>
   <span class="tok-ss">version =</span> <span class="tok-s2">&quot;1.2.3&quot;</span>
   <span class="tok-ss">src =</span> fetchurl <span class="tok-p">{</span>
@@ -1160,15 +1168,19 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 <p><strong>-i</strong> install derivations</p>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">→ nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -iA pythonPackages.pyyaml
+<pre class="pygments highlight"><code data-lang="bash">→ nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -iA pythonPackages.pyyaml <i class="conum" data-value="1"></i><b>(1)</b>
 → nix-env -e python2.7-PyYAML-3.11
-→ nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -i brackets -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs/archive/master.tar.gz’ <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+→ nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -i brackets -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs/archive/master.tar.gz’ <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>on nixos, you might use <code>nix-env -iA nixos.pythonPackages.pyyaml</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>install from master directly</td>
 </tr>
 </table>
@@ -1373,39 +1385,27 @@ the 'ellipsis' (<code>&#8230;&#8203;</code>) allows the passing of a bigger set,
 </div>
 </div>
 <div class="sect2">
-<h3 id="_idioms">Idioms</h3>
+<h3 id="_tips_and_tricks">Tips and tricks</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Override pkgs derivations</dt>
+<dt class="hdlist1">customize nixpkgs locally</dt>
 <dd>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="nix">pkgs<span class="tok-o">.</span>overridePackages <span class="tok-p">(</span>self<span class="tok-p">:</span> super<span class="tok-p">:</span> <span class="tok-p">{</span>
-<span class="hll">  <span class="tok-ss">foo =</span> super<span class="tok-o">.</span>foo<span class="tok-o">.</span>override <span class="tok-p">{</span> <span class="tok-ss">barSupport =</span> <span class="tok-no">true</span> <span class="tok-p">;</span> <span class="tok-p">};</span> <i class="conum" data-value="1"></i><b>(1)</b>
-</span><span class="tok-p">})</span></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>you may call <mark>override</mark> on much derivations to changes attribute value(s).</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>Instead of using <mark>overridePackages</mark> in <code>~/.nixpkgs/config.nix</code> you would typically declare a <mark>packageOverrides</mark> function knowing it will be called to customize '&lt;nixpkgs&gt;' locally:</p>
+<p>You can override derivation attributes in user space without forking the <code>nixpkgs</code> repository.
+In <code>~/.nixpkgs/config.nix</code> you typically declare a <code>packageOverrides</code> function and then use <code>override</code> to customize attributes:</p>
 </div>
 <div class="listingblock">
 <div class="title">~/.nixpkgs/config.nix</div>
 <div class="content">
 <pre class="pygments highlight"><code data-lang="nix"><span class="tok-p">{</span>
-<span class="hll">  <span class="tok-ss">packageOverrides =</span> super<span class="tok-p">:</span>
-</span>    <span class="tok-k">let</span> <span class="tok-ss">self =</span> super<span class="tok-o">.</span>pkgs<span class="tok-p">;</span>
+  <span class="tok-ss">packageOverrides =</span> super<span class="tok-p">:</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tok-k">let</span> <span class="tok-ss">self =</span> super<span class="tok-o">.</span>pkgs<span class="tok-p">;</span>
+        <span class="tok-ss">foo =</span> super<span class="tok-o">.</span>foo<span class="tok-o">.</span>override <span class="tok-p">{</span> <span class="tok-ss">barSupport =</span> <span class="tok-no">true</span> <span class="tok-p">;</span> <span class="tok-p">};</span> <i class="conum" data-value="2"></i><b>(2)</b>
     <span class="tok-k">in</span>
     <span class="tok-p">{</span>
+      <span class="tok-k">inherit</span> foo<span class="tok-p">;</span>
       <span class="tok-ss">haskellPackages =</span> super<span class="tok-o">.</span>haskellPackages<span class="tok-o">.</span>override <span class="tok-p">{</span>
-        <span class="tok-ss">overrides =</span> self<span class="tok-p">:</span> super<span class="tok-p">:</span> <span class="tok-p">{</span> <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="tok-ss">overrides =</span> self<span class="tok-p">:</span> super<span class="tok-p">:</span> <span class="tok-p">{</span> <i class="conum" data-value="3"></i><b>(3)</b>
         <span class="tok-o">...</span>
         <span class="tok-p">};</span>
     <span class="tok-p">};</span>
@@ -1416,15 +1416,52 @@ the 'ellipsis' (<code>&#8230;&#8203;</code>) allows the passing of a bigger set,
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><mark>packageOverrides</mark> takes the original (super) nixpkgs set and return a new (self) record set.
+<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>call <mark>override</mark> (defined on much derivations) to changes the arguments passed to it.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>override the <mark>overrides</mark> attribute of haskellPackages</td>
 </tr>
 </table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">override/fix pattern</div>
+<div class="literalblock">
+<div class="content">
+<pre>fix = f:
+  let self = f self;
+  in self;
+
+extend = attrs: f: self:
+  let super = attrs self;
+  in super // f self super;
+
+ps = self:
+  { foo = "foo"; bar = "bar";
+     foobar = self.foo + self.bar;
+  };
+
+f = self: super:
+  { foo = reverse super.foo; }
+
+(fix ps).foobar # "foobar"
+
+(fix (extend ps f)).foobar # "oofbar"</pre>
+</div>
+</div>
+</div>
 </div>
 </dd>
 <dt class="hdlist1">Private packages</dt>
 <dd>
 <div class="paragraph">
-<p>You can easily extend <code>nixpkgs</code> with private derivations without any forking by writing a custom file:</p>
+<p>You can also extend <code>nixpkgs</code> with private derivations without any forking. For instance using a custom file:</p>
 </div>
 <div class="listingblock">
 <div class="title">dotfiles.nix</div>
@@ -1493,32 +1530,6 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 <td><code>nix-env -i</code> takes the name attribute and strip the version (first numeric after <code>-</code>)</td>
 </tr>
 </table>
-</div>
-</dd>
-<dt class="hdlist1">Override pattern</dt>
-<dd>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="nix"><span class="tok-ss">fix =</span> f<span class="tok-p">:</span>
-  <span class="tok-k">let</span> <span class="tok-ss">self =</span> f self<span class="tok-p">;</span>
-  <span class="tok-k">in</span> self<span class="tok-p">;</span>
-
-<span class="tok-ss">extend =</span> attrs<span class="tok-p">:</span> f<span class="tok-p">:</span> self<span class="tok-p">:</span>
-  <span class="tok-k">let</span> <span class="tok-ss">super =</span> attrs self<span class="tok-p">;</span>
-  <span class="tok-k">in</span> super <span class="tok-o">//</span> f self super<span class="tok-p">;</span>
-
-<span class="tok-ss">ps =</span> self<span class="tok-p">:</span>
-  <span class="tok-p">{</span> <span class="tok-ss">foo =</span> <span class="tok-s2">&quot;foo&quot;</span><span class="tok-p">;</span> <span class="tok-ss">bar =</span> <span class="tok-s2">&quot;bar&quot;</span><span class="tok-p">;</span>
-     <span class="tok-ss">foobar =</span> self<span class="tok-o">.</span>foo <span class="tok-o">+</span> self<span class="tok-o">.</span>bar<span class="tok-p">;</span>
-  <span class="tok-p">};</span>
-
-<span class="tok-ss">f =</span> self<span class="tok-p">:</span> super<span class="tok-p">:</span>
-  <span class="tok-p">{</span> <span class="tok-ss">foo =</span> reverse super<span class="tok-o">.</span>foo<span class="tok-p">;</span> <span class="tok-p">}</span>
-
-<span class="tok-p">(</span>fix ps<span class="tok-p">)</span><span class="tok-o">.</span>foobar <span class="tok-c1"># &quot;foobar&quot;</span>
-
-<span class="tok-p">(</span>fix <span class="tok-p">(</span>extend ps f<span class="tok-p">))</span><span class="tok-o">.</span>foobar <span class="tok-c1"># &quot;oofbar&quot;</span></code></pre>
-</div>
 </div>
 </dd>
 <dt class="hdlist1">Pinned a version of nixpkgs</dt>
@@ -2112,7 +2123,7 @@ fix f = f (fix f)</p>
 <p>Folding is the act of reducing a structure to a single value.</p>
 </div>
 <div class="paragraph">
-<p>We can see them as consumers or <code>comonads</code>.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup></p>
+<p>We can see them as consumers or <code>comonads</code>.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup></p>
 </div>
 </div>
 <div class="sect3">
@@ -2550,7 +2561,7 @@ Nothing</code></pre>
 <div class="sect3">
 <h4 id="_st">ST</h4>
 <div class="paragraph">
-<p>The ST<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup> monad lets you use update-in-place, but unlike IO it is escapable.
+<p>The ST<sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup> monad lets you use update-in-place, but unlike IO it is escapable.
 This means it uses system trickery to ensure that mutable data can&#8217;t escape the monad; that is, when you run an ST computation you get a pure result.</p>
 </div>
 <div class="paragraph">
@@ -3780,9 +3791,9 @@ In category theory we never look inside objects. All information about objects i
 <dl>
 <dt class="hdlist1">definition</dt>
 <dd>
-<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup>.
+<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup>.
 The objects have not structure or meaning, actually they only serve to mark the beginning or end of an arrow.
-Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup> that preverse a <code>structure</code>.
+Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup> that preverse a <code>structure</code>.
 The structure whatever it is characterizes the category.</p>
 <div class="ulist">
 <ul>
@@ -4326,16 +4337,19 @@ REF TYPE BOXES TO VALUES</p>
 <div id="footnotes">
 <hr>
 <div class="footnote" id="_footnote_1">
-<a href="#_footnoteref_1">1</a>. Unfolding is then associated to producers or <code>monads</code>.
+<a href="#_footnoteref_1">1</a>. similar to <code>overrridePackages</code> which is only used outside of the special <code>config.nix</code> for specific use cases
 </div>
 <div class="footnote" id="_footnote_2">
-<a href="#_footnoteref_2">2</a>. state monad transformer.
+<a href="#_footnoteref_2">2</a>. Unfolding is then associated to producers or <code>monads</code>.
 </div>
 <div class="footnote" id="_footnote_3">
-<a href="#_footnoteref_3">3</a>. also called arrows
+<a href="#_footnoteref_3">3</a>. state monad transformer.
 </div>
 <div class="footnote" id="_footnote_4">
-<a href="#_footnoteref_4">4</a>. you can have zero, one or many arrows from one object to another
+<a href="#_footnoteref_4">4</a>. also called arrows
+</div>
+<div class="footnote" id="_footnote_5">
+<a href="#_footnoteref_5">5</a>. you can have zero, one or many arrows from one object to another
 </div>
 </div>
 </body>

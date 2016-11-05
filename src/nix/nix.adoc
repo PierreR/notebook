@@ -131,7 +131,7 @@ From a nix language point of view, a derivation is simply a set, with some attri
 To build a package, `nixpkgs` makes heavy usage of `stdenv` and its function `mkDerivation`:
 
 ```nix
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "libfoo-${version}"; <1>
   version = "1.2.3"
   src = fetchurl {
@@ -254,11 +254,12 @@ The Haskell package set is not registered in the top-level namespace because it 
 - *-i* install derivations
 +
 ```
-→ nix-env -f '<nixpkgs>' -iA pythonPackages.pyyaml
+→ nix-env -f '<nixpkgs>' -iA pythonPackages.pyyaml <1>
 → nix-env -e python2.7-PyYAML-3.11
-→ nix-env -f '<nixpkgs>' -i brackets -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz’ <1>
+→ nix-env -f '<nixpkgs>' -i brackets -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz’ <2>
 ```
-<1> install from master directly
+<1> on nixos, you might use `nix-env -iA nixos.pythonPackages.pyyaml`
+<2> install from master directly
 
 - *-u* update
 +
@@ -371,40 +372,63 @@ Merge sets::
 e1 // e2 # merge e1 and e2 with e2 taking precedence in case of equally named attribute
 ```
 
-== Idioms
+== Tips and tricks
 
-Override pkgs derivations::
+customize nixpkgs locally::
 +
-[source, nix, highlight="2"]
-----
-pkgs.overridePackages (self: super: {
-  foo = super.foo.override { barSupport = true ; }; <1>
-})
-----
-<1> you may call #override# on much derivations to changes attribute value(s).
-+
-Instead of using #overridePackages# in `~/.nixpkgs/config.nix` you would typically declare a #packageOverrides# function knowing it will be called to customize '<nixpkgs>' locally:
+You can override derivation attributes in user space without forking the `nixpkgs` repository.
+In `~/.nixpkgs/config.nix` you typically declare a `packageOverrides` function and then use `override` to customize attributes:
 +
 .~/.nixpkgs/config.nix
-[source, nix, highlight="2"]
-----
+```nix
 {
-  packageOverrides = super:
+  packageOverrides = super: <1>
     let self = super.pkgs;
+        foo = super.foo.override { barSupport = true ; }; <2>
     in
     {
+      inherit foo;
       haskellPackages = super.haskellPackages.override {
-        overrides = self: super: { <1>
+        overrides = self: super: { <3>
         ...
         };
     };
 }
-----
-<1> override the #overrides# attribute of haskellPackages
+```
+<1> #packageOverrides# takes the original (super) nixpkgs set and return a new (self) record set.
+footnote:[similar to `overrridePackages` which is only used outside of the special `config.nix` for specific use cases]
+<2> call #override# (defined on much derivations) to changes the arguments passed to it.
+<3> override the #overrides# attribute of haskellPackages
+
++
+.override/fix pattern
+****
+....
+fix = f:
+  let self = f self;
+  in self;
+
+extend = attrs: f: self:
+  let super = attrs self;
+  in super // f self super;
+
+ps = self:
+  { foo = "foo"; bar = "bar";
+     foobar = self.foo + self.bar;
+  };
+
+f = self: super:
+  { foo = reverse super.foo; }
+
+(fix ps).foobar # "foobar"
+
+(fix (extend ps f)).foobar # "oofbar"
+....
+****
 
 Private packages::
 +
-You can easily extend `nixpkgs` with private derivations without any forking by writing a custom file:
+You can also extend `nixpkgs` with private derivations without any forking. For instance using a custom file:
 +
 .dotfiles.nix
 ```nix
@@ -447,30 +471,6 @@ You then build the derivation or install it in the user environment.
 → nix-env -f dotfiles.nix -i devbox_dotfiles <1>
 ```
 <1> `nix-env -i` takes the name attribute and strip the version (first numeric after `-`)
-
-Override pattern::
-+
-```nix
-fix = f:
-  let self = f self;
-  in self;
-
-extend = attrs: f: self:
-  let super = attrs self;
-  in super // f self super;
-
-ps = self:
-  { foo = "foo"; bar = "bar";
-     foobar = self.foo + self.bar;
-  };
-
-f = self: super:
-  { foo = reverse super.foo; }
-
-(fix ps).foobar # "foobar"
-
-(fix (extend ps f)).foobar # "oofbar"
-```
 
 Pinned a version of nixpkgs::
 +
