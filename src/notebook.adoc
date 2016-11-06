@@ -54,3 +54,13 @@ include::programming-notes.adoc[]
 include::elasticsearch/es.adoc[]
 
 :leveloffset: 0
+
+++++
+<script>
+(function() {
+    for (var e of document.getElementsByClassName("sidebarblock")) {
+        e.onclick = function () {toggle_display(this)};
+    }
+})();
+</script>
+++++
