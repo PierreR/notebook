@@ -4352,7 +4352,9 @@ REF TYPE BOXES TO VALUES</p>
 </div>
 <script>
 (function() {
-    for (var e of document.getElementsByClassName("sidebarblock")) {
+    var sidetext = document.getElementsByClassName("sidebarblock");
+    for (var i = 0; i < sidetext.length; i++) {
+        var e = sidetext[i];
         var content = e.children[0].children[1].children[0];
         var tri = e.children[0].children[0].children[0];
         // make all sidetext invisible by default
@@ -4361,11 +4363,9 @@ REF TYPE BOXES TO VALUES</p>
             var style = content.style;
             if(style.display == 'block') {
                 style.display = 'none';
-                /* console.log(e.children[0].children[0].classList[1]);*/
                 tri.classList.remove("toggle");
             } else {
                 style.display = 'block';
-                /* console.log(e.children[0].children[0].classList[1]);*/
                 tri.classList.add("toggle");
             }
         }
