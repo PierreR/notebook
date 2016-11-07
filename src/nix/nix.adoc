@@ -401,7 +401,7 @@ footnote:[similar to `overrridePackages` which is only used outside of the speci
 <3> override the #overrides# attribute of haskellPackages
 
 +
-.+++ <div class="tri0 toggle0"></div> +++ override/fix pattern
+.+++ <div class="tri"></div> +++ override/fix pattern
 ****
 ....
 fix = f:

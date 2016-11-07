@@ -59,7 +59,20 @@ include::elasticsearch/es.adoc[]
 <script>
 (function() {
     for (var e of document.getElementsByClassName("sidebarblock")) {
-        e.onclick = function () {toggle_display(this)};
+        var content = e.children[0].children[1].children[0];
+        var tri = e.children[0].children[0].children[0];
+        // make all sidetext invisible by default
+        content.style.display = 'none';
+        e.onclick = function () {
+            var style = content.style;
+            if(style.display == 'block') {
+                style.display = 'none';
+                tri.classList.remove("toggle");
+            } else {
+                style.display = 'block';
+                tri.classList.add("toggle");
+            }
+        }
     }
 })();
 </script>
