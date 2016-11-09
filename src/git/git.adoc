@@ -13,7 +13,7 @@ There are 4 different types of objects:
 
 ## Tips
 
-* Ignore files in all projects but keep this for yourself
+Ignore files in all projects but keep this for yourself::
 
 	. Add to your ~/.gitconfig file
 
@@ -23,3 +23,10 @@ There are 4 different types of objects:
 	```
 
 	. Create a ~/.gitignore file with file patterns to be ignored
+
+
+Delete a range of tags both locally and remotely::
++
+```
+for i in `seq 248 638`; do git tag -d $i; git push --delete origin $i;done
+```

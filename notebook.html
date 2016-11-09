@@ -1141,7 +1141,7 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 <td class="content">
 <div class="paragraph">
 <p><code>nix-env</code> doesn&#8217;t require a starting nix expression. As a consequence, <code>nix-env</code> does not use <code>&lt;nixpkgs&gt;</code> as NIX_PATH. It actually uses <code>~/.nix-defexpr/channels</code>.
-If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code> flag on the command line.</p>
+If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code> (or <code>--file</code>) option on the command line.</p>
 </div>
 </td>
 </tr>
@@ -1232,9 +1232,20 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 </li>
 </ul>
 </div>
-<div class="listingblock">
+<div class="sidebarblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"></code></pre>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<code>nix-pull</code> is deprecated and replaced by the use of <code>binary caches</code>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3865,10 +3876,10 @@ The structure whatever it is characterizes the category.</p>
 </div>
 <div class="sect2">
 <h3 id="_tips">Tips</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Ignore files in all projects but keep this for yourself</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Ignore files in all projects but keep this for yourself</dt>
+<dd>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -3887,8 +3898,16 @@ excludesfile = /home/username/.gitignore
 </li>
 </ol>
 </div>
-</li>
-</ul>
+</dd>
+<dt class="hdlist1">Delete a range of tags both locally and remotely</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-k">for</span> i in <span class="tok-sb">`</span>seq <span class="tok-m">248</span> 638<span class="tok-sb">`</span><span class="tok-p">;</span> <span class="tok-k">do</span> git tag -d <span class="tok-nv">$i</span><span class="tok-p">;</span> git push --delete origin <span class="tok-nv">$i</span><span class="tok-p">;</span><span class="tok-k">done</span></code></pre>
+</div>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -3947,6 +3966,14 @@ excludesfile = /home/username/.gitignore
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">route ADD 192.168.30.0 MASK 255.255.255.0 10.255.10.4</code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">SCP copy</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">scp -i ~/.ssh/user_rsa -r folder user@svifscapl003.prd.srv.cirb.lan:/tmp</code></pre>
 </div>
 </div>
 </dd>

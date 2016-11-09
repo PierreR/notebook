@@ -234,7 +234,7 @@ or without a default.nix file:
 [NOTE]
 ====
 `nix-env` doesn't require a starting nix expression. As a consequence, `nix-env` does not use `<nixpkgs>` as NIX_PATH. It actually uses `~/.nix-defexpr/channels`.
-If you want to use <nixpkgs>, you would explicitly use the `-f` flag on the command line.
+If you want to use <nixpkgs>, you would explicitly use the `-f` (or `--file`) option on the command line.
 ====
 
 - *-q* list installed derivations within a profile
@@ -274,8 +274,9 @@ nix-build tool does two main jobs:
 * nix-instantiate: parse the `.nix` file and return the .drv file
 * nix-store -r: realise the .drv, which actually builds the derivation
 
-```
-```
+****
+WARNING: `nix-pull` is deprecated and replaced by the use of `binary caches`
+****
 
 == Language Expressions
 

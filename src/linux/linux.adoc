@@ -32,6 +32,12 @@ Add route in windows::
 route ADD 192.168.30.0 MASK 255.255.255.0 10.255.10.4
 ```
 
+SCP copy::
++
+```
+scp -i ~/.ssh/user_rsa -r folder user@svifscapl003.prd.srv.cirb.lan:/tmp
+```
+
 ## Definitions
 
 Push (SSE) vs Pull (REQ/REP)::
