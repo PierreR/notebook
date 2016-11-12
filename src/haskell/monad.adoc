@@ -33,33 +33,3 @@ writeSTRef :: STRef s a -> a -> ST s ()
 The reason #ST# is interesting is that it's a primitive monad like IO, allowing computations to perform low-level manipulations on bytearrays and pointers.
 This means that ST can provide a pure interface while using low-level operations on mutable data, meaning it's very fast. From the perspective of the program, it's as if the ST computation runs in a separate thread with thread-local storage.
 
-== MonadPlus
-
-Two operations:
-
-* `mzero`, zero value or failure
-* `mplus`, combine two computations
-
-```
-msum = foldr mplus mzero
-```
-
-In a list, a monadplus will give you the first successful computation or the last zero value. With failures, it really disregards them striving for success:
-```shell
-[Just 1, Just 2, Nothing]              -> Just 1
-[Left "Failing", Right()]              -> Right ()
-[Left "Failing", Left "Failing again"] -> Left "Failing again"
-msum [Left "F", Right "R"]             -> Right "R"
-```
-Note that some monad such as ExceptT are appending (using the monoid instance) the error messages (the `Monoid m => Left m`)  when using `asum` or `msum`.
-
-In 7.10, every MonadPlus are `Alternative` (likewise all monads are applicative).
-In that spirit you should avoid using `mzero` and `mplus` if possible; replacing them with empty and (<|>).
-
-[WARNING]
-
-====
- `(++)` needs to reconstruct the list on the left !
- So this is not efficient [1..10000] ++ [4]
-
-====

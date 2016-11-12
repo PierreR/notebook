@@ -126,14 +126,14 @@ class Contravariant f where
 So here we can adapt the *input* to go from a consumer of input 'a' to a consumer of input 'b'. But to go there you need to provide a function from 'b' to 'a'
 
 
-## Isomorphisms
+== Isomorphisms
 
 Category theory allows us to give a precise, abstract (works for all categories) and self-contained definition of an isomorphism:
 
 An arrow/morphism f: A -> B is called an isomorphism in *C* if there is an arrow g that goes from B to A such that: +
 g ∘ f = 1A and f ∘ g = 1B
 
-## Applicative
+== Applicative
 
 With a functor f it is not possible to apply a function wrapped by the structure `f` to a value wrapped by f. This is given by Applicative:
 
@@ -162,18 +162,37 @@ fmap g x = pure g <*> x
 Applicative functors are to be preferred to monads when the structure of a computation is fixed a priori.
 That makes it possible to perform certain kinds of static analysis on applicative values.
 
-### Alternative
+=== Alternative
 
 An Alternative instance gives an applicative functor the structure of a monoid,
-with empty as the unit element, and <|> as the binary operation.
+with #empty# as the unit element, and #<|># as the binary operation.
 
 ```haskell
 class Applicative f => Alternative f where
   empty :: f a
  (<|>) :: f a -> f a -> f a
+
 ```
 
-## Monad
+#asum#::
+give you the first successful computation or the last zero value. With failures, it really disregards them striving for success. It is defined as:
++
+```
+asum = foldr (<|>) empty
+```
++
+```shell
+[Just 1, Just 2, Nothing]              -> Just 1
+[Left "Failing", Right()]              -> Right ()
+[Left "Failing", Left "Failing again"] -> Left "Failing again"
+asum [Left "F", Right "R"]             -> Right "R"
+```
+Note that some monad such as ExceptT are appending (using the monoid instance) the error messages (the `Monoid m => Left m`)  when using `asum` or `msum`.
+
+NOTE: `MonadPlus` together with `mzero`, `mplus` and `msum` are the monadic equivalents. Since 7.10, all MonadPlus are Alternative (likewise all monads are applicatives).
+so you whould avoid using these and prefer empty, (<|>) and asum.
+
+== Monad
 
 ```haskell
 class Applicative m => Monad m where
@@ -293,6 +312,15 @@ Right cfg -> return . Right . query cfg fp =<< F.newFileCache
 * SDL2/gl for game
 * Web (ghcjs, threepenny, ...)
 
+
+== Pitfall
+
+#(++)# needs to reconstruct the list on the left !
+
+```shell
+# ! inefficient !
+→ [1..10000] ++ [4]
+```
 
 == Useful
 
