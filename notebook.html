@@ -577,12 +577,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_derivation">Derivation</a></li>
 <li><a href="#_channels">Channels</a></li>
 <li><a href="#_nix_shell">Nix-shell</a></li>
-<li><a href="#_commands">Commands</a>
-<ul class="sectlevel4">
-<li><a href="#_nix_env">nix-env</a></li>
-<li><a href="#_nix_build">nix-build</a></li>
-</ul>
-</li>
+<li><a href="#_nix_env">Nix-env</a></li>
+<li><a href="#_nix_build">Nix-build</a></li>
 <li><a href="#_language_expressions">Language Expressions</a></li>
 <li><a href="#_tips_and_tricks">Tips and tricks</a></li>
 <li><a href="#_bootstrap">Bootstrap</a></li>
@@ -1042,7 +1038,8 @@ On <code>nixos</code>, you should stick to <code>nixos-unstable</code> (don&#821
 <p>When Nix builds a package, it builds it in an isolated environment. It does this by creating a clean, child shell, then adding only the dependencies the package declares. After setting up the dependencies, it runs the build script, moves the built app into the Nix store, and sets up the environment to point to it. Finally, it destroys this child shell.</p>
 </div>
 <div class="paragraph">
-<p>But we can ask Nix to not destroy the child shell, and instead let us use it for working iteratively on the app. This is what the <code>nix-shell</code> is about:</p>
+<p>But we can ask Nix to not destroy the child shell, and instead let us use it for working iteratively on the app.
+This is what the <mark>nix-shell</mark> is about: it will build the dependencies of the specified derivation, but <strong>not</strong> the derivation itself.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1058,7 +1055,10 @@ On <code>nixos</code>, you should stick to <code>nixos-unstable</code> (don&#821
 </table>
 </div>
 <div class="paragraph">
-<p>If a path is not given, nix-shell defaults to <code>shell.nix</code> if it exists, and <code>default.nix</code> otherwise. This allows for a nice trick. We can decribe a virtual dev environment (of any sort for any language) by decribing a derivation in <code>default.nix</code> like so:</p>
+<p>If a path is not given, nix-shell defaults to <code>shell.nix</code> if it exists, and <code>default.nix</code> otherwise.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup></p>
+</div>
+<div class="paragraph">
+<p>This allows for a nice trick. We can decribe a virtual dev environment (of any sort for any language) by decribing a derivation in <code>default.nix</code> like so:</p>
 </div>
 <div class="listingblock">
 <div class="title">default.nix</div>
@@ -1072,6 +1072,36 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
   <span class="tok-ss">name =</span> <span class="tok-s2">&quot;haskell-env&quot;</span><span class="tok-p">;</span>
   <span class="tok-ss">buildInputs =</span> <span class="tok-p">[</span> henv pythonPackages<span class="tok-o">.</span>pyyaml<span class="tok-p">];</span>
 <span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+nix-shell will use the <code>NIX_PATH</code> environment variable which by default in user space points to the root nixpkgs channel. That means that (unlike <code>nix-env</code>), even if your channel points to unstable in user space, nix-shell might still use the root stable channel.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can force any script file to run in a nix-shell as such:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env nix-shell</span>
+<span class="tok-c">#! nix-shell -i bash</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or without a default.nix file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env nix-shell</span>
+<span class="tok-c">#! nix-shell -i bash -p pythonPackages.pyyaml -p &#39;(import &lt;nixpkgs&gt; {}).haskellPackages.ghcWithPackages (p: with p; [shake])&#39;</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1106,37 +1136,17 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>You can force any script file to run in a nix-shell as such:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env nix-shell</span>
-<span class="tok-c">#! nix-shell -i bash</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or without a default.nix file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env nix-shell</span>
-<span class="tok-c">#! nix-shell -i bash -p pythonPackages.pyyaml -p &#39;(import &lt;nixpkgs&gt; {}).haskellPackages.ghcWithPackages (p: with p; [shake])&#39;</span></code></pre>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="_commands">Commands</h3>
-<div class="sect4">
-<h5 id="_nix_env">nix-env</h5>
+<h3 id="_nix_env">Nix-env</h3>
 <div class="paragraph">
-<p><code>nix-env</code> is the command to use to search, install, remove packages locally in user space (or profile). These packages are installed in the <code>nix-store</code> but are only accessible inside one environment (aka user/profile).</p>
+<p><mark>nix-env</mark> is the command to use to search, install, remove packages locally in user space (or profile). These packages are installed in the <code>nix-store</code> but are only accessible inside one environment (aka user/profile).</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -1154,11 +1164,11 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 </li>
 <li>
 <p><strong>-qaP</strong> list available package with the path</p>
-<div class="admonitionblock warning">
+<div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -1189,7 +1199,6 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">→ nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -iA pythonPackages.pyyaml <i class="conum" data-value="1"></i><b>(1)</b>
-→ nix-env -e python2.7-PyYAML-3.11
 → nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -i brackets -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs/archive/master.tar.gz’ <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
@@ -1207,18 +1216,26 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 </div>
 </li>
 <li>
+<p><strong>-e</strong> erase</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">→ nix-env -e python2.7-PyYAML-3.11</code></pre>
+</div>
+</div>
+</li>
+<li>
 <p><strong>-u</strong> update</p>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">→ nix-env -u <span class="tok-s1">&#39;*&#39;</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash">→ nix-env -u</code></pre>
 </div>
 </div>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_nix_build">nix-build</h5>
+<div class="sect2">
+<h3 id="_nix_build">Nix-build</h3>
 <div class="paragraph">
 <p>nix-build tool does two main jobs:</p>
 </div>
@@ -1245,7 +1262,6 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 </td>
 </tr>
 </table>
-</div>
 </div>
 </div>
 </div>
@@ -1448,7 +1464,7 @@ In <code>~/.nixpkgs/config.nix</code> you typically declare a <code>packageOverr
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td><mark>packageOverrides</mark> takes the original (super) nixpkgs set and return a new (self) record set.
-<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup></td>
+<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1666,11 +1682,10 @@ with import nixpkgs <span class="tok-o">{}</span><span class="tok-p">;</span></c
 <div class="sect3">
 <h4 id="_type_class">Type class</h4>
 <div class="paragraph">
-<p>Type class enables a (de)limited form of <code>adhoc polymorphism</code> or <code>overloading</code>.
-Each instance implements the same function differently or to say it diffently one function will behave diffently according to the types of its arguments.</p>
+<p>Type classes are in a sense dual to type declarations. Whereas the latter defines how types are created, type class defines how a set of types are consumed.</p>
 </div>
 <div class="paragraph">
-<p>The <code>adhoc polymporphism</code> needs to be delimited as such to play well with <code>parametric polymorphism</code> and keeping the type checking sane.</p>
+<p>When talking about polymorphism, type class enables a form of <code>adhoc polymorphism</code>  or <code>overloading</code> <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup> that needs to be delimited as such to play well with <code>parametric polymorphism</code> and keeping the type checking sane.</p>
 </div>
 <div class="paragraph">
 <p>Type class are not first class in Haskell. They cannot be used in place of type (as you would in Java with interface).</p>
@@ -1683,7 +1698,28 @@ Each instance implements the same function differently or to say it diffently on
 One notable drawback is that each type can have at most one implementation of the type class.</p>
 </div>
 <div class="paragraph">
-<p><mark>Eq</mark>, <mark>Num</mark>, <mark>Show</mark> are classical examples.</p>
+<p><mark>Eq</mark>, <mark>Show</mark>, <mark>Num</mark>, <mark>Integral</mark>, <mark>Ord</mark>, <mark>Enum</mark> are classical examples.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">Num</span> <span class="tok-n">a</span> <span class="tok-kr">where</span>
+  <span class="tok-p">(</span><span class="tok-o">+</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span>
+  <span class="tok-p">(</span><span class="tok-o">*</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span>
+  <span class="tok-p">(</span><span class="tok-o">-</span><span class="tok-p">)</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span>
+  <span class="tok-n">negate</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span>
+  <span class="tok-n">abs</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span>
+  <span class="tok-n">signum</span> <span class="tok-ow">::</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span>
+  <span class="tok-n">fromInteger</span> <span class="tok-ow">::</span> <span class="tok-kt">Integer</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">a</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Using <mark>enumFromTo</mark> from the Enum type class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">→ enumFromTo 3 8     -&gt; [3,4,5,6,7,8]
+→ enumFromTo &#39;a&#39; &#39;f&#39; -&gt; &quot;abcdef&quot;</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p><span class="icon"><i class="fa fa-info-circle fa-1x"></i></span> In Scala, type-classes are types themselves, and instances are first class values.</p>
@@ -1928,10 +1964,9 @@ with <mark>empty</mark> as the unit element, and <mark>&lt;|&gt;</mark> as the b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">[Just 1, Just 2, Nothing]              -&gt; Just 1
-[Left &quot;Failing&quot;, Right()]              -&gt; Right ()
-[Left &quot;Failing&quot;, Left &quot;Failing again&quot;] -&gt; Left &quot;Failing again&quot;
-asum [Left &quot;F&quot;, Right &quot;R&quot;]             -&gt; Right &quot;R&quot;</code></pre>
+<pre class="pygments highlight"><code data-lang="shell">→ asum [Just 1, Just 2, Nothing]              -&gt; Just 1
+→ asum [Left &quot;Failing&quot;, Right()]              -&gt; Right ()
+→ asum [Left &quot;Failing&quot;, Left &quot;Failing again&quot;] -&gt; Left &quot;Failing again&quot;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2203,7 +2238,7 @@ fix f = f (fix f)</p>
 <p>Folding is the act of reducing a structure to a single value.</p>
 </div>
 <div class="paragraph">
-<p>We can see them as consumers or <code>comonads</code>.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup></p>
+<p>We can see them as consumers or <code>comonads</code>.<sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup></p>
 </div>
 </div>
 <div class="sect3">
@@ -2641,7 +2676,7 @@ Nothing</code></pre>
 <div class="sect3">
 <h4 id="_st">ST</h4>
 <div class="paragraph">
-<p>The ST<sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup> monad lets you use update-in-place, but unlike IO it is escapable.
+<p>The ST<sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup> monad lets you use update-in-place, but unlike IO it is escapable.
 This means it uses system trickery to ensure that mutable data can&#8217;t escape the monad; that is, when you run an ST computation you get a pure result.</p>
 </div>
 <div class="paragraph">
@@ -3815,9 +3850,9 @@ In category theory we never look inside objects. All information about objects i
 <dl>
 <dt class="hdlist1">definition</dt>
 <dd>
-<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup>.
+<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup>.
 The objects have not structure or meaning, actually they only serve to mark the beginning or end of an arrow.
-Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup> that preverse a <code>structure</code>.
+Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup> that preverse a <code>structure</code>.
 The structure whatever it is characterizes the category.</p>
 <div class="ulist">
 <ul>
@@ -4375,7 +4410,9 @@ REF TYPE BOXES TO VALUES</p>
     var sidetext = document.getElementsByClassName("sidebarblock");
     for (var i = 0; i < sidetext.length; i++) {
         var e = sidetext[i];
-        var content = e.children[0].children[1].children[0];
+        try {
+          var content = e.children[0].children[1].children[0];
+        } catch (e) { continue;}
         var tri = e.children[0].children[0].children[0];
         // make all sidetext invisible by default
         content.style.display = 'none';
@@ -4399,19 +4436,25 @@ REF TYPE BOXES TO VALUES</p>
 <div id="footnotes">
 <hr>
 <div class="footnote" id="_footnote_1">
-<a href="#_footnoteref_1">1</a>. similar to <code>overrridePackages</code> which is only used outside of the special <code>config.nix</code> for specific use cases
+<a href="#_footnoteref_1">1</a>. If no such files exists, it will default to <code>&lt;nixpkgs&gt;</code>
 </div>
 <div class="footnote" id="_footnote_2">
-<a href="#_footnoteref_2">2</a>. Unfolding is then associated to producers or <code>monads</code>.
+<a href="#_footnoteref_2">2</a>. similar to <code>overrridePackages</code> which is only used outside of the special <code>config.nix</code> for specific use cases
 </div>
 <div class="footnote" id="_footnote_3">
-<a href="#_footnoteref_3">3</a>. state monad transformer.
+<a href="#_footnoteref_3">3</a>. Each instance implements the same function differently or to say it  diffently one function will behave diffently according to the types of its arguments
 </div>
 <div class="footnote" id="_footnote_4">
-<a href="#_footnoteref_4">4</a>. also called arrows
+<a href="#_footnoteref_4">4</a>. Unfolding is then associated to producers or <code>monads</code>.
 </div>
 <div class="footnote" id="_footnote_5">
-<a href="#_footnoteref_5">5</a>. you can have zero, one or many arrows from one object to another
+<a href="#_footnoteref_5">5</a>. state monad transformer.
+</div>
+<div class="footnote" id="_footnote_6">
+<a href="#_footnoteref_6">6</a>. also called arrows
+</div>
+<div class="footnote" id="_footnote_7">
+<a href="#_footnoteref_7">7</a>. you can have zero, one or many arrows from one object to another
 </div>
 </div>
 </body>

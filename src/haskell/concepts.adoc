@@ -3,10 +3,9 @@
 
 == Type class
 
-Type class enables a (de)limited form of `adhoc polymorphism` or `overloading`.
-Each instance implements the same function differently or to say it diffently one function will behave diffently according to the types of its arguments.
+Type classes are in a sense dual to type declarations. Whereas the latter defines how types are created, type class defines how a set of types are consumed.
 
-The `adhoc polymporphism` needs to be delimited as such to play well with `parametric polymorphism` and keeping the type checking sane.
+When talking about polymorphism, type class enables a form of `adhoc polymorphism`  or `overloading` footnote:[Each instance implements the same function differently or to say it  diffently one function will behave diffently according to the types of its arguments] that needs to be delimited as such to play well with `parametric polymorphism` and keeping the type checking sane.
 
 Type class are not first class in Haskell. They cannot be used in place of type (as you would in Java with interface).
 
@@ -15,7 +14,23 @@ It is internally implemented as *_dictionnary passing_*: `ghc` puts the methods 
 It is best to look at them as a set of constraints on type.
 One notable drawback is that each type can have at most one implementation of the type class.
 
-#Eq#, #Num#, #Show# are classical examples.
+#Eq#, #Show#, #Num#, #Integral#, #Ord#, #Enum# are classical examples.
+
+```
+class Num a where
+  (+) :: a -> a -> a
+  (*) :: a -> a -> a
+  (-) :: a -> a -> a
+  negate :: a -> a
+  abs :: a -> a
+  signum :: a -> a
+  fromInteger :: Integer -> a
+```
+Using #enumFromTo# from the Enum type class:
+```shell
+→ enumFromTo 3 8     -> [3,4,5,6,7,8]
+→ enumFromTo 'a' 'f' -> "abcdef"
+```
 
 icon:info-circle[1x] In Scala, type-classes are types themselves, and instances are first class values.
 
@@ -182,10 +197,9 @@ asum = foldr (<|>) empty
 ```
 +
 ```shell
-[Just 1, Just 2, Nothing]              -> Just 1
-[Left "Failing", Right()]              -> Right ()
-[Left "Failing", Left "Failing again"] -> Left "Failing again"
-asum [Left "F", Right "R"]             -> Right "R"
+→ asum [Just 1, Just 2, Nothing]              -> Just 1
+→ asum [Left "Failing", Right()]              -> Right ()
+→ asum [Left "Failing", Left "Failing again"] -> Left "Failing again"
 ```
 Note that some monad such as ExceptT are appending (using the monoid instance) the error messages (the `Monoid m => Left m`)  when using `asum` or `msum`.
 

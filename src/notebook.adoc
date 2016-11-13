@@ -61,7 +61,9 @@ include::elasticsearch/es.adoc[]
     var sidetext = document.getElementsByClassName("sidebarblock");
     for (var i = 0; i < sidetext.length; i++) {
         var e = sidetext[i];
-        var content = e.children[0].children[1].children[0];
+        try {
+          var content = e.children[0].children[1].children[0];
+        } catch (e) { continue;}
         var tri = e.children[0].children[0].children[0];
         // make all sidetext invisible by default
         content.style.display = 'none';
