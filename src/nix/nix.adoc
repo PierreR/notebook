@@ -1,5 +1,12 @@
 = Nix
 
+== Description
+
+Nix is not a configuration management tool alike `Puppet`, `Chef` or `Salt`. It is more accurately described as a (universal) package manager.
+
+In that regard, unless you are running `nixos`, `disnix` (or use other tricks), nix won't configure systemd services for instance.
+Nix only operates on its store (usually located in '/nix') to gather packages called `derivations` in nix parlance.
+
 == NixOS
 
 === icon:tasks[] Install
@@ -124,7 +131,7 @@ for `wifi`, manually configure it by using `NetworkManager` through the `nmtui` 
 
 == Derivation
 
-In nix, packages are called derivations. Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it's a little more complex than this), and name is the name of the derivation.
+Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it's a little more complex than this), and name is the name of the derivation.
 
 From a nix language point of view, a derivation is simply a set, with some attributes.
 
@@ -204,9 +211,16 @@ stdenv.mkDerivation {
 }
 ```
 
-WARNING: nix-shell will use the `NIX_PATH` environment variable which by default in user space points to the root nixpkgs channel. That means that (unlike `nix-env`), even if your channel points to unstable in user space, nix-shell might still use the root stable channel.
+[WARNING]
+====
+nix-shell will use the `NIX_PATH` environment variable which by default in user space points to the root nixpkgs channel. That means that (unlike `nix-env`), even if your channel points to unstable in user space, nix-shell might still use the root stable channel. You can change that behavior by running for instance:
 
-You can force any script file to run in a nix-shell as such:
+```
+nix-shell  while every dockers inside a node is running with `--dns 172.17.0.1`:footnote[testing.nix -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archiv.e/nixos-uns the e.tar.gz
+```
+====
+
+You can foalways rce any sc]ript file to run in a nix-shell as such:
 ```
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash
@@ -244,18 +258,22 @@ If you want to use <nixpkgs>, you would explicitly use the `-f` (or `--file`) op
 
 - *-q* list installed derivations within a profile
 - *-qaP* list available package with the path
-+
-[NOTE]
-====
-The Haskell package set is not registered in the top-level namespace because it is huge. As a consequence, when searching for haskell  packages you need to provide the `haskellPackages` attribute:
-```
-→ nix-env -f '<nixpkgs>' -qaP -A haskellPackages.shake <1>
-# In nixos, you can also do:
-→ nix-env -qaP -A nixos.pythonPackages
-```
-<1> together with `-A`, `-f` needs to be provided.
 
-====
+When searching for packages, it is usually more efficient to specify a namespace attribute using the `-A` option.
+
+```
+# in nixos:
+→ nix-env -qaP -A nixos.haskellPackages
+→ nix-env -qaP -A nixos.pythonPackages
+# outside nixos:
+→ nix-env -qaP -A nixpkgs.pythonPackages
+```
+You can also omit the channel namespace and specify the input for `nixpkgs` explicitly with the `-f` option:
+
+```
+→ nix-env -f '<nixpkgs>' -qaP -A haskellPackages.shake --description
+```
+
 - *-i* install derivations
 +
 ```

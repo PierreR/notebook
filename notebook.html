@@ -1081,7 +1081,14 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-nix-shell will use the <code>NIX_PATH</code> environment variable which by default in user space points to the root nixpkgs channel. That means that (unlike <code>nix-env</code>), even if your channel points to unstable in user space, nix-shell might still use the root stable channel.
+<div class="paragraph">
+<p>nix-shell will use the <code>NIX_PATH</code> environment variable which by default in user space points to the root nixpkgs channel. That means that (unlike <code>nix-env</code>), even if your channel points to unstable in user space, nix-shell might still use the root stable channel. You can change that behavior by running for instance:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">nix-shell testing.nix -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz</code></pre>
+</div>
+</div>
 </td>
 </tr>
 </table>
