@@ -1,6 +1,5 @@
 = Nix
 
-== Description
 
 Nix is not a configuration management tool alike `Puppet`, `Chef` or `Salt`. It is more accurately described as a (universal) package manager.
 

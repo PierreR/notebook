@@ -740,6 +740,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_nix">Nix</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Nix is not a configuration management tool alike <code>Puppet</code>, <code>Chef</code> or <code>Salt</code>. It is more accurately described as a (universal) package manager.</p>
+</div>
+<div class="paragraph">
+<p>In that regard, unless you are running <code>nixos</code>, <code>disnix</code> (or use other tricks), nix won&#8217;t configure systemd services for instance.
+Nix only operates on its store (usually located in '/nix') to gather packages called <code>derivations</code> in nix parlance.</p>
+</div>
 <div class="sect2">
 <h3 id="_nixos">NixOS</h3>
 <div class="sect3">
@@ -936,7 +943,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_derivation">Derivation</h3>
 <div class="paragraph">
-<p>In nix, packages are called derivations. Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it&#8217;s a little more complex than this), and name is the name of the derivation.</p>
+<p>Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it&#8217;s a little more complex than this), and name is the name of the derivation.</p>
 </div>
 <div class="paragraph">
 <p>From a nix language point of view, a derivation is simply a set, with some attributes.</p>
@@ -1086,7 +1093,7 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">nix-shell testing.nix -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz</code></pre>
+<pre class="pygments highlight"><code data-lang="bash">nix-shell  <span class="tok-k">while</span> every dockers inside a node is running with <span class="tok-sb">`</span>--dns 172.17.0.1<span class="tok-sb">`</span>:footnote<span class="tok-o">[</span>testing.nix -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs-channels/archiv.e/nixos-uns the e.tar.gz</code></pre>
 </div>
 </div>
 </td>
@@ -1094,7 +1101,7 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </table>
 </div>
 <div class="paragraph">
-<p>You can force any script file to run in a nix-shell as such:</p>
+<p>You can foalways rce any sc]ript file to run in a nix-shell as such:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1171,36 +1178,31 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 </li>
 <li>
 <p><strong>-qaP</strong> list available package with the path</p>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
+</li>
+</ul>
+</div>
 <div class="paragraph">
-<p>The Haskell package set is not registered in the top-level namespace because it is huge. As a consequence, when searching for haskell  packages you need to provide the <code>haskellPackages</code> attribute:</p>
+<p>When searching for packages, it is usually more efficient to specify a namespace attribute using the <code>-A</code> option.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">→ nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -qaP -A haskellPackages.shake <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="tok-c"># In nixos, you can also do:</span>
-→ nix-env -qaP -A nixos.pythonPackages</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># in nixos:</span>
+→ nix-env -qaP -A nixos.haskellPackages
+→ nix-env -qaP -A nixos.pythonPackages
+<span class="tok-c"># outside nixos:</span>
+→ nix-env -qaP -A nixpkgs.pythonPackages</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>together with <code>-A</code>, <code>-f</code> needs to be provided.</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>You can also omit the channel namespace and specify the input for <code>nixpkgs</code> explicitly with the <code>-f</code> option:</p>
 </div>
-</td>
-</tr>
-</table>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">→ nix-env -f <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -qaP -A haskellPackages.shake --description</code></pre>
 </div>
-</li>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p><strong>-i</strong> install derivations</p>
 <div class="listingblock">
