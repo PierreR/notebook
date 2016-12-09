@@ -215,11 +215,11 @@ stdenv.mkDerivation {
 nix-shell will use the `NIX_PATH` environment variable which by default in user space points to the root nixpkgs channel. That means that (unlike `nix-env`), even if your channel points to unstable in user space, nix-shell might still use the root stable channel. You can change that behavior by running for instance:
 
 ```
-nix-shell  while every dockers inside a node is running with `--dns 172.17.0.1`:footnote[testing.nix -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archiv.e/nixos-uns the e.tar.gz
+nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz
 ```
 ====
 
-You can foalways rce any sc]ript file to run in a nix-shell as such:
+You can force any script file to run in a nix-shell as such:
 ```
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash
