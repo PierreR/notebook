@@ -1093,7 +1093,7 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">nix-shell  <span class="tok-k">while</span> every dockers inside a node is running with <span class="tok-sb">`</span>--dns 172.17.0.1<span class="tok-sb">`</span>:footnote<span class="tok-o">[</span>testing.nix -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs-channels/archiv.e/nixos-uns the e.tar.gz</code></pre>
+<pre class="pygments highlight"><code data-lang="bash">nix-shell -I <span class="tok-nv">nixpkgs</span><span class="tok-o">=</span>https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz</code></pre>
 </div>
 </div>
 </td>
@@ -1101,7 +1101,7 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </table>
 </div>
 <div class="paragraph">
-<p>You can foalways rce any sc]ript file to run in a nix-shell as such:</p>
+<p>You can force any script file to run in a nix-shell as such:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1462,7 +1462,7 @@ In <code>~/.nixpkgs/config.nix</code> you typically declare a <code>packageOverr
       <span class="tok-k">inherit</span> foo<span class="tok-p">;</span>
       <span class="tok-ss">haskellPackages =</span> super<span class="tok-o">.</span>haskellPackages<span class="tok-o">.</span>override <span class="tok-p">{</span>
         <span class="tok-ss">overrides =</span> self<span class="tok-p">:</span> super<span class="tok-p">:</span> <span class="tok-p">{</span> <i class="conum" data-value="3"></i><b>(3)</b>
-        <span class="tok-o">...</span>
+          <span class="tok-ss">language-puppet_1_3_3 =</span> self<span class="tok-o">.</span>callPackage <span class="tok-o">.</span><span class="tok-l">/pkgs/language-puppet</span> <span class="tok-p">{</span><span class="tok-k">inherit</span> foo<span class="tok-p">;};</span> <i class="conum" data-value="4"></i><b>(4)</b>
         <span class="tok-p">};</span>
     <span class="tok-p">};</span>
 <span class="tok-p">}</span></code></pre>
@@ -1482,6 +1482,10 @@ In <code>~/.nixpkgs/config.nix</code> you typically declare a <code>packageOverr
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>override the <mark>overrides</mark> attribute of haskellPackages</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>key = value of the return set</td>
 </tr>
 </table>
 </div>

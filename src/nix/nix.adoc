@@ -418,7 +418,7 @@ In `~/.nixpkgs/config.nix` you typically declare a `packageOverrides` function a
       inherit foo;
       haskellPackages = super.haskellPackages.override {
         overrides = self: super: { <3>
-        ...
+          language-puppet_1_3_3 = self.callPackage ./pkgs/language-puppet {inherit foo;}; <4>
         };
     };
 }
@@ -427,7 +427,7 @@ In `~/.nixpkgs/config.nix` you typically declare a `packageOverrides` function a
 footnote:[similar to `overrridePackages` which is only used outside of the special `config.nix` for specific use cases]
 <2> call #override# (defined on much derivations) to changes the arguments passed to it.
 <3> override the #overrides# attribute of haskellPackages
-
+<4> key = value of the return set
 +
 .+++ <div class="tri"></div> +++ override/fix pattern
 ****
