@@ -37,3 +37,31 @@ sh :: MonadIO io => Shell a -> io ()
 ```
 
 Shell` is also an instance of `MonadPlus` (and thus Alternative). So you can concatenate two Shell streams using `<|>`.
+
+== Command line options
+
+
+```
+data Command
+  = Console
+  | Stack (Maybe StackName, StackCommand)
+  deriving (Show)
+
+commandParser :: Parser Command
+commandParser =
+      Console <$  subcommand "console" "Help msg" (pure ())
+  <|> Stack   <$> subcommand "stack" "Help msg" stackParser <1>
+```
+<1> remaining parser (after 'stack')
+
+[WARNING]
+====
+When using a group you will need a single datatype to extract the value of the rest of the command.
+Don't do this:
+```
+data Command = Stack Int Text
+
+commandParser :: Parser Command
+commandParser = Stack <$> subcommand "stack" "Help" intParser <*> textParser
+```
+====
