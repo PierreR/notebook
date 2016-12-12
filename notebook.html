@@ -637,6 +637,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_example">Example</a></li>
 </ul>
 </li>
+<li><a href="#_turtle">Turtle</a>
+<ul class="sectlevel3">
+<li><a href="#_streams">Streams</a></li>
+<li><a href="#_command_line_options">Command line options</a></li>
+</ul>
+</li>
 <li><a href="#_pipes">Pipes</a>
 <ul class="sectlevel3">
 <li><a href="#_primitives">Primitives</a></li>
@@ -2780,6 +2786,100 @@ Let&#8217;s take as an example, the task of running a test suite.</p>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>One of the top target. It is a phony rule because it does not produce anything.
 &lt;3&gt;</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_turtle">Turtle</h3>
+<div class="paragraph">
+<p>Pierre Radermecker &lt;<a href="mailto:pierrer@pi3r.be">pierrer@pi3r.be</a>&gt;
+2015
+:language: haskell
+:source-highlighter: pygments
+<a href="https://github.com/Gabriel439/Haskell-Turtle-Library">Github</a></p>
+</div>
+<div class="sect3">
+<h4 id="_streams">Streams</h4>
+<div class="paragraph">
+<p>The Shell monad represents a stream of values. You can think of Shell as <code>[] + IO + Managed</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">newtype</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">Shell</span> <span class="tok-p">{</span> <span class="tok-n">_foldIO</span> <span class="tok-ow">::</span> <span class="tok-n">forall</span> <span class="tok-n">r</span> <span class="tok-o">.</span> <span class="tok-kt">FoldM</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">r</span> <span class="tok-p">}</span>
+
+
+<span class="tok-c1">-- invoke any external shell command</span>
+<span class="tok-nf">shell</span>
+    <span class="tok-ow">::</span> <span class="tok-kt">Text</span>        <span class="tok-c1">-- Command line</span>
+    <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span>  <span class="tok-c1">-- Standard input to feed to program</span>
+    <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-kt">ExitCode</span>
+
+<span class="tok-nf">select</span> <span class="tok-ow">::</span>        <span class="tok-p">[</span><span class="tok-n">a</span><span class="tok-p">]</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
+<span class="tok-nf">liftIO</span> <span class="tok-ow">::</span>      <span class="tok-kt">IO</span> <span class="tok-n">a</span>  <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
+<span class="tok-nf">using</span>  <span class="tok-ow">::</span> <span class="tok-kt">Managed</span> <span class="tok-n">a</span>  <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
+
+<span class="tok-c1">-- usual construction primitive</span>
+<span class="tok-nf">empty</span> <span class="tok-ow">::</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
+
+<span class="tok-c1">-- embed a shell cmd as streams</span>
+<span class="tok-nf">inshell</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span>
+
+<span class="tok-c1">-- consume the stream by printing it to stdout</span>
+<span class="tok-nf">view</span>   <span class="tok-ow">::</span> <span class="tok-kt">Show</span> <span class="tok-n">a</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span>
+<span class="tok-nf">stdout</span> <span class="tok-ow">::</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span>
+<span class="tok-c1">-- consume the (side-effect) stream, discarding any unused values</span>
+<span class="tok-nf">sh</span> <span class="tok-ow">::</span> <span class="tok-kt">MonadIO</span> <span class="tok-n">io</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">io</span> <span class="tok-nb">()</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Shell` is also an instance of <code>MonadPlus</code> (and thus Alternative). So you can concatenate two Shell streams using <code>&lt;|&gt;</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_command_line_options">Command line options</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">data</span> <span class="tok-kt">Command</span>
+  <span class="tok-ow">=</span> <span class="tok-kt">Console</span>
+  <span class="tok-o">|</span> <span class="tok-kt">Stack</span> <span class="tok-p">(</span><span class="tok-kt">Maybe</span> <span class="tok-kt">StackName</span><span class="tok-p">,</span> <span class="tok-kt">StackCommand</span><span class="tok-p">)</span>
+  <span class="tok-kr">deriving</span> <span class="tok-p">(</span><span class="tok-kt">Show</span><span class="tok-p">)</span>
+
+<span class="tok-nf">commandParser</span> <span class="tok-ow">::</span> <span class="tok-kt">Parser</span> <span class="tok-kt">Command</span>
+<span class="tok-nf">commandParser</span> <span class="tok-ow">=</span>
+      <span class="tok-kt">Console</span> <span class="tok-o">&lt;$</span>  <span class="tok-n">subcommand</span> <span class="tok-s">&quot;console&quot;</span> <span class="tok-s">&quot;Help msg&quot;</span> <span class="tok-p">(</span><span class="tok-n">pure</span> <span class="tok-nb">()</span><span class="tok-p">)</span>
+  <span class="tok-o">&lt;|&gt;</span> <span class="tok-kt">Stack</span>   <span class="tok-o">&lt;$&gt;</span> <span class="tok-n">subcommand</span> <span class="tok-s">&quot;stack&quot;</span> <span class="tok-s">&quot;Help msg&quot;</span> <span class="tok-n">stackParser</span> <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>remaining parser (after 'stack')</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When using a group you will need a single datatype to extract the value of the rest of the command.
+Don&#8217;t do this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">data</span> <span class="tok-kt">Command</span> <span class="tok-ow">=</span> <span class="tok-kt">Stack</span> <span class="tok-kt">Int</span> <span class="tok-kt">Text</span>
+
+<span class="tok-nf">commandParser</span> <span class="tok-ow">::</span> <span class="tok-kt">Parser</span> <span class="tok-kt">Command</span>
+<span class="tok-nf">commandParser</span> <span class="tok-ow">=</span> <span class="tok-kt">Stack</span> <span class="tok-o">&lt;$&gt;</span> <span class="tok-n">subcommand</span> <span class="tok-s">&quot;stack&quot;</span> <span class="tok-s">&quot;Help&quot;</span> <span class="tok-n">intParser</span> <span class="tok-o">&lt;*&gt;</span> <span class="tok-n">textParser</span></code></pre>
+</div>
+</div>
+</td>
 </tr>
 </table>
 </div>

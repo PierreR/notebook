@@ -1,4 +1,4 @@
-= Haskell: Turtle
+=  Turtle
 Pierre Radermecker <pierrer@pi3r.be>
 2015
 :language: haskell
@@ -36,7 +36,7 @@ stdout :: Shell Text -> IO ()
 sh :: MonadIO io => Shell a -> io ()
 ```
 
-Shell` is also an instance of `MonadPlus` (and thus Alternative). So you can concatenate two Shell streams using `<|>`.
+`Shell` is also an instance of `MonadPlus` (and thus Alternative). So you can concatenate two Shell streams using `<|>`.
 
 == Command line options
 

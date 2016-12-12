@@ -31,6 +31,8 @@ include::haskell/monad.adoc[]
 
 include::haskell/shake.adoc[]
 
+include::haskell/turtle.adoc[]
+
 include::haskell/pipes.adoc[]
 
 include::haskell/convention.adoc[]
