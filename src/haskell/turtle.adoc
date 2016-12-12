@@ -1,7 +1,7 @@
 =  Turtle
 == Streams
 
-The Shell monad represents a stream of values. You can think of Shell as `[] + IO + Managed`.
+The #Shell# type represents a stream of values. You can think of Shell as `[] + IO + Managed`.
 
 ```
 newtype Shell a = Shell { _foldIO :: forall r . FoldM IO a r -> IO r }
