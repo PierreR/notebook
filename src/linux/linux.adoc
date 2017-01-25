@@ -23,6 +23,14 @@ pandoc --latex-engine=xelatex -o blog.pdf http://blog.jakubarnold.cz/2014/07/22/
 - `lvextend -L+12G /dev/system_vg/data`
 - `xfs_growfs /dev/system_vg/data`
 
+or by adding a new disk using puppet :
+
+- add a new disk on the VCloud
+- after a few delay, VCloud will automatically create a new partition for instance '/dev/sdd'
+- add this new partition as a new physical volume: `pvcreate /dev/sdd`. You can see it with `pvs`
+- `vgextend vg_rhel /dev/sdd` (the name to 'vg_rhel' is fixed for our new RHEL 7 template)
+- `puppet agent -t` will now create a new lv `nix`. You can see it with `lvs`
+
 
 ## Tips
 
@@ -45,4 +53,3 @@ Push (SSE) vs Pull (REQ/REP)::
 Application layer:: HTTP, SNMP, AMQP, XMPP, IRC, DHCP, WebDAV, SSH, FTP, SIP, Telnet
 
 Transport layer:: TCP, UDP (SCTP)
-
