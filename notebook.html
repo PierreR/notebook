@@ -3435,11 +3435,11 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-o">#!</span> <span class="tok-o">/</span><span class="tok-n">usr</span><span class="tok-o">/</span><span class="tok-n">bin</span><span class="tok-o">/</span><span class="tok-n">env</span> <span class="tok-n">bash</span>
-<span class="tok-nf">readarray</span> <span class="tok-n">arr</span> <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-o">$</span><span class="tok-p">(</span><span class="tok-n">dhall</span> <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-n">&#39;</span><span class="tok-p">(</span><span class="tok-o">./</span><span class="tok-n">config</span><span class="tok-o">/</span><span class="tok-n">box</span> <span class="tok-p">)</span><span class="tok-o">.</span><span class="tok-n">userStacks&#39;</span> <span class="tok-mi">2</span><span class="tok-o">&gt;</span> <span class="tok-o">/</span><span class="tok-n">dev</span><span class="tok-o">/</span><span class="tok-n">null</span> <span class="tok-o">|</span> <span class="tok-n">jq</span> <span class="tok-o">-</span><span class="tok-n">r</span> <span class="tok-n">&#39;join</span> <span class="tok-p">(</span><span class="tok-s">&quot; &quot;</span><span class="tok-p">)</span><span class="tok-n">&#39;</span><span class="tok-p">)</span>
-<span class="tok-nf">for</span> <span class="tok-n">s</span> <span class="tok-kr">in</span> <span class="tok-o">$</span><span class="tok-p">{</span><span class="tok-n">arr</span><span class="tok-p">};</span> <span class="tok-kr">do</span>
-    <span class="tok-n">echo</span> <span class="tok-s">&quot;$s&quot;</span>
-<span class="tok-nf">done</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env bash</span>
+readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</span>dhall <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-s1">&#39;(./config/box ).userStacks&#39;</span> 2&gt; /dev/null <span class="tok-p">|</span> jq -r <span class="tok-s1">&#39;join (&quot; &quot;)&#39;</span><span class="tok-k">)</span>
+<span class="tok-k">for</span> s in <span class="tok-k">${</span><span class="tok-nv">arr</span><span class="tok-k">}</span><span class="tok-p">;</span> <span class="tok-k">do</span>
+    <span class="tok-nb">echo</span> <span class="tok-s2">&quot;$s&quot;</span>
+<span class="tok-k">done</span></code></pre>
 </div>
 </div>
 </div>

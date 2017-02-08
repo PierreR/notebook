@@ -38,7 +38,7 @@ main = do
   configure (box_config^.userName.strict) (box_config^.userEmail.strict)
 ```
 
-```
+```bash
 #! /usr/bin/env bash
 readarray arr <<< $(dhall <<< '(./config/box ).userStacks' 2> /dev/null | jq -r 'join (" ")')
 for s in ${arr}; do
