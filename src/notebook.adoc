@@ -35,6 +35,8 @@ include::haskell/turtle.adoc[]
 
 include::haskell/pipes.adoc[]
 
+include::haskell/dhall.adoc[]
+
 include::haskell/convention.adoc[]
 
 include::haskell/includes.adoc[]

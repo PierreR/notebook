@@ -1,0 +1,47 @@
+=  Dhall
+Dhall is a programming language specialized for configuration files.
+
+./config/box
+```
+{ userName         = ""
+, userEmail        = ""
+, userStacks       = ["bos", "irisbox"]
+, plugins          = True
+, mrRepoUrl        = "git://github.com/CIRB/vcsh_mr_template.git"
+}
+```
+
+```
+{-# LANGUAGE DeriveGeneric #-}
+
+data BoxConfig
+  = BoxConfig
+  { _userName        :: LText <1>
+  , _userEmail       :: LText
+  , _userStacks      :: Vector LText <2>
+  , _plugins         :: Bool
+  , _mrRepoUrl       :: LText
+  } deriving (Generic, Show)
+
+makeLenses ''BoxConfig
+
+instance Interpret BoxConfig
+```
+<1> Dhall uses lazy text by default
+<2> Dhall uses vector instead of list
+
+
+```
+main :: IO ()
+main = do
+  box_config  <- Dhall.input auto "./config/box"
+  configure (box_config^.userName.strict) (box_config^.userEmail.strict)
+```
+
+```
+#! /usr/bin/env bash
+readarray arr <<< $(dhall <<< '(./config/box ).userStacks' 2> /dev/null | jq -r 'join (" ")')
+for s in ${arr}; do
+    echo "$s"
+done
+```

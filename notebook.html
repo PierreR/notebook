@@ -658,6 +658,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_resources">Resources</a></li>
 </ul>
 </li>
+<li><a href="#_dhall">Dhall</a></li>
 <li><a href="#_naming_convention">Naming convention</a>
 <ul class="sectlevel3">
 <li><a href="#_algebraic_data_type">Algebraic Data Type</a></li>
@@ -3379,6 +3380,70 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 </div>
 </div>
 <div class="sect2">
+<h3 id="_dhall">Dhall</h3>
+<div class="paragraph">
+<p>Dhall is a programming language specialized for configuration files.</p>
+</div>
+<div class="listingblock">
+<div class="title">/config/box</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-p">{</span> <span class="tok-n">userName</span>         <span class="tok-ow">=</span> <span class="tok-s">&quot;&quot;</span>
+<span class="tok-p">,</span> <span class="tok-n">userEmail</span>        <span class="tok-ow">=</span> <span class="tok-s">&quot;&quot;</span>
+<span class="tok-p">,</span> <span class="tok-n">userStacks</span>       <span class="tok-ow">=</span> <span class="tok-p">[</span><span class="tok-s">&quot;bos&quot;</span><span class="tok-p">,</span> <span class="tok-s">&quot;irisbox&quot;</span><span class="tok-p">]</span>
+<span class="tok-p">,</span> <span class="tok-n">plugins</span>          <span class="tok-ow">=</span> <span class="tok-kt">True</span>
+<span class="tok-p">,</span> <span class="tok-n">mrRepoUrl</span>        <span class="tok-ow">=</span> <span class="tok-s">&quot;git://github.com/CIRB/vcsh_mr_template.git&quot;</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-cm">{-# LANGUAGE DeriveGeneric #-}</span>
+
+<span class="tok-kr">data</span> <span class="tok-kt">BoxConfig</span>
+  <span class="tok-ow">=</span> <span class="tok-kt">BoxConfig</span>
+  <span class="tok-p">{</span> <span class="tok-n">_userName</span>        <span class="tok-ow">::</span> <span class="tok-kt">LText</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tok-p">,</span> <span class="tok-n">_userEmail</span>       <span class="tok-ow">::</span> <span class="tok-kt">LText</span>
+  <span class="tok-p">,</span> <span class="tok-n">_userStacks</span>      <span class="tok-ow">::</span> <span class="tok-kt">Vector</span> <span class="tok-kt">LText</span> <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="tok-p">,</span> <span class="tok-n">_plugins</span>         <span class="tok-ow">::</span> <span class="tok-kt">Bool</span>
+  <span class="tok-p">,</span> <span class="tok-n">_mrRepoUrl</span>       <span class="tok-ow">::</span> <span class="tok-kt">LText</span>
+  <span class="tok-p">}</span> <span class="tok-kr">deriving</span> <span class="tok-p">(</span><span class="tok-kt">Generic</span><span class="tok-p">,</span> <span class="tok-kt">Show</span><span class="tok-p">)</span>
+
+<span class="tok-nf">makeLenses</span> <span class="tok-n">&#39;&#39;BoxConfig</span>
+
+<span class="tok-kr">instance</span> <span class="tok-kt">Interpret</span> <span class="tok-kt">BoxConfig</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Dhall uses lazy text by default</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Dhall uses vector instead of list</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">main</span> <span class="tok-ow">::</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span>
+<span class="tok-nf">main</span> <span class="tok-ow">=</span> <span class="tok-kr">do</span>
+  <span class="tok-n">box_config</span>  <span class="tok-ow">&lt;-</span> <span class="tok-kt">Dhall</span><span class="tok-o">.</span><span class="tok-n">input</span> <span class="tok-n">auto</span> <span class="tok-s">&quot;./config/box&quot;</span>
+  <span class="tok-n">configure</span> <span class="tok-p">(</span><span class="tok-n">box_config</span><span class="tok-o">^.</span><span class="tok-n">userName</span><span class="tok-o">.</span><span class="tok-n">strict</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">box_config</span><span class="tok-o">^.</span><span class="tok-n">userEmail</span><span class="tok-o">.</span><span class="tok-n">strict</span><span class="tok-p">)</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-o">#!</span> <span class="tok-o">/</span><span class="tok-n">usr</span><span class="tok-o">/</span><span class="tok-n">bin</span><span class="tok-o">/</span><span class="tok-n">env</span> <span class="tok-n">bash</span>
+<span class="tok-nf">readarray</span> <span class="tok-n">arr</span> <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-o">$</span><span class="tok-p">(</span><span class="tok-n">dhall</span> <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-n">&#39;</span><span class="tok-p">(</span><span class="tok-o">./</span><span class="tok-n">config</span><span class="tok-o">/</span><span class="tok-n">box</span> <span class="tok-p">)</span><span class="tok-o">.</span><span class="tok-n">userStacks&#39;</span> <span class="tok-mi">2</span><span class="tok-o">&gt;</span> <span class="tok-o">/</span><span class="tok-n">dev</span><span class="tok-o">/</span><span class="tok-n">null</span> <span class="tok-o">|</span> <span class="tok-n">jq</span> <span class="tok-o">-</span><span class="tok-n">r</span> <span class="tok-n">&#39;join</span> <span class="tok-p">(</span><span class="tok-s">&quot; &quot;</span><span class="tok-p">)</span><span class="tok-n">&#39;</span><span class="tok-p">)</span>
+<span class="tok-nf">for</span> <span class="tok-n">s</span> <span class="tok-kr">in</span> <span class="tok-o">$</span><span class="tok-p">{</span><span class="tok-n">arr</span><span class="tok-p">};</span> <span class="tok-kr">do</span>
+    <span class="tok-n">echo</span> <span class="tok-s">&quot;$s&quot;</span>
+<span class="tok-nf">done</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_naming_convention">Naming convention</h3>
 <div class="sect3">
 <h4 id="_algebraic_data_type">Algebraic Data Type</h4>
@@ -4087,6 +4152,28 @@ excludesfile = /home/username/.gitignore
 </li>
 <li>
 <p><code>xfs_growfs /dev/system_vg/data</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>or by adding a new disk using puppet :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>add a new disk on the VCloud</p>
+</li>
+<li>
+<p>after a few delay, VCloud will automatically create a new partition for instance '/dev/sdd'</p>
+</li>
+<li>
+<p>add this new partition as a new physical volume: <code>pvcreate /dev/sdd</code>. You can see it with <code>pvs</code></p>
+</li>
+<li>
+<p><code>vgextend vg_rhel /dev/sdd</code> (the name to 'vg_rhel' is fixed for our new RHEL 7 template)</p>
+</li>
+<li>
+<p><code>puppet agent -t</code> will now create a new lv <code>nix</code>. You can see it with <code>lvs</code></p>
 </li>
 </ul>
 </div>
