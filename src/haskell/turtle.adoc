@@ -5,14 +5,20 @@ The #Shell# type represents a stream of values. You can think of Shell as `[] + 
 
 ```
 newtype Shell a = Shell { _foldIO :: forall r . FoldM IO a r -> IO r }
+```
 
+You invoke any external shell commands using #proc# or #shell#. If you don't care about throwing an error instead of returning the error code you would use `procs` and `shells`; `proc(s)` is more secure but it won't do any shell string interpolation.
 
--- invoke any external shell command
+```
 shell
     :: Text        -- Command line
     -> Shell Text  -- Standard input to feed to program
     -> IO ExitCode
 
+shells :: Text-> Shell Text -> IO ()
+```
+
+```
 select ::        [a] -> Shell a
 liftIO ::      IO a  -> Shell a
 using  :: Managed a  -> Shell a
@@ -20,17 +26,72 @@ using  :: Managed a  -> Shell a
 -- usual construction primitive
 empty :: Shell a
 
--- embed a shell cmd as streams
-inshell :: Text -> Shell Text -> Shell Text
-
 -- consume the stream by printing it to stdout
 view   :: Show a => Shell a -> IO ()
 stdout :: Shell Text -> IO ()
+
 -- consume the (side-effect) stream, discarding any unused values
 sh :: MonadIO io => Shell a -> io ()
 ```
 
-`Shell` is also an instance of `MonadPlus` (and thus Alternative). So you can concatenate two Shell streams using `<|>`.
+You can simulate piping the result of a command with `inshell` or `inproc`:
+```
+inshell :: Text -> Shell Text -> Shell Text
+
+inproc "curl" ["-s"
+              , "http://"
+              ] empty <1>
+    & output "filename.ext" <2>
+```
+<1> keep the result of a command as a stream
+<2> pipe and copy
+
+`Shell` is also an instance of `MonadPlus` (and thus Alternative).
+So you can concatenate two Shell streams using `<|>`.
+
+=== Folding
+Whenever you peek into the value of a shell stream using `<-` you are effectively looping over all values (as the list monad does). For instance this code is bogus :
+
+.bogus
+[IMPORTANT]
+====
+
+```
+do
+  found <- testpath =<< find (prefix (text "/home/vagrant/zsh")) "/home/vagrant"
+  unless found $ ...
+```
+====
+
+You will need to consume the stream and one good way to do so is using #fold# from the `foldl` package:
+```
+import qualified Control.Foldl as Fold
+
+main = do
+  not_found <- fold (find (prefix (text "/home/vagrant/zsh")) "/home/vagrant") Fold.null
+  when (not_found) $ do ...
+```
+
+=== FilePath
+
+`Turtle` is using the deprecated `system-filepath package` to handle filepaths in a more secure way. Watch out as it might be full of surprises:
+
+.common traps
+[IMPORTANT]
+====
+
+```
+let first = "/home/vagrant" :: FilePath
+     second = "/plugin" <1>
+     test = first <> second -- "/plugin"
+
+eclipseVersion = "4.5" <2>
+let fp = "foo" </> "bar_" <> eclipseVersion </> "plugin" -> foo/bar_/4.5/plugin <3>
+```
+<1> don't start with a `/` as it means you want to concatenate an absolute path
+<2> give you an filepath type automatically thanks to the `IsString` instance.
+<3> in system-filepath `<>` and `</>` are both alias for `append` emoji:tired_face[]
+====
 
 == Command line options
 

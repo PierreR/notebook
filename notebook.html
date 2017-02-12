@@ -2801,34 +2801,148 @@ Let&#8217;s take as an example, the task of running a test suite.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">newtype</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">Shell</span> <span class="tok-p">{</span> <span class="tok-n">_foldIO</span> <span class="tok-ow">::</span> <span class="tok-n">forall</span> <span class="tok-n">r</span> <span class="tok-o">.</span> <span class="tok-kt">FoldM</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">r</span> <span class="tok-p">}</span>
-
-
-<span class="tok-c1">-- invoke any external shell command</span>
-<span class="tok-nf">shell</span>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">newtype</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">Shell</span> <span class="tok-p">{</span> <span class="tok-n">_foldIO</span> <span class="tok-ow">::</span> <span class="tok-n">forall</span> <span class="tok-n">r</span> <span class="tok-o">.</span> <span class="tok-kt">FoldM</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span> <span class="tok-n">r</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">r</span> <span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You invoke any external shell commands using <mark>proc</mark> or <mark>shell</mark>. If you don&#8217;t care about throwing an error instead of returning the error code you would use <code>procs</code> and <code>shells</code>; <code>proc(s)</code> is more secure but it won&#8217;t do any shell string interpolation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">shell</span>
     <span class="tok-ow">::</span> <span class="tok-kt">Text</span>        <span class="tok-c1">-- Command line</span>
     <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span>  <span class="tok-c1">-- Standard input to feed to program</span>
     <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-kt">ExitCode</span>
 
-<span class="tok-nf">select</span> <span class="tok-ow">::</span>        <span class="tok-p">[</span><span class="tok-n">a</span><span class="tok-p">]</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
+<span class="tok-nf">shells</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span><span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">select</span> <span class="tok-ow">::</span>        <span class="tok-p">[</span><span class="tok-n">a</span><span class="tok-p">]</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
 <span class="tok-nf">liftIO</span> <span class="tok-ow">::</span>      <span class="tok-kt">IO</span> <span class="tok-n">a</span>  <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
 <span class="tok-nf">using</span>  <span class="tok-ow">::</span> <span class="tok-kt">Managed</span> <span class="tok-n">a</span>  <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
 
 <span class="tok-c1">-- usual construction primitive</span>
 <span class="tok-nf">empty</span> <span class="tok-ow">::</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span>
 
-<span class="tok-c1">-- embed a shell cmd as streams</span>
-<span class="tok-nf">inshell</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span>
-
 <span class="tok-c1">-- consume the stream by printing it to stdout</span>
 <span class="tok-nf">view</span>   <span class="tok-ow">::</span> <span class="tok-kt">Show</span> <span class="tok-n">a</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span>
 <span class="tok-nf">stdout</span> <span class="tok-ow">::</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span>
+
 <span class="tok-c1">-- consume the (side-effect) stream, discarding any unused values</span>
 <span class="tok-nf">sh</span> <span class="tok-ow">::</span> <span class="tok-kt">MonadIO</span> <span class="tok-n">io</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">io</span> <span class="tok-nb">()</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>Shell</code> is also an instance of <code>MonadPlus</code> (and thus Alternative). So you can concatenate two Shell streams using <code>&lt;|&gt;</code>.</p>
+<p>You can simulate piping the result of a command with <code>inshell</code> or <code>inproc</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">inshell</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span>
+
+<span class="tok-nf">inproc</span> <span class="tok-s">&quot;curl&quot;</span> <span class="tok-p">[</span><span class="tok-s">&quot;-s&quot;</span>
+              <span class="tok-p">,</span> <span class="tok-s">&quot;http://&quot;</span>
+              <span class="tok-p">]</span> <span class="tok-n">empty</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tok-o">&amp;</span> <span class="tok-n">output</span> <span class="tok-s">&quot;filename.ext&quot;</span> <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>keep the result of a command as a stream</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>pipe and copy</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>Shell</code> is also an instance of <code>MonadPlus</code> (and thus Alternative).
+So you can concatenate two Shell streams using <code>&lt;|&gt;</code>.</p>
+</div>
+<div class="sect4">
+<h5 id="_folding">Folding</h5>
+<div class="paragraph">
+<p>Whenever you peek into the value of a shell stream using <code>&#8592;</code> you are effectively looping over all values (as the list monad does). For instance this code is bogus :</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">bogus</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">do</span>
+  <span class="tok-n">found</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">testpath</span> <span class="tok-o">=&lt;&lt;</span> <span class="tok-n">find</span> <span class="tok-p">(</span><span class="tok-n">prefix</span> <span class="tok-p">(</span><span class="tok-n">text</span> <span class="tok-s">&quot;/home/vagrant/zsh&quot;</span><span class="tok-p">))</span> <span class="tok-s">&quot;/home/vagrant&quot;</span>
+  <span class="tok-n">unless</span> <span class="tok-n">found</span> <span class="tok-o">$</span> <span class="tok-o">...</span></code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You will need to consume the stream and one good way to do so is using <mark>fold</mark> from the <code>foldl</code> package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">import</span> <span class="tok-k">qualified</span> <span class="tok-nn">Control.Foldl</span> <span class="tok-k">as</span> <span class="tok-n">Fold</span>
+
+<span class="tok-nf">main</span> <span class="tok-ow">=</span> <span class="tok-kr">do</span>
+  <span class="tok-n">not_found</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">fold</span> <span class="tok-p">(</span><span class="tok-n">find</span> <span class="tok-p">(</span><span class="tok-n">prefix</span> <span class="tok-p">(</span><span class="tok-n">text</span> <span class="tok-s">&quot;/home/vagrant/zsh&quot;</span><span class="tok-p">))</span> <span class="tok-s">&quot;/home/vagrant&quot;</span><span class="tok-p">)</span> <span class="tok-kt">Fold</span><span class="tok-o">.</span><span class="tok-n">null</span>
+  <span class="tok-n">when</span> <span class="tok-p">(</span><span class="tok-n">not_found</span><span class="tok-p">)</span> <span class="tok-o">$</span> <span class="tok-kr">do</span> <span class="tok-o">...</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_filepath">FilePath</h5>
+<div class="paragraph">
+<p><code>Turtle</code> is using the deprecated <code>system-filepath package</code> to handle filepaths in a more secure way. Watch out as it might be full of surprises:</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">common traps</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">let</span> <span class="tok-n">first</span> <span class="tok-ow">=</span> <span class="tok-s">&quot;/home/vagrant&quot;</span> <span class="tok-ow">::</span> <span class="tok-kt">FilePath</span>
+     <span class="tok-n">second</span> <span class="tok-ow">=</span> <span class="tok-s">&quot;/plugin&quot;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+     <span class="tok-n">test</span> <span class="tok-ow">=</span> <span class="tok-n">first</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">second</span> <span class="tok-c1">-- &quot;/plugin&quot;</span>
+
+<span class="tok-nf">eclipseVersion</span> <span class="tok-ow">=</span> <span class="tok-s">&quot;4.5&quot;</span> <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tok-kr">let</span> <span class="tok-n">fp</span> <span class="tok-ow">=</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-o">&lt;/&gt;</span> <span class="tok-s">&quot;bar_&quot;</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">eclipseVersion</span> <span class="tok-o">&lt;/&gt;</span> <span class="tok-s">&quot;plugin&quot;</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">foo</span><span class="tok-o">/</span><span class="tok-n">bar_</span><span class="tok-o">/</span><span class="tok-mf">4.5</span><span class="tok-o">/</span><span class="tok-n">plugin</span> <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>don&#8217;t start with a <code>/</code> as it means you want to concatenate an absolute path</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>give you an filepath type automatically thanks to the <code>IsString</code> instance.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>in system-filepath <code>&lt;&gt;</code> and <code>&lt;/&gt;</code> are both alias for <code>append</code> emoji:tired_face[]</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect3">
