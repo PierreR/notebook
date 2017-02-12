@@ -2905,7 +2905,7 @@ So you can concatenate two Shell streams using <code>&lt;|&gt;</code>.</p>
 <div class="sect3">
 <h4 id="_filepath">FilePath</h4>
 <div class="paragraph">
-<p><code>Turtle</code> is using the deprecated <code>system-filepath package</code> to handle filepaths in a more secure way. Watch out as it might be full of surprises:</p>
+<p><code>Turtle</code> is using the deprecated <code>system-filepath package</code> to handle filepaths in a more secure way<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup>. Watch out as it is at time a bit surprising:</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -2941,6 +2941,27 @@ So you can concatenate two Shell streams using <code>&lt;|&gt;</code>.</p>
 </tr>
 </table>
 </div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When appending <code>filepath</code> and <code>text</code> the best strategy is probably to keep the filepath encoding and then convert to text if necessary:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">let</span> <span class="tok-n">path</span> <span class="tok-ow">=</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-o">&lt;/&gt;</span> <span class="tok-n">fromText</span> <span class="tok-n">eclipseVersion</span> <span class="tok-o">&lt;/&gt;</span> <span class="tok-s">&quot;plugin&quot;</span>
+    <span class="tok-n">_path</span> <span class="tok-ow">=</span> <span class="tok-n">format</span> <span class="tok-n">fp</span> <span class="tok-n">path</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use <code>&lt;/&gt;</code> for appending filepaths, use <code>&lt;&gt;</code> for appending text.
 </td>
 </tr>
 </table>
@@ -4136,9 +4157,9 @@ In category theory we never look inside objects. All information about objects i
 <dl>
 <dt class="hdlist1">definition</dt>
 <dd>
-<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup>.
+<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup>.
 The objects have not structure or meaning, actually they only serve to mark the beginning or end of an arrow.
-Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup> that preverse a <code>structure</code>.
+Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</sup> that preverse a <code>structure</code>.
 The structure whatever it is characterizes the category.</p>
 <div class="ulist">
 <ul>
@@ -4759,10 +4780,13 @@ REF TYPE BOXES TO VALUES</p>
 <a href="#_footnoteref_5">5</a>. state monad transformer.
 </div>
 <div class="footnote" id="_footnote_6">
-<a href="#_footnoteref_6">6</a>. also called arrows
+<a href="#_footnoteref_6">6</a>. a mental model that might help is to look at each filepath as being a list of string not just one string
 </div>
 <div class="footnote" id="_footnote_7">
-<a href="#_footnoteref_7">7</a>. you can have zero, one or many arrows from one object to another
+<a href="#_footnoteref_7">7</a>. also called arrows
+</div>
+<div class="footnote" id="_footnote_8">
+<a href="#_footnoteref_8">8</a>. you can have zero, one or many arrows from one object to another
 </div>
 </div>
 </body>

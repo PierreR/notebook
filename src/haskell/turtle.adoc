@@ -74,7 +74,7 @@ main = do
 
 == FilePath
 
-`Turtle` is using the deprecated `system-filepath package` to handle filepaths in a more secure way. Watch out as it might be full of surprises:
+`Turtle` is using the deprecated `system-filepath package` to handle filepaths in a more secure wayfootnote:[a mental model that might help is to look at each filepath as being a list of string not just one string]. Watch out as it is at time a bit surprising:
 
 .common traps
 [IMPORTANT]
@@ -92,6 +92,15 @@ let fp = "foo" </> "bar_" <> eclipseVersion </> "plugin" -> foo/bar_/4.5/plugin 
 <2> give you an filepath type automatically thanks to the `IsString` instance
 <3> in system-filepath `<>` and `</>` are both alias for `append` icon:frown-o[]
 ====
+
+When appending `filepath` and `text` the best strategy is probably to keep the filepath encoding and then convert to text if necessary:
+
+```
+let path = "foo" </> fromText eclipseVersion </> "plugin"
+    _path = format fp path
+```
+
+TIP: Use `</>` for appending filepaths, use `<>` for appending text.
 
 == Command line options
 
