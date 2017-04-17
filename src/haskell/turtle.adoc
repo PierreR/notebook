@@ -12,10 +12,10 @@ You invoke any external shell commands using #proc# or #shell#. If you don't car
 ```
 shell
     :: Text        -- Command line
-    -> Shell Text  -- Standard input to feed to program
-    -> IO ExitCode
+    -> Shell Line  -- Lines of standard input to feed to program
+    -> io ExitCode
 
-shells :: Text-> Shell Text -> IO ()
+shells :: Text-> Shell Line -> io ()
 ```
 
 ```
@@ -36,7 +36,7 @@ sh :: MonadIO io => Shell a -> io ()
 
 You can simulate piping the result of a command with `inshell` or `inproc`:
 ```
-inshell :: Text -> Shell Text -> Shell Text
+inshell :: Text -> Shell Line -> Shell Line
 
 inproc "curl" ["-s"
               , "http://"
@@ -45,6 +45,8 @@ inproc "curl" ["-s"
 ```
 <1> keep the result of a command as a stream
 <2> pipe and copy
+
+WARNING: When using #inshell# you lose the ability to care about the exit code of the command that produces the stream.
 
 `Shell` is also an instance of `MonadPlus` (and thus Alternative).
 So you can concatenate two Shell streams using `<|>`.
