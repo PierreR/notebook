@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="generator" content="Asciidoctor 1.5.5">
 <meta name="keywords" content="nix, nixos">
 <meta name="author" content="Pierre Radermecker">
 <title>Notebook</title>
@@ -19,7 +19,6 @@ audio:not([controls]){display:none;height:0}
 [hidden],template{display:none}
 script{display:none!important}
 html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
-body{margin:0}
 a{background:transparent}
 a:focus{outline:thin dotted}
 a:active,a:hover{outline:0}
@@ -54,7 +53,7 @@ textarea{overflow:auto;vertical-align:top}
 table{border-collapse:collapse;border-spacing:0}
 *,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
 html,body{font-size:100%}
-body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
 a:hover{cursor:pointer}
 img,object,embed{max-width:100%;height:auto}
 object,embed{height:100%}
@@ -66,7 +65,6 @@ img{-ms-interpolation-mode:bicubic}
 .text-center{text-align:center!important}
 .text-justify{text-align:justify!important}
 .hide{display:none}
-body{-webkit-font-smoothing:antialiased}
 img,object,svg{display:inline-block;vertical-align:middle}
 textarea{height:auto;min-height:50px}
 select{width:100%}
@@ -121,13 +119,16 @@ table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:
 table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
 table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
 table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
-body{tab-size:4}
 h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
 h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
 .clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
 .clearfix:after,.float-group:after{clear:both}
-*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+*:not(pre)>code.nobreak{word-wrap:normal}
+*:not(pre)>code.nowrap{white-space:nowrap}
 pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+em em{font-style:normal}
+strong strong{font-weight:400}
 .keyseq{color:rgba(51,51,51,.8)}
 kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
 .keyseq kbd:first-child{margin-left:0}
@@ -418,16 +419,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .hide-for-print{display:none!important}
 .show-for-print{display:inherit!important}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 <style>
 .listingblock .pygments .hll { background-color: #ffffcc }
-.listingblock .pygments  { background: #f8f8f8; }
+.listingblock .pygments, .listingblock .pygments code { background: #f8f8f8; }
 .listingblock .pygments .tok-c { color: #408080; font-style: italic } /* Comment */
 .listingblock .pygments .tok-err { border: 1px solid #FF0000 } /* Error */
 .listingblock .pygments .tok-k { color: #008000; font-weight: bold } /* Keyword */
 .listingblock .pygments .tok-o { color: #666666 } /* Operator */
+.listingblock .pygments .tok-ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .listingblock .pygments .tok-cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .listingblock .pygments .tok-cp { color: #BC7A00 } /* Comment.Preproc */
+.listingblock .pygments .tok-cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .listingblock .pygments .tok-c1 { color: #408080; font-style: italic } /* Comment.Single */
 .listingblock .pygments .tok-cs { color: #408080; font-style: italic } /* Comment.Special */
 .listingblock .pygments .tok-gd { color: #A00000 } /* Generic.Deleted */
@@ -467,8 +470,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .listingblock .pygments .tok-mh { color: #666666 } /* Literal.Number.Hex */
 .listingblock .pygments .tok-mi { color: #666666 } /* Literal.Number.Integer */
 .listingblock .pygments .tok-mo { color: #666666 } /* Literal.Number.Oct */
+.listingblock .pygments .tok-sa { color: #BA2121 } /* Literal.String.Affix */
 .listingblock .pygments .tok-sb { color: #BA2121 } /* Literal.String.Backtick */
 .listingblock .pygments .tok-sc { color: #BA2121 } /* Literal.String.Char */
+.listingblock .pygments .tok-dl { color: #BA2121 } /* Literal.String.Delimiter */
 .listingblock .pygments .tok-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .listingblock .pygments .tok-s2 { color: #BA2121 } /* Literal.String.Double */
 .listingblock .pygments .tok-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -479,9 +484,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .listingblock .pygments .tok-s1 { color: #BA2121 } /* Literal.String.Single */
 .listingblock .pygments .tok-ss { color: #19177C } /* Literal.String.Symbol */
 .listingblock .pygments .tok-bp { color: #008000 } /* Name.Builtin.Pseudo */
+.listingblock .pygments .tok-fm { color: #0000FF } /* Name.Function.Magic */
 .listingblock .pygments .tok-vc { color: #19177C } /* Name.Variable.Class */
 .listingblock .pygments .tok-vg { color: #19177C } /* Name.Variable.Global */
 .listingblock .pygments .tok-vi { color: #19177C } /* Name.Variable.Instance */
+.listingblock .pygments .tok-vm { color: #19177C } /* Name.Variable.Magic */
 .listingblock .pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
 </style>
 <style>
@@ -1113,8 +1120,8 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env nix-shell</span>
-<span class="tok-c">#! nix-shell -i bash</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-ch">#! /usr/bin/env nix-shell</span>
+<span class="tok-c1">#! nix-shell -i bash</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1122,8 +1129,8 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env nix-shell</span>
-<span class="tok-c">#! nix-shell -i bash -p pythonPackages.pyyaml -p &#39;(import &lt;nixpkgs&gt; {}).haskellPackages.ghcWithPackages (p: with p; [shake])&#39;</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-ch">#! /usr/bin/env nix-shell</span>
+<span class="tok-c1">#! nix-shell -i bash -p pythonPackages.pyyaml -p &#39;(import &lt;nixpkgs&gt; {}).haskellPackages.ghcWithPackages (p: with p; [shake])&#39;</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1194,10 +1201,10 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># in nixos:</span>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c1"># in nixos:</span>
 → nix-env -qaP -A nixos.haskellPackages
 → nix-env -qaP -A nixos.pythonPackages
-<span class="tok-c"># outside nixos:</span>
+<span class="tok-c1"># outside nixos:</span>
 → nix-env -qaP -A nixpkgs.pythonPackages</code></pre>
 </div>
 </div>
@@ -2502,15 +2509,15 @@ The function <code>traverse</code> is exactly <code>mapM</code> generalized for 
   <span class="tok-p">,</span> <span class="tok-n">_surname</span>   <span class="tok-ow">::</span> <span class="tok-kt">String</span>
   <span class="tok-p">}</span>
 <span class="tok-c1">-- building lenses for _firstname and _surname</span>
-<span class="tok-nf">makeLenses</span> <span class="tok-n">&#39;&#39;Person</span>
+<span class="tok-nf">makeLenses</span> <span class="tok-kt">&#39;&#39;Person</span>
 <span class="tok-c1">-- create an HasPerson class with the `firstname` and `surname` optics</span>
-<span class="tok-nf">makeClassy</span> <span class="tok-n">&#39;&#39;Person</span>
+<span class="tok-nf">makeClassy</span> <span class="tok-kt">&#39;&#39;Person</span>
 <span class="tok-c1">-- create an HasFirstname and HasSurname class</span>
 <span class="tok-kr">data</span> <span class="tok-kt">Person</span> <span class="tok-ow">=</span> <span class="tok-kt">Person</span>
   <span class="tok-p">{</span> <span class="tok-n">_PersonFirstname</span> <span class="tok-ow">::</span> <span class="tok-kt">String</span>
   <span class="tok-p">,</span> <span class="tok-n">_PersonSurname</span>   <span class="tok-ow">::</span> <span class="tok-kt">String</span>
   <span class="tok-p">}</span>
-<span class="tok-nf">makeField</span> <span class="tok-n">&#39;&#39;Person</span></code></pre>
+<span class="tok-nf">makeField</span> <span class="tok-kt">&#39;&#39;Person</span></code></pre>
 </div>
 </div>
 </div>
@@ -2775,7 +2782,7 @@ Let&#8217;s take as an example, the task of running a test suite.</p>
       <span class="tok-kt">S</span><span class="tok-o">.</span><span class="tok-kt">Right</span> <span class="tok-kr">_</span> <span class="tok-ow">-&gt;</span>
         <span class="tok-n">liftIO</span> <span class="tok-o">$</span> <span class="tok-n">withFile</span> <span class="tok-n">out</span> <span class="tok-kt">WriteMode</span> <span class="tok-p">(</span><span class="tok-nf">\</span><span class="tok-n">h</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">hPutDoc</span> <span class="tok-n">h</span> <span class="tok-p">(</span> <span class="tok-n">dullgreen</span> <span class="tok-s">&quot;✓&quot;</span> <span class="tok-o">&lt;+&gt;</span> <span class="tok-n">text</span> <span class="tok-n">node</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">line</span><span class="tok-p">))</span>
       <span class="tok-kt">S</span><span class="tok-o">.</span><span class="tok-kt">Left</span> <span class="tok-n">msg</span> <span class="tok-ow">-&gt;</span>
-        <span class="tok-n">liftIO</span> <span class="tok-o">$</span> <span class="tok-n">withFile</span> <span class="tok-n">out</span> <span class="tok-kt">WriteMode</span> <span class="tok-p">(</span><span class="tok-nf">\</span><span class="tok-n">h</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">hPutDoc</span> <span class="tok-n">h</span> <span class="tok-p">(</span> <span class="tok-n">char</span> <span class="tok-n">&#39;x&#39;</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">space</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">red</span> <span class="tok-p">(</span><span class="tok-n">text</span> <span class="tok-n">node</span><span class="tok-p">)</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">line</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">indent</span> <span class="tok-mi">2</span> <span class="tok-p">(</span><span class="tok-n">getError</span> <span class="tok-n">msg</span><span class="tok-p">)</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">line</span><span class="tok-p">))</span></code></pre>
+        <span class="tok-n">liftIO</span> <span class="tok-o">$</span> <span class="tok-n">withFile</span> <span class="tok-n">out</span> <span class="tok-kt">WriteMode</span> <span class="tok-p">(</span><span class="tok-nf">\</span><span class="tok-n">h</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">hPutDoc</span> <span class="tok-n">h</span> <span class="tok-p">(</span> <span class="tok-n">char</span> <span class="tok-sc">&#39;x&#39;</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">space</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">red</span> <span class="tok-p">(</span><span class="tok-n">text</span> <span class="tok-n">node</span><span class="tok-p">)</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">line</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">indent</span> <span class="tok-mi">2</span> <span class="tok-p">(</span><span class="tok-n">getError</span> <span class="tok-n">msg</span><span class="tok-p">)</span> <span class="tok-o">&lt;&gt;</span> <span class="tok-n">line</span><span class="tok-p">))</span></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2812,10 +2819,10 @@ Let&#8217;s take as an example, the task of running a test suite.</p>
 <div class="content">
 <pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">shell</span>
     <span class="tok-ow">::</span> <span class="tok-kt">Text</span>        <span class="tok-c1">-- Command line</span>
-    <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span>  <span class="tok-c1">-- Standard input to feed to program</span>
-    <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-kt">ExitCode</span>
+    <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Line</span>  <span class="tok-c1">-- Lines of standard input to feed to program</span>
+    <span class="tok-ow">-&gt;</span> <span class="tok-n">io</span> <span class="tok-kt">ExitCode</span>
 
-<span class="tok-nf">shells</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span><span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span></code></pre>
+<span class="tok-nf">shells</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span><span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Line</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">io</span> <span class="tok-nb">()</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -2840,7 +2847,7 @@ Let&#8217;s take as an example, the task of running a test suite.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">inshell</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Text</span>
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">inshell</span> <span class="tok-ow">::</span> <span class="tok-kt">Text</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Line</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">Shell</span> <span class="tok-kt">Line</span>
 
 <span class="tok-nf">inproc</span> <span class="tok-s">&quot;curl&quot;</span> <span class="tok-p">[</span><span class="tok-s">&quot;-s&quot;</span>
               <span class="tok-p">,</span> <span class="tok-s">&quot;http://&quot;</span>
@@ -2857,6 +2864,18 @@ Let&#8217;s take as an example, the task of running a test suite.</p>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>pipe and copy</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+When using <mark>inshell</mark> you lose the ability to care about the exit code of the command that produces the stream.
+</td>
 </tr>
 </table>
 </div>
@@ -3544,7 +3563,7 @@ You can test this pure kernel by swapping out controllers with predicable inputs
   <span class="tok-p">,</span> <span class="tok-n">_mrRepoUrl</span>       <span class="tok-ow">::</span> <span class="tok-kt">LText</span>
   <span class="tok-p">}</span> <span class="tok-kr">deriving</span> <span class="tok-p">(</span><span class="tok-kt">Generic</span><span class="tok-p">,</span> <span class="tok-kt">Show</span><span class="tok-p">)</span>
 
-<span class="tok-nf">makeLenses</span> <span class="tok-n">&#39;&#39;BoxConfig</span>
+<span class="tok-nf">makeLenses</span> <span class="tok-kt">&#39;&#39;BoxConfig</span>
 
 <span class="tok-kr">instance</span> <span class="tok-kt">Interpret</span> <span class="tok-kt">BoxConfig</span></code></pre>
 </div>
@@ -3571,10 +3590,10 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#! /usr/bin/env bash</span>
-readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</span>dhall <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-s1">&#39;(./config/box ).userStacks&#39;</span> 2&gt; /dev/null <span class="tok-p">|</span> jq -r <span class="tok-s1">&#39;join (&quot; &quot;)&#39;</span><span class="tok-k">)</span>
-<span class="tok-k">for</span> s in <span class="tok-k">${</span><span class="tok-nv">arr</span><span class="tok-k">}</span><span class="tok-p">;</span> <span class="tok-k">do</span>
-    <span class="tok-nb">echo</span> <span class="tok-s2">&quot;$s&quot;</span>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-ch">#! /usr/bin/env bash</span>
+readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</span>dhall <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-s1">&#39;(./config/box ).userStacks&#39;</span> <span class="tok-m">2</span>&gt; /dev/null <span class="tok-p">|</span> jq -r <span class="tok-s1">&#39;join (&quot; &quot;)&#39;</span><span class="tok-k">)</span>
+<span class="tok-k">for</span> s in <span class="tok-si">${</span><span class="tok-nv">arr</span><span class="tok-si">}</span><span class="tok-p">;</span> <span class="tok-k">do</span>
+    <span class="tok-nb">echo</span> <span class="tok-s2">&quot;</span><span class="tok-nv">$s</span><span class="tok-s2">&quot;</span>
 <span class="tok-k">done</span></code></pre>
 </div>
 </div>
@@ -4238,7 +4257,7 @@ excludesfile = /home/username/.gitignore
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-k">for</span> i in <span class="tok-sb">`</span>seq <span class="tok-m">248</span> 638<span class="tok-sb">`</span><span class="tok-p">;</span> <span class="tok-k">do</span> git tag -d <span class="tok-nv">$i</span><span class="tok-p">;</span> git push --delete origin <span class="tok-nv">$i</span><span class="tok-p">;</span><span class="tok-k">done</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-k">for</span> i in <span class="tok-sb">`</span>seq <span class="tok-m">248</span> <span class="tok-m">638</span><span class="tok-sb">`</span><span class="tok-p">;</span> <span class="tok-k">do</span> git tag -d <span class="tok-nv">$i</span><span class="tok-p">;</span> git push --delete origin <span class="tok-nv">$i</span><span class="tok-p">;</span><span class="tok-k">done</span></code></pre>
 </div>
 </div>
 </dd>
@@ -4254,10 +4273,10 @@ excludesfile = /home/username/.gitignore
 <h3 id="_script">Script</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#!/bin/bash -xe</span>
-<span class="tok-k">while</span> <span class="tok-nb">read </span>host
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-ch">#!/bin/bash -xe</span>
+<span class="tok-k">while</span> <span class="tok-nb">read</span> host
 <span class="tok-k">do</span>
-       cat plone_team.pub <span class="tok-p">|</span> ssh alhazen@<span class="tok-s2">&quot;$host&quot;</span>.prd.srv.cirb.lan <span class="tok-s2">&quot;grep plone ~/.ssh/authorized_keys || cat &gt;&gt; ~/.ssh/authorized_keys&quot;</span>
+       cat plone_team.pub <span class="tok-p">|</span> ssh alhazen@<span class="tok-s2">&quot;</span><span class="tok-nv">$host</span><span class="tok-s2">&quot;</span>.prd.srv.cirb.lan <span class="tok-s2">&quot;grep plone ~/.ssh/authorized_keys || cat &gt;&gt; ~/.ssh/authorized_keys&quot;</span>
 <span class="tok-k">done</span> &lt; plone-prod-uniq.txt</code></pre>
 </div>
 </div>
@@ -4322,7 +4341,7 @@ excludesfile = /home/username/.gitignore
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">route ADD 192.168.30.0 MASK 255.255.255.0 10.255.10.4</code></pre>
+<pre class="pygments highlight"><code data-lang="bash">route ADD <span class="tok-m">192</span>.168.30.0 MASK <span class="tok-m">255</span>.255.255.0 <span class="tok-m">10</span>.255.10.4</code></pre>
 </div>
 </div>
 </dd>
@@ -4517,10 +4536,10 @@ select * from pg</pre>
 <h3 id="_shell_utils_practices">Shell utils practices</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">psql -h 192.168.14.62 -W -U pradermecker postgres &lt; create_PGPUPPETDB.sql
+<pre class="pygments highlight"><code data-lang="bash">psql -h <span class="tok-m">192</span>.168.14.62 -W -U pradermecker postgres &lt; create_PGPUPPETDB.sql
 
-<span class="tok-nb">export </span><span class="tok-nv">PGPASSWORD</span><span class="tok-o">=</span>dbpasswordforpuppetdb
-ssh puppetmaster-prod <span class="tok-s1">&#39;sudo -u postgres pg_dump puppetdb &#39;</span> <span class="tok-p">|</span> psql -h 192.168.14.62 -U puppetdb -w PGPUPPETDB</code></pre>
+<span class="tok-nb">export</span> <span class="tok-nv">PGPASSWORD</span><span class="tok-o">=</span>dbpasswordforpuppetdb
+ssh puppetmaster-prod <span class="tok-s1">&#39;sudo -u postgres pg_dump puppetdb &#39;</span> <span class="tok-p">|</span> psql -h <span class="tok-m">192</span>.168.14.62 -U puppetdb -w PGPUPPETDB</code></pre>
 </div>
 </div>
 </div>
