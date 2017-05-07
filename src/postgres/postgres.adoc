@@ -1,5 +1,31 @@
 # Postgres
 
+## NixOS setup
+
+```
+services.postgresql = {
+    enable = true;
+    authentication = ''
+      local saltstack all trust
+    '';
+  };
+```
+
+```
+CREATE USER vagrant SUPERSUSER LOGIN; <1>
+
+CREATE USER salt LOGIN; <2>
+CREATE DATABASE saltstack WITH owner = 'salt';
+ALTER USER salt WITH password 'saltpass';
+
+psql saltstack -U salt <3>
+
+```
+<1> as root
+<2> as vagrant
+<3> as vagrant, check that you can connect to the db
+
+
 ## Glossary
 
 PEM:: Postgres Enterprise Manager
