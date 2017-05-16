@@ -639,6 +639,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_st">ST</a></li>
 </ul>
 </li>
+<li><a href="#_exceptions">Exceptions</a>
+<ul class="sectlevel3">
+<li><a href="#_types">Types</a></li>
+<li><a href="#_primitives">Primitives</a></li>
+<li><a href="#_monad_primitives">Monad primitives</a></li>
+</ul>
+</li>
 <li><a href="#_shake">Shake</a>
 <ul class="sectlevel3">
 <li><a href="#_example">Example</a></li>
@@ -653,7 +660,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_pipes">Pipes</a>
 <ul class="sectlevel3">
-<li><a href="#_primitives">Primitives</a></li>
+<li><a href="#_primitives_2">Primitives</a></li>
 <li><a href="#_lift">Lift</a></li>
 <li><a href="#_concurrent_api">Concurrent API</a></li>
 <li><a href="#_pipes_handle">Pipes-Handle</a></li>
@@ -678,7 +685,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_gats">GATS</a></li>
 <li><a href="#_haxl">Haxl</a>
 <ul class="sectlevel3">
-<li><a href="#_primitives_2">Primitives</a></li>
+<li><a href="#_primitives_3">Primitives</a></li>
 </ul>
 </li>
 <li><a href="#_operational">Operational</a></li>
@@ -722,6 +729,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_postgres">Postgres</a>
 <ul class="sectlevel2">
+<li><a href="#_nixos_setup">NixOS setup</a></li>
 <li><a href="#_glossary">Glossary</a></li>
 <li><a href="#_servers">Servers</a></li>
 <li><a href="#_architecture">Architecture</a></li>
@@ -2729,6 +2737,169 @@ This means that ST can provide a pure interface while using low-level operations
 </div>
 </div>
 <div class="sect2">
+<h3 id="_exceptions">Exceptions</h3>
+<div class="sect3">
+<h4 id="_types">Types</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Synchronous exceptions</dt>
+<dd>
+<p>Generated as a result of a failing action in IO (same thread). Usually thrown using <code>throwIO</code>.</p>
+</dd>
+<dt class="hdlist1">Impure exceptions</dt>
+<dd>
+<p>Thrown in pure code by partial function. Ideally, we would not use such functions, a better practice is to return an <code>Either</code> type in this situation.</p>
+</dd>
+<dt class="hdlist1">Asynchronous exceptions</dt>
+<dd>
+<p>Can occur anywhere, including in pure code. Generated when another thread or the runtime system is trying to kill the current thread (via throwTo) or report an “unrecoverable” situation like a StackOverflow.</p>
+</dd>
+<dt class="hdlist1">Interruptible actions</dt>
+<dd>
+<p>Some operations are <a href="https://www.stackage.org/haddock/nightly-2016-07-17/base-4.9.0.0/Control-Exception.html#g:13">interruptible</a> by async exceptions even within a mask. This is the case for blocking functions such as <code>takeMVar</code> but also for most I/O operations dealing with the outside world.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_primitives">Primitives</h4>
+<div class="listingblock">
+<div class="title">Throwing</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">throwIO</span> <span class="tok-ow">::</span> <span class="tok-kt">Exception</span> <span class="tok-n">e</span> <span class="tok-ow">=&gt;</span> <span class="tok-n">e</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Catching</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">try</span> <span class="tok-ow">::</span> <span class="tok-kt">Exception</span> <span class="tok-n">e</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-p">(</span><span class="tok-kt">Either</span> <span class="tok-n">e</span> <span class="tok-n">a</span><span class="tok-p">)</span>
+
+<span class="tok-nf">catch</span>  <span class="tok-ow">::</span> <span class="tok-kt">Exception</span> <span class="tok-n">e</span>
+        <span class="tok-ow">=&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span>        <span class="tok-c1">-- ^ computation</span>
+        <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">e</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-c1">-- ^ handler</span>
+        <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><mark>catch</mark> has an implicit <code>mask</code> around the handler.</p>
+</li>
+<li>
+<p><mark>try</mark> does not have a similar default. Don&#8217;t use it for recovering from an async exception.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Cleanup</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">finally</span>
+        <span class="tok-ow">::</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span> <span class="tok-c1">-- ^ computation</span>
+        <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">b</span> <span class="tok-c1">-- ^ computation to run afterward even if an exception was raised</span>
+        <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span>
+<span class="tok-nf">a</span> <span class="tok-p">`</span><span class="tok-n">finally</span><span class="tok-p">`</span> <span class="tok-n">sequel</span> <span class="tok-ow">=</span>
+  <span class="tok-n">mask</span> <span class="tok-o">$</span> <span class="tok-nf">\</span><span class="tok-n">restore</span> <span class="tok-ow">-&gt;</span> <span class="tok-kr">do</span>
+    <span class="tok-n">r</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">restore</span> <span class="tok-n">a</span> <span class="tok-p">`</span><span class="tok-n">onException</span><span class="tok-p">`</span> <span class="tok-n">sequel</span>
+    <span class="tok-kr">_</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">sequel</span>
+    <span class="tok-n">return</span> <span class="tok-n">r</span>
+
+<span class="tok-c1">-- | Like &#39;finally&#39;, but only performs the final action if there was an</span>
+<span class="tok-c1">-- exception raised by the computation.</span>
+<span class="tok-nf">onException</span> <span class="tok-ow">::</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">b</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span>
+<span class="tok-nf">onException</span> <span class="tok-n">io</span> <span class="tok-n">what</span> <span class="tok-ow">=</span>
+  <span class="tok-n">io</span> <span class="tok-p">`</span><span class="tok-n">catch</span><span class="tok-p">`</span> <span class="tok-nf">\</span><span class="tok-n">e</span> <span class="tok-ow">-&gt;</span> <span class="tok-kr">do</span> <span class="tok-kr">_</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">what</span>
+                        <span class="tok-n">throwIO</span> <span class="tok-p">(</span><span class="tok-n">e</span> <span class="tok-ow">::</span> <span class="tok-kt">SomeException</span><span class="tok-p">)</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Acquiring</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">bracket</span>
+        <span class="tok-ow">::</span> <span class="tok-kt">IO</span> <span class="tok-n">a</span>        <span class="tok-c1">-- ^ acquire resource</span>
+        <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-c1">-- ^ release resource</span>
+        <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">c</span><span class="tok-p">)</span> <span class="tok-c1">-- ^ use resource</span>
+        <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-n">c</span>
+<span class="tok-nf">bracket</span> <span class="tok-n">before</span> <span class="tok-n">after</span> <span class="tok-n">use</span> <span class="tok-ow">=</span>
+  <span class="tok-n">mask</span> <span class="tok-o">$</span> <span class="tok-nf">\</span><span class="tok-n">restore</span> <span class="tok-ow">-&gt;</span> <span class="tok-kr">do</span>
+    <span class="tok-n">a</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">before</span>
+    <span class="tok-n">r</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">restore</span> <span class="tok-p">(</span><span class="tok-n">use</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-p">`</span><span class="tok-n">onException</span><span class="tok-p">`</span> <span class="tok-n">after</span> <span class="tok-n">a</span>
+    <span class="tok-kr">_</span> <span class="tok-ow">&lt;-</span> <span class="tok-n">after</span> <span class="tok-n">a</span>
+    <span class="tok-n">return</span> <span class="tok-n">r</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_monad_primitives">Monad primitives</h4>
+<div class="paragraph">
+<p>The <code>exceptions</code> package defines <code>Control.Monad.Catch</code> with</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">MonadThrow</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">Monad</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">MonadThrow</span> <span class="tok-n">m</span> <span class="tok-kr">where</span>
+  <span class="tok-n">throwM</span> <span class="tok-ow">::</span> <span class="tok-kt">Exception</span> <span class="tok-n">e</span> <span class="tok-ow">=&gt;</span> <span class="tok-n">e</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">a</span></code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">MonadCatch</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">MonadThrow</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">MonadCatch</span> <span class="tok-n">m</span> <span class="tok-kr">where</span>
+  <span class="tok-n">catch</span> <span class="tok-ow">::</span> <span class="tok-kt">Exception</span> <span class="tok-n">e</span> <span class="tok-ow">=&gt;</span> <span class="tok-n">m</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-p">(</span><span class="tok-n">e</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">a</span></code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">MonadMask</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">class</span> <span class="tok-kt">MonadCatch</span> <span class="tok-n">m</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">MonadMask</span> <span class="tok-n">m</span> <span class="tok-kr">where</span>
+  <span class="tok-n">mask</span> <span class="tok-ow">::</span> <span class="tok-p">((</span><span class="tok-n">forall</span> <span class="tok-n">a</span><span class="tok-o">.</span> <span class="tok-n">m</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">b</span>
+  <span class="tok-n">uninterruptibleMask</span> <span class="tok-ow">::</span> <span class="tok-p">((</span><span class="tok-n">forall</span> <span class="tok-n">a</span><span class="tok-o">.</span> <span class="tok-n">m</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">b</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">m</span> <span class="tok-n">b</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Instances should ensure that, in the following code <code>f ‘finally’ g</code>, the action <code>g</code> is called regardless of what occurs within <code>f</code>, including async exceptions.</p>
+</li>
+<li>
+<p><code>ExceptT</code> is not an instance of <mark>MonadMask</mark>. See <a href="https://www.fpcomplete.com/blog/2017/02/monadmask-vs-monadbracket">MonadMask vs MonadBracket</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_shake">Shake</h3>
 <div class="sect3">
 <h4 id="_example">Example</h4>
@@ -3037,7 +3208,7 @@ Don&#8217;t do this:</p>
 <div class="sect2">
 <h3 id="_pipes">Pipes</h3>
 <div class="sect3">
-<h4 id="_primitives">Primitives</h4>
+<h4 id="_primitives_2">Primitives</h4>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -3790,7 +3961,7 @@ When you pattern-match your GADT constructor, the instance implicitly comes into
 <div class="sect2">
 <h3 id="_haxl">Haxl</h3>
 <div class="sect3">
-<h4 id="_primitives_2">Primitives</h4>
+<h4 id="_primitives_3">Primitives</h4>
 <div class="olist upperalpha">
 <ol class="upperalpha" type="A">
 <li>
@@ -4377,6 +4548,46 @@ excludesfile = /home/username/.gitignore
 <div class="sect1">
 <h2 id="_postgres">Postgres</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_nixos_setup">NixOS setup</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">services.postgresql <span class="tok-o">=</span> <span class="tok-o">{</span>
+    <span class="tok-nb">enable</span> <span class="tok-o">=</span> true<span class="tok-p">;</span>
+    <span class="tok-nv">authentication</span> <span class="tok-o">=</span> <span class="tok-s1">&#39;&#39;</span>
+      <span class="tok-nb">local</span> saltstack all trust
+    <span class="tok-s1">&#39;&#39;</span><span class="tok-p">;</span>
+  <span class="tok-o">}</span><span class="tok-p">;</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">CREATE USER vagrant SUPERSUSER LOGIN<span class="tok-p">;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+
+CREATE USER salt LOGIN<span class="tok-p">;</span> <i class="conum" data-value="2"></i><b>(2)</b>
+CREATE DATABASE saltstack WITH <span class="tok-nv">owner</span> <span class="tok-o">=</span> <span class="tok-s1">&#39;salt&#39;</span><span class="tok-p">;</span>
+ALTER USER salt WITH password <span class="tok-s1">&#39;saltpass&#39;</span><span class="tok-p">;</span>
+
+psql saltstack -U salt <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>as root</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>as vagrant</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>as vagrant, check that you can connect to the db</td>
+</tr>
+</table>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_glossary">Glossary</h3>
 <div class="dlist">

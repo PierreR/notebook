@@ -29,6 +29,8 @@ include::haskell/lens.adoc[]
 
 include::haskell/monad.adoc[]
 
+include::haskell/exceptions.adoc[]
+
 include::haskell/shake.adoc[]
 
 include::haskell/turtle.adoc[]
