@@ -47,7 +47,7 @@ include::haskell/includes.adoc[]
 :source-language: bash
 include::spacemacs.adoc[]
 
-include::category-theory.adoc[]
+include::docker/docker.adoc[]
 
 include::git/git.adoc[]
 
@@ -58,6 +58,8 @@ include::postgres/postgres.adoc[]
 include::programming-notes.adoc[]
 
 include::elasticsearch/es.adoc[]
+
+include::category-theory.adoc[]
 
 :leveloffset: 0
 

@@ -1,4 +1,15 @@
-= Cluster
+= Docker
+
+== docker engine
+
+```
+→ docker run -d --net compose_default puppet/puppet-agent-centos <1> <2>
+```
+<1> `-d` for detached (will run in the background)
+<2>  `--net compose_default` specify the network created by default by docker-compose
+
+== Docker compose
+
 
 == Consul
 
