@@ -2,7 +2,7 @@
 
 == Intro
 
-At the core of container technology are cGroups and namespaces. Control groups work by allowing the host to share and limit the resources each process or container can consume. Processes are limited
+At the core of container technology are `cGroups` and `namespaces`. Control groups work by allowing the host to share and limit the resources each process or container can consume. Processes are limited
 to see only the process ID in the same namespace.
 
 A Docker environment is made up of filesystems layered over each other. At the base is a boot filesystem, docker's next layer is the root filesystem, rootfs. Then Docker takes advantage of a union mount to add more readonly filesystems on top. These filesystems are called "images". Finally, Docker mounts a read-write filesystem on top of any layers below. This is where whatever process we want our Docker container to run will execute.
