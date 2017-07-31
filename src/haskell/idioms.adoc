@@ -1,0 +1,32 @@
+# Idioms
+
+## Maybe
+
+Use of a `case` to pattern match a `maybe` value is quite common:
+```
+  readline >>= \case
+    Just "Y" -> pure ()
+    _        -> die "Abort"
+
+```
+
+You might want to define a `unwrapWith` utility mimicking `rust` `unwrap_with` but it would be limited and unpractical: 
+
+```
+-- | Unwrap a maybe value in an io computation
+-- passing an alert action in case of Nothing
+unwrapWith :: MonadIO io => io a -> Maybe a -> io a <1>
+unwrapWith io_alert v = maybe io_alert pure v
+<1> Note how `a` fixes the input/output
+```
+
+At the end of the day it is better to stick with the 'case pattern-matching' idiom even for simple cases and avoid the less readable `maybe` variant:
+
+```
+ readline >>= \case
+   Nothing -> die "Abort"
+   Just v  -> pure v
+
+  readline >>= maybe (die "Abort") pure <1>
+```
+<1> shorter but arguably more cryptic

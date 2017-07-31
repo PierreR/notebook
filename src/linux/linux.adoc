@@ -40,10 +40,21 @@ Add route in windows::
 route ADD 192.168.30.0 MASK 255.255.255.0 10.255.10.4
 ```
 
-SCP copy::
+SCP copy from local to remote::
 +
 ```
 scp -i ~/.ssh/user_rsa -r folder user@svifscapl003.prd.srv.cirb.lan:/tmp
+```
+
+SCP copy from remote to remote::
+Using your local computer
++
+```
+ssh-add ~/.ssh/alhazen_rsa
+# Give alhazen the permission to write on targetfqdn:/srv/tmp
+ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn \
+"scp /srv/data/pgserver.dump alhazen@targetfqdn:/srv/tmp"
+
 ```
 
 ## Definitions

@@ -601,7 +601,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_naming_convention">Naming convention</a></li>
 <li><a href="#_common_functions">Common functions</a></li>
 <li><a href="#_gats">GATS</a></li>
-<li><a href="#_haxl">Haxl</a></li>
 <li><a href="#_operational">Operational</a></li>
 <li><a href="#_operator_colloquial_name">Operator colloquial name</a></li>
 <li><a href="#_developments">Developments</a></li>
@@ -3872,55 +3871,6 @@ When you pattern-match your GADT constructor, the instance implicitly comes into
 </div>
 </div>
 <div class="sect2">
-<h3 id="_haxl">Haxl</h3>
-<div class="sect3">
-<h4 id="_primitives_3">Primitives</h4>
-<div class="olist upperalpha">
-<ol class="upperalpha" type="A">
-<li>
-<p>the concurrency monad</p>
-<div class="paragraph">
-<p>gives you a <code>Result</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">newtype</span> <span class="tok-kt">GenHaxl</span> <span class="tok-n">u</span> <span class="tok-n">a</span> <span class="tok-ow">=</span> <span class="tok-kt">GenHaxl</span>
-  <span class="tok-p">{</span> <span class="tok-n">unHaxl</span> <span class="tok-ow">::</span> <span class="tok-kt">Env</span> <span class="tok-n">u</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IORef</span> <span class="tok-p">(</span><span class="tok-kt">RequestStore</span> <span class="tok-n">u</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">IO</span> <span class="tok-p">(</span><span class="tok-kt">Result</span> <span class="tok-n">u</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-p">}</span>
-
-<span class="tok-c1">-- | The result of a computation is either &#39;Done&#39; with a value, &#39;Throw&#39;</span>
-<span class="tok-c1">-- with an exception, or &#39;Blocked&#39; on the result of a data fetch with</span>
-<span class="tok-c1">-- a continuation.</span>
-<span class="tok-kr">data</span> <span class="tok-kt">Result</span> <span class="tok-n">u</span> <span class="tok-n">a</span>
-  <span class="tok-ow">=</span> <span class="tok-kt">Done</span> <span class="tok-n">a</span>
-  <span class="tok-o">|</span> <span class="tok-kt">Throw</span> <span class="tok-kt">SomeException</span>
-  <span class="tok-o">|</span> <span class="tok-kt">Blocked</span> <span class="tok-p">(</span><span class="tok-kt">GenHaxl</span> <span class="tok-n">u</span> <span class="tok-n">a</span><span class="tok-p">)</span>
-
-<span class="tok-nf">datafetch</span> <span class="tok-ow">::</span> <span class="tok-p">(</span><span class="tok-kt">DataSource</span> <span class="tok-n">u</span> <span class="tok-n">r</span><span class="tok-p">,</span> <span class="tok-kt">Request</span> <span class="tok-n">r</span> <span class="tok-n">a</span><span class="tok-p">)</span> <span class="tok-ow">=&gt;</span> <span class="tok-n">r</span> <span class="tok-n">a</span> <span class="tok-ow">-&gt;</span> <span class="tok-kt">GenHaxl</span> <span class="tok-n">u</span> <span class="tok-n">a</span></code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>the request</p>
-<div class="paragraph">
-<p>is a set of <strong>constraints</strong>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="haskell"><span class="tok-kr">type</span> <span class="tok-kt">Request</span> <span class="tok-n">req</span> <span class="tok-n">a</span> <span class="tok-ow">=</span>
-  <span class="tok-p">(</span> <span class="tok-kt">Eq</span> <span class="tok-p">(</span><span class="tok-n">req</span> <span class="tok-n">a</span><span class="tok-p">)</span>
-  <span class="tok-p">,</span> <span class="tok-kt">Hashable</span> <span class="tok-p">(</span><span class="tok-n">req</span> <span class="tok-n">a</span><span class="tok-p">)</span>
-  <span class="tok-p">,</span> <span class="tok-kt">Typeable</span> <span class="tok-p">(</span><span class="tok-n">req</span> <span class="tok-n">a</span><span class="tok-p">)</span>
-  <span class="tok-p">,</span> <span class="tok-kt">Show</span> <span class="tok-p">(</span><span class="tok-n">req</span> <span class="tok-n">a</span><span class="tok-p">)</span>
-  <span class="tok-p">,</span> <span class="tok-kt">Show</span> <span class="tok-n">a</span>
-  <span class="tok-p">)</span></code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="_operational">Operational</h3>
 <div class="quoteblock">
 <blockquote>
@@ -4564,11 +4514,23 @@ excludesfile = /home/username/.gitignore
 </div>
 </div>
 </dd>
-<dt class="hdlist1">SCP copy</dt>
+<dt class="hdlist1">SCP copy from local to remote</dt>
 <dd>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">scp -i ~/.ssh/user_rsa -r folder user@svifscapl003.prd.srv.cirb.lan:/tmp</code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">SCP copy from remote to remote</dt>
+<dd>
+<p>Using your local computer</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">ssh-add ~/.ssh/alhazen_rsa
+<span class="tok-c1"># Give alhazen the permission to write on targetfqdn:/srv/tmp</span>
+ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn <span class="tok-se">\</span>
+<span class="tok-s2">&quot;scp /srv/data/pgserver.dump alhazen@targetfqdn:/srv/tmp&quot;</span></code></pre>
 </div>
 </div>
 </dd>
