@@ -41,6 +41,8 @@ include::haskell/dhall.adoc[]
 
 include::haskell/convention.adoc[]
 
+include::haskell/idioms.adoc[]
+
 include::haskell/includes.adoc[]
 
 :leveloffset: 1
