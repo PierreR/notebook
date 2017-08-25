@@ -1,3 +1,6 @@
+= Puppet
+
+TIP: Don't use exported resources unless it is absolutely necessary. There are very bad while bootstrapping.
 
 ## Run puppet
 
@@ -19,5 +22,5 @@ SCM -> Stash and Nginx
 ## Tips and tricks
 
 ```
-puppet agent -t --tags newsletter 
+puppet agent -t --tags newsletter
 ```

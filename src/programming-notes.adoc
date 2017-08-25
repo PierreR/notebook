@@ -1,41 +1,29 @@
 = Programming Notes
 
 
-== Glossary
+== Notion
 
-.Functional Programming
+Functional Programming::
 
 The meaning of the programs is centered around evaluating expressions rather than executing instructions.
 
-====
 ""
 This is the key to functional programming’s power — it allows improved modularization
 
 In a functional program what is important is that it is a value oriented language; what we are building are sentences made from different values and higher order functions. The types and higher order values are defining the grammar of those sentences.
-
-Software should be designed from the start to be monitored
 ""
-====
 
-.Nibble
+Algebraic Data Type::
 
-Half of one byte. So 4 bits/digits -> 16 values
+A struct or new type, composed from other types either as a product or a sum type.
 
-.Subroutine
+|=====
+| Name | Member | Inhabitant
 
-Synonym for function
-
-.Subtype
-....
-Circle <: Shape
-....
-
-.Algebraic Data Type
-A struct, a new type, composed from other types either as a product or a sum type.
-As such the type that contains
-* 0 element is Void
-* 1         is Unit `()`
-* 2            Bool `True` and `False`
+| Void | | 0
+| Unit | () | 1
+| Bool | True, False | 2
+|=====
 
 Going from there you can define by sum a type with 3 elements:
 ```haskell
@@ -59,7 +47,7 @@ mulValues = [Mul False False, Mul False True, Mul True False, Mul True True]
 
 ```
 
-.Abstract Data Type (ADT)
+Abstract Data Type (ADT)::
 
 A data type is said to be abstract when its implementation is hidden from the client.
 ADT's are types which encapsulates a set of operations.
@@ -71,14 +59,7 @@ The canonical example is a `Stack` for which we define a set of operations inclu
 
 This is very different and even dual to the concept of objects in OO. ADT operations belongs to its datatype whereas OO objects are implemented as collections of observations (methods) that can be performed upon them. The focus on observations, rather than construction, means that objects are best understood as co-algebras.
 
-.CAP
-
-- Consistency
-- Availability
-- Partition
-
-
-.Hash Value
+Hash Value::
 
 `Hashing` is a transformation `AnyText -> TextWithFixedSmallerSize` (array of bites) called `digest` or `hash value` with the following (ideal) properties:
 
@@ -90,6 +71,49 @@ This is very different and even dual to the concept of objects in OO. ADT operat
 The idea is to store this mapping in a database so that you use `digest` as a representation for `AnyText` (the `digest` becomes the id/handle for the Text).
 Given such a mapping you can also hash `AnyText`, get a `digest` and do a lookup in the table to see if the mapping already exists.
 
+CAP::
+
+- Consistency
+- Availability
+- Partition
+
+
+Glossary::
++
+.nibble
+Half of one byte. So 4 bits/digits -> 16 values
++
+.subroutine
+Synonym for function
++
+.subtype
+....
+Circle <: Shape
+....
++
+.Object Orientated Programming
+Objects by definition include mutable state -> intensional object identity !!
+
+
+== Quotes
+
+Monitoring::
+
+""
+Software should be designed from the start to be monitored
+""
+
+ORM::
+
+""
+ORMs are mixing different concerns. There were introduced by OO zealots to avoid the declarative nature of SQL. Now according to Martin Fowler they are just a way to get memory cache. Yes right but that is not the way ORMs have been sold ?
+
+The whole ORM story looks like a complete disaster. Building a graph of objects in memory across sessions has proven to make little sense in many projects I had worked on.
+
+If you deal with a relational database, abstracting it with mutable pojos is dubious at best. I am pretty convinced a nice API query interface such as LINQ can solve the problems of the myriads of SQL statements to handle.
+
+Here is the problem, at the end, data are used to be feed into viewer. So let's get this straight. Output JSON directly from a query language interface !
+""
 
 == Scrible
 
@@ -98,35 +122,8 @@ Please do understand the difference between -> and => ... what you need here is 
 
 RAM : Heap & Stack
 
-OO -> mutable state -> intensional object identity !!
-
-Persistence data structure old version <-
-
 IDENDITY LABEL FOR A TIMELINE
 CONFLATE ID WITH STATE
 REF TYPE BOXES TO VALUES
 
-
-
-Here is the problem, at the end, data are used to be feed into viewer. So let's get this straight. Output JSON directly from a query language interface !
-
-You just don't want this data layer period ! Unless you need to do something with it on the service layer.
-
-You need two different transparent process to take place. Spit records from the database, mangle and service the data by outputing JSON, or spit json right away.
-
-
-Get some output from the frontend, mangle and check, then update your data backend.
-
-We need to make a strong difference between records and objects. Let's talk about interface as well. In Haskell, we have got type class and polymorphism.
-
 How do we express polymorphism in UML. You mark class with a stereotype. You have to see class as something really global in UML. It is just a blueprint of code.
-
-The whole ORM story looks like a complete disaster. Building a graph of objects in memory across sessions has proven to make little sense in many projects I had worked on.
-
-If you deal with a relational database, abstracting it with mutable pojos is dubious at best. I am pretty convinced a nice API query interface such as LINQ can solve the problems of the myriads of SQL statements to handle.
-
-RAM caching does not seem that difficult either as long as it happens pseudo-transparently behind the interface.
-
-Then a good language support for records and you are good to go.
-
-ORMs are mixing different concerns. There were introduced by OO zealots to avoid the declarative nature of SQL. Now according to Martin Fowler they are just a way to get memory cache. Yes right but that is not the way ORMs have been sold ?

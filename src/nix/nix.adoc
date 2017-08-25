@@ -454,7 +454,36 @@ f = self: super:
 ....
 ****
 
-Private packages::
+overlays::
+
+Since `17.03` there is a more idiomatic way to achieve such local customization:
++
+.~/.config/nixpgks/overlays/default.nix
+```
+self: super:
+let
+  hlib = super.haskell.lib;
+in
+{
+  haskellPackages = super.haskellPackages.override {
+    overrides =  hpkgs: _hpkgs: {
+      cicd-shell = hlib.dontCheck (hlib.dontHaddock
+        (_hpkgs.callCabal2nix "cicd-shell" (super.fetchgit { <1>
+           url = "http://stash.cirb.lan/scm/cicd/cicd-shell.git";
+           rev = "d76c532d69e4d01bdaf2c716533d9557371c28ea";
+           sha256 = "0yval6k6rliw1q79ikj6xxnfz17wdlnjz1428qbv8yfl8692p13h";
+         }) {
+              protolude = _hpkgs.protolude_0_2;
+            }
+        ));
+      };
+    };
+}
+```
+<1> `callCabal2nix` allows to automatically fetch and build any haskell package from the web
+
+
+private packages::
 +
 You can also extend `nixpkgs` with private derivations without any forking. For instance using a custom file:
 +
@@ -500,18 +529,30 @@ You then build the derivation or install it in the user environment.
 ```
 <1> `nix-env -i` takes the name attribute and strip the version (first numeric after `-`)
 
-Pinned a version of nixpkgs::
+pinned a version of nixpkgs::
 +
 ```
-  nixpkgs = (import <nixpkgs> {}).pkgs.fetchgit {
-              url = "https://github.com/nixos/nixpkgs-channels";
-              rev = "f93a8ee1105f4cc3770ce339a8c1a4acea3b2fb6";
-              sha256 = "01fnyw711p6kf9qpdabys9im10hlih1l1pxwp06wkq7b9wsljawd";
-            };
+nixpkgs = (import <nixpkgs> {}).pkgs.fetchgit {
+            url = "https://github.com/nixos/nixpkgs-channels";
+            rev = "f93a8ee1105f4cc3770ce339a8c1a4acea3b2fb6";
+            sha256 = "01fnyw711p6kf9qpdabys9im10hlih1l1pxwp06wkq7b9wsljawd";
+          };
 
 in
 
 with import nixpkgs {};
+```
+
+caching the list of all available package into a local file::
++
+```
+nix-env -qaP --description '*' > ~/allpkgs.desc
+```
+
+reproduce any hydra build locally::
++
+```
+bash <(curl https://hydra.nixos.org/build/57055021/reproduce)
 ```
 
 == Bootstrap

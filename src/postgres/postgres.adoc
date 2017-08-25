@@ -118,27 +118,64 @@ Use pgdump to migrate from postgres to postgres.
 
 We don't have to start the slave before the master. The slave can just wait for a master to start up.
 
-First shutdown the master and set it up for replication by:
-	1) change postgres.conf
+
+[upperroman]
+. First shutdown the master and set it up for replication by:
+
+.. change `postgres.conf`
++
+```
 wal_level = hot_standby
-max_wal_senders = 2
+max_wal_senders = 4
 wal_keep_segments = 32
+```
++
+```
 archive_mode = on
 archive_command = 'cp %p /data/archive/%f'
-	2) change pg_hba.conf
-host  replication  all 127.0.0.1/32  trust
+```
+.. change `pg_hba.conf`:
++
+```
+host  replication  repuser slaveip/32  md5
+```
 
-Then take a brand new backup of the master db and ship it to the master. Locally it is just
-Start the server !!
-pg_basebackup -h localhost -D /opt/PostgresPlus/9.3AS/data1
-( or just copy the directory if the server is down)
+. Configure the `pg_hba.conf` of the slave:
++
+```.slave
+host  replication  repuser masterip/32  md5
+```
 
+. Initialize the cluster
 
-	PAX process
+On a local server, you can just copy the `data` folder from the master to the slave or `pg_basebackup -h localhost -D /opt/PostgresPlus/9.3AS/data1` but on a real set up you would follow these steps:
 
+[loweralpha]
+.. on the master:
++
+```
+postgres=# select pg_start_backup('cluster_init');
+```
+.. on the slave:
++
+[source]
+----
+rsync -avz --delete --inplace --exclude-from=/srv/pgsql/do-not-sync  root@195.244.165.68:/srv/pgsql/data/ /srv/pgsql/data <1>
+----
+<1> with the postgres user
+
+.. on the master
++
+```
+postgres=# select pg_stop_backup();
+```
+
+====
+"	PAX process
 
 	Select * from pg_stat_activity
 	select * from pg
+====
 
 ## Shell utils practices
 

@@ -600,11 +600,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_dhall">Dhall</a></li>
 <li><a href="#_naming_convention">Naming convention</a></li>
 <li><a href="#_idioms">Idioms</a></li>
+<li><a href="#_extensions">Extensions</a></li>
 <li><a href="#_common_functions">Common functions</a></li>
 <li><a href="#_gats">GATS</a></li>
 <li><a href="#_operational">Operational</a></li>
 <li><a href="#_operator_colloquial_name">Operator colloquial name</a></li>
 <li><a href="#_developments">Developments</a></li>
+<li><a href="#_blast">Blast</a></li>
 </ul>
 </li>
 <li><a href="#_spacemacs">Spacemacs</a>
@@ -659,7 +661,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_programming_notes">Programming Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_glossary_2">Glossary</a></li>
+<li><a href="#_notion">Notion</a></li>
+<li><a href="#_quotes">Quotes</a></li>
 <li><a href="#_scrible">Scrible</a></li>
 </ul>
 </li>
@@ -1454,7 +1457,43 @@ f = self: super:
 </div>
 </div>
 </dd>
-<dt class="hdlist1">Private packages</dt>
+<dt class="hdlist1">overlays</dt>
+<dd>
+<p>Since <code>17.03</code> there is a more idiomatic way to achieve such local customization:</p>
+<div class="listingblock">
+<div class="title">~/.config/nixpgks/overlays/default.nix</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">self: super:
+<span class="tok-nb">let</span>
+  <span class="tok-nv">hlib</span> <span class="tok-o">=</span> super.haskell.lib<span class="tok-p">;</span>
+in
+<span class="tok-o">{</span>
+  <span class="tok-nv">haskellPackages</span> <span class="tok-o">=</span> super.haskellPackages.override <span class="tok-o">{</span>
+    <span class="tok-nv">overrides</span> <span class="tok-o">=</span>  hpkgs: _hpkgs: <span class="tok-o">{</span>
+      cicd-shell <span class="tok-o">=</span> hlib.dontCheck <span class="tok-o">(</span>hlib.dontHaddock
+        <span class="tok-o">(</span>_hpkgs.callCabal2nix <span class="tok-s2">&quot;cicd-shell&quot;</span> <span class="tok-o">(</span>super.fetchgit <span class="tok-o">{</span> <i class="conum" data-value="1"></i><b>(1)</b>
+           <span class="tok-nv">url</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;http://stash.cirb.lan/scm/cicd/cicd-shell.git&quot;</span><span class="tok-p">;</span>
+           <span class="tok-nv">rev</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;d76c532d69e4d01bdaf2c716533d9557371c28ea&quot;</span><span class="tok-p">;</span>
+           <span class="tok-nv">sha256</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;0yval6k6rliw1q79ikj6xxnfz17wdlnjz1428qbv8yfl8692p13h&quot;</span><span class="tok-p">;</span>
+         <span class="tok-o">})</span> <span class="tok-o">{</span>
+              <span class="tok-nv">protolude</span> <span class="tok-o">=</span> _hpkgs.protolude_0_2<span class="tok-p">;</span>
+            <span class="tok-o">}</span>
+        <span class="tok-o">))</span><span class="tok-p">;</span>
+      <span class="tok-o">}</span><span class="tok-p">;</span>
+    <span class="tok-o">}</span><span class="tok-p">;</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>callCabal2nix</code> allows to automatically fetch and build any haskell package from the web</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">private packages</dt>
 <dd>
 <div class="paragraph">
 <p>You can also extend <code>nixpkgs</code> with private derivations without any forking. For instance using a custom file:</p>
@@ -1528,19 +1567,35 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </table>
 </div>
 </dd>
-<dt class="hdlist1">Pinned a version of nixpkgs</dt>
+<dt class="hdlist1">pinned a version of nixpkgs</dt>
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">  <span class="tok-nv">nixpkgs</span> <span class="tok-o">=</span> <span class="tok-o">(</span>import &lt;nixpkgs&gt; <span class="tok-o">{})</span>.pkgs.fetchgit <span class="tok-o">{</span>
-              <span class="tok-nv">url</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;https://github.com/nixos/nixpkgs-channels&quot;</span><span class="tok-p">;</span>
-              <span class="tok-nv">rev</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;f93a8ee1105f4cc3770ce339a8c1a4acea3b2fb6&quot;</span><span class="tok-p">;</span>
-              <span class="tok-nv">sha256</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;01fnyw711p6kf9qpdabys9im10hlih1l1pxwp06wkq7b9wsljawd&quot;</span><span class="tok-p">;</span>
-            <span class="tok-o">}</span><span class="tok-p">;</span>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">nixpkgs</span> <span class="tok-o">=</span> <span class="tok-o">(</span>import &lt;nixpkgs&gt; <span class="tok-o">{})</span>.pkgs.fetchgit <span class="tok-o">{</span>
+            <span class="tok-nv">url</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;https://github.com/nixos/nixpkgs-channels&quot;</span><span class="tok-p">;</span>
+            <span class="tok-nv">rev</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;f93a8ee1105f4cc3770ce339a8c1a4acea3b2fb6&quot;</span><span class="tok-p">;</span>
+            <span class="tok-nv">sha256</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;01fnyw711p6kf9qpdabys9im10hlih1l1pxwp06wkq7b9wsljawd&quot;</span><span class="tok-p">;</span>
+          <span class="tok-o">}</span><span class="tok-p">;</span>
 
 in
 
 with import nixpkgs <span class="tok-o">{}</span><span class="tok-p">;</span></code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">caching the list of all available package into a local file</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">nix-env -qaP --description <span class="tok-s1">&#39;*&#39;</span> &gt; ~/allpkgs.desc</code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">reproduce any hydra build locally</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">bash &lt;<span class="tok-o">(</span>curl https://hydra.nixos.org/build/57055021/reproduce<span class="tok-o">)</span></code></pre>
 </div>
 </div>
 </dd>
@@ -3794,6 +3849,106 @@ readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</sp
 </div>
 </div>
 <div class="sect2">
+<h3 id="_extensions">Extensions</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Syntax</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>LambdaCase</p>
+</li>
+<li>
+<p>GADTSyntax</p>
+</li>
+<li>
+<p>RankNTypes</p>
+</li>
+<li>
+<p>BangPatterns</p>
+</li>
+<li>
+<p>RecordWildCards</p>
+</li>
+<li>
+<p>DuplicateRecordFields</p>
+</li>
+<li>
+<p>MultiWayIf</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Common</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>ScopedTypeVariables (69)</p>
+</li>
+<li>
+<p>DeriveGeneric (66)</p>
+</li>
+<li>
+<p>TupleSections (59)</p>
+</li>
+<li>
+<p>MultiParamTypeClasses (56)</p>
+</li>
+<li>
+<p>FlexibleInstances (33)</p>
+</li>
+<li>
+<p>FlexibleContexts (31)</p>
+</li>
+<li>
+<p>TypeOperators (29)</p>
+</li>
+<li>
+<p>FunctionalDependencies (15)</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Unknown</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>MonadComprehensions (12)</p>
+</li>
+<li>
+<p>EmptyCase (3)</p>
+</li>
+<li>
+<p>DisambiguateRecordFields (14)</p>
+</li>
+<li>
+<p>RecursiveDo (10)</p>
+</li>
+<li>
+<p>ParallelListComp</p>
+</li>
+<li>
+<p>TypeFamilies,</p>
+</li>
+<li>
+<p>PatternSynonyms</p>
+</li>
+<li>
+<p>PartialTypeSignatures</p>
+</li>
+<li>
+<p>TypeApplications</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_common_functions">Common functions</h3>
 <div class="listingblock">
 <div class="content">
@@ -4058,6 +4213,36 @@ When you pattern-match your GADT constructor, the instance implicitly comes into
 <div class="content">
 <pre class="pygments highlight"><code data-lang="haskell"><span class="tok-nf">hasktags</span> <span class="tok-o">-</span><span class="tok-n">e</span> <span class="tok-n">src</span></code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_blast">Blast</h3>
+<div class="paragraph">
+<p>Two main ideas:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>build two 'isomorphic' AST for the slave and the master. The nodes (shape) is the same but each node is slighlty different in the master and slaves</p>
+</li>
+<li>
+<p>find a way so that the execution of <code>f x</code> can be done in a typed safed way on the slaves using the cache</p>
+</li>
+<li>
+<p>you know from the start how many slaves you have</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Kubernetes</dt>
+<dd>
+<p>Chaque pod dans Kubernetes possède une adresse IP unique &#8594; One slave == one pod</p>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>One slave is failing, you get another one inside the pod &#8594; same IP</p>
 </div>
 </div>
 </div>
@@ -4579,7 +4764,7 @@ excludesfile = /home/username/.gitignore
 <pre class="pygments highlight"><code data-lang="bash">ssh-add ~/.ssh/alhazen_rsa
 <span class="tok-c1"># Give alhazen the permission to write on targetfqdn:/srv/tmp</span>
 ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn <span class="tok-se">\</span>
-<span class="tok-s2">&quot;scp /srv/data/pgserver.dump alhazen@targetfqdn:/srv/tmp&quot;</span></code></pre>
+<span class="tok-s2">&quot;scp -o StrictHostKeyChecking=No /srv/data/pgserver.dump alhazen@targetfqdn:/srv/tmp&quot;</span></code></pre>
 </div>
 </div>
 </dd>
@@ -4773,32 +4958,102 @@ There is a daemon process started by the PostMaster</p>
 <div class="paragraph">
 <p>We don&#8217;t have to start the slave before the master. The slave can just wait for a master to start up.</p>
 </div>
-<div class="paragraph">
-<p>First shutdown the master and set it up for replication by:
-	1) change postgres.conf
-wal_level = hot_standby
-max_wal_senders = 2
-wal_keep_segments = 32
-archive_mode = on
-archive_command = 'cp %p /data/archive/%f'
-	2) change pg_hba.conf
-host  replication  all 127.0.0.1/32  trust</p>
-</div>
-<div class="paragraph">
-<p>Then take a brand new backup of the master db and ship it to the master. Locally it is just
-Start the server !!
-pg_basebackup -h localhost -D /opt/PostgresPlus/9.3AS/data1
-( or just copy the directory if the server is down)</p>
-</div>
-<div class="literalblock">
+<div class="olist upperroman">
+<ol class="upperroman" type="I">
+<li>
+<p>First shutdown the master and set it up for replication by:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>change <code>postgres.conf</code></p>
+<div class="listingblock">
 <div class="content">
-<pre>PAX process</pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">wal_level</span> <span class="tok-o">=</span> hot_standby
+<span class="tok-nv">max_wal_senders</span> <span class="tok-o">=</span> <span class="tok-m">4</span>
+<span class="tok-nv">wal_keep_segments</span> <span class="tok-o">=</span> <span class="tok-m">32</span></code></pre>
 </div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">archive_mode</span> <span class="tok-o">=</span> on
+<span class="tok-nv">archive_command</span> <span class="tok-o">=</span> <span class="tok-s1">&#39;cp %p /data/archive/%f&#39;</span></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>change <code>pg_hba.conf</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">host  replication  repuser slaveip/32  md5</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Configure the <code>pg_hba.conf</code> of the slave:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang=".slave">host  replication  repuser masterip/32  md5</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Initialize the cluster</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>On a local server, you can just copy the <code>data</code> folder from the master to the slave or <code>pg_basebackup -h localhost -D /opt/PostgresPlus/9.3AS/data1</code> but on a real set up you would follow these steps:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>on the master:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">postgres</span><span class="tok-o">=</span><span class="tok-c1"># select pg_start_backup(&#39;cluster_init&#39;);</span></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>on the slave:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">rsync -avz --delete --inplace --exclude-from<span class="tok-o">=</span>/srv/pgsql/do-not-sync  root@195.244.165.68:/srv/pgsql/data/ /srv/pgsql/data <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>with the postgres user</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>on the master</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">postgres</span><span class="tok-o">=</span><span class="tok-c1"># select pg_stop_backup();</span></code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>"	PAX process</p>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>Select * from pg_stat_activity
 select * from pg</pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4819,13 +5074,15 @@ ssh puppetmaster-prod <span class="tok-s1">&#39;sudo -u postgres pg_dump puppetd
 <h2 id="_programming_notes">Programming Notes</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_glossary_2">Glossary</h3>
-<div class="paragraph">
-<div class="title">Functional Programming</div>
+<h3 id="_notion">Notion</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Functional Programming</dt>
+<dd>
 <p>The meaning of the programs is centered around evaluating expressions rather than executing instructions.</p>
+</dd>
+</dl>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -4834,35 +5091,47 @@ ssh puppetmaster-prod <span class="tok-s1">&#39;sudo -u postgres pg_dump puppetd
 <div class="paragraph">
 <p>In a functional program what is important is that it is a value oriented language; what we are building are sentences made from different values and higher order functions. The types and higher order values are defining the grammar of those sentences.</p>
 </div>
-<div class="paragraph">
-<p>Software should be designed from the start to be monitored</p>
-</div>
 </blockquote>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Algebraic Data Type</dt>
+<dd>
+<p>A struct or new type, composed from other types either as a product or a sum type.</p>
+</dd>
+</dl>
 </div>
-</div>
-<div class="paragraph">
-<div class="title">Nibble</div>
-<p>Half of one byte. So 4 bits/digits &#8594; 16 values</p>
-</div>
-<div class="paragraph">
-<div class="title">Subroutine</div>
-<p>Synonym for function</p>
-</div>
-<div class="literalblock">
-<div class="title">Subtype</div>
-<div class="content">
-<pre>Circle &lt;: Shape</pre>
-</div>
-</div>
-<div class="paragraph">
-<div class="title">Algebraic Data Type</div>
-<p>A struct, a new type, composed from other types either as a product or a sum type.
-As such the type that contains
-* 0 element is Void
-* 1         is Unit <code>()</code>
-* 2            Bool <code>True</code> and <code>False</code></p>
-</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Member</th>
+<th class="tableblock halign-left valign-top">Inhabitant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Void</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bool</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">True, False</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Going from there you can define by sum a type with 3 elements:</p>
 </div>
@@ -4888,11 +5157,15 @@ As such the type that contains
 <span class="tok-nf">mulValues</span> <span class="tok-ow">=</span> <span class="tok-p">[</span><span class="tok-kt">Mul</span> <span class="tok-kt">False</span> <span class="tok-kt">False</span><span class="tok-p">,</span> <span class="tok-kt">Mul</span> <span class="tok-kt">False</span> <span class="tok-kt">True</span><span class="tok-p">,</span> <span class="tok-kt">Mul</span> <span class="tok-kt">True</span> <span class="tok-kt">False</span><span class="tok-p">,</span> <span class="tok-kt">Mul</span> <span class="tok-kt">True</span> <span class="tok-kt">True</span><span class="tok-p">]</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<div class="title">Abstract Data Type (ADT)</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Abstract Data Type (ADT)</dt>
+<dd>
 <p>A data type is said to be abstract when its implementation is hidden from the client.
 ADT&#8217;s are types which encapsulates a set of operations.
 The concept originates from CLU (Liskov, 1972) :</p>
+</dd>
+</dl>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -4907,24 +5180,11 @@ The concept originates from CLU (Liskov, 1972) :</p>
 <div class="paragraph">
 <p>This is very different and even dual to the concept of objects in OO. ADT operations belongs to its datatype whereas OO objects are implemented as collections of observations (methods) that can be performed upon them. The focus on observations, rather than construction, means that objects are best understood as co-algebras.</p>
 </div>
-<div class="ulist">
-<div class="title">CAP</div>
-<ul>
-<li>
-<p>Consistency</p>
-</li>
-<li>
-<p>Availability</p>
-</li>
-<li>
-<p>Partition</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<div class="title">Hash Value</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Hash Value</dt>
+<dd>
 <p><code>Hashing</code> is a transformation <code>AnyText &#8594; TextWithFixedSmallerSize</code> (array of bites) called <code>digest</code> or <code>hash value</code> with the following (ideal) properties:</p>
-</div>
 <div class="ulist">
 <ul>
 <li>
@@ -4938,9 +5198,89 @@ The concept originates from CLU (Liskov, 1972) :</p>
 </li>
 </ul>
 </div>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
 <p>The idea is to store this mapping in a database so that you use <code>digest</code> as a representation for <code>AnyText</code> (the <code>digest</code> becomes the id/handle for the Text).
 Given such a mapping you can also hash <code>AnyText</code>, get a <code>digest</code> and do a lookup in the table to see if the mapping already exists.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">CAP</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Consistency</p>
+</li>
+<li>
+<p>Availability</p>
+</li>
+<li>
+<p>Partition</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Glossary</dt>
+<dd>
+<div class="paragraph">
+<div class="title">nibble</div>
+<p>Half of one byte. So 4 bits/digits &#8594; 16 values</p>
+</div>
+<div class="paragraph">
+<div class="title">subroutine</div>
+<p>Synonym for function</p>
+</div>
+<div class="literalblock">
+<div class="title">subtype</div>
+<div class="content">
+<pre>Circle &lt;: Shape</pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">Object Orientated Programming</div>
+<p>Objects by definition include mutable state &#8594; intensional object identity !!</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_quotes">Quotes</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Monitoring</dt>
+</dl>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Software should be designed from the start to be monitored</p>
+</div>
+</blockquote>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">ORM</dt>
+</dl>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>ORMs are mixing different concerns. There were introduced by OO zealots to avoid the declarative nature of SQL. Now according to Martin Fowler they are just a way to get memory cache. Yes right but that is not the way ORMs have been sold ?</p>
+</div>
+<div class="paragraph">
+<p>The whole ORM story looks like a complete disaster. Building a graph of objects in memory across sessions has proven to make little sense in many projects I had worked on.</p>
+</div>
+<div class="paragraph">
+<p>If you deal with a relational database, abstracting it with mutable pojos is dubious at best. I am pretty convinced a nice API query interface such as LINQ can solve the problems of the myriads of SQL statements to handle.</p>
+</div>
+<div class="paragraph">
+<p>Here is the problem, at the end, data are used to be feed into viewer. So let&#8217;s get this straight. Output JSON directly from a query language interface !</p>
+</div>
+</blockquote>
 </div>
 </div>
 <div class="sect2">
@@ -4952,48 +5292,12 @@ Given such a mapping you can also hash <code>AnyText</code>, get a <code>digest<
 <p>RAM : Heap &amp; Stack</p>
 </div>
 <div class="paragraph">
-<p>OO &#8594; mutable state &#8594; intensional object identity !!</p>
-</div>
-<div class="paragraph">
-<p>Persistence data structure old version &#8592;</p>
-</div>
-<div class="paragraph">
 <p>IDENDITY LABEL FOR A TIMELINE
 CONFLATE ID WITH STATE
 REF TYPE BOXES TO VALUES</p>
 </div>
 <div class="paragraph">
-<p>Here is the problem, at the end, data are used to be feed into viewer. So let&#8217;s get this straight. Output JSON directly from a query language interface !</p>
-</div>
-<div class="paragraph">
-<p>You just don&#8217;t want this data layer period ! Unless you need to do something with it on the service layer.</p>
-</div>
-<div class="paragraph">
-<p>You need two different transparent process to take place. Spit records from the database, mangle and service the data by outputing JSON, or spit json right away.</p>
-</div>
-<div class="paragraph">
-<p>Get some output from the frontend, mangle and check, then update your data backend.</p>
-</div>
-<div class="paragraph">
-<p>We need to make a strong difference between records and objects. Let&#8217;s talk about interface as well. In Haskell, we have got type class and polymorphism.</p>
-</div>
-<div class="paragraph">
 <p>How do we express polymorphism in UML. You mark class with a stereotype. You have to see class as something really global in UML. It is just a blueprint of code.</p>
-</div>
-<div class="paragraph">
-<p>The whole ORM story looks like a complete disaster. Building a graph of objects in memory across sessions has proven to make little sense in many projects I had worked on.</p>
-</div>
-<div class="paragraph">
-<p>If you deal with a relational database, abstracting it with mutable pojos is dubious at best. I am pretty convinced a nice API query interface such as LINQ can solve the problems of the myriads of SQL statements to handle.</p>
-</div>
-<div class="paragraph">
-<p>RAM caching does not seem that difficult either as long as it happens pseudo-transparently behind the interface.</p>
-</div>
-<div class="paragraph">
-<p>Then a good language support for records and you are good to go.</p>
-</div>
-<div class="paragraph">
-<p>ORMs are mixing different concerns. There were introduced by OO zealots to avoid the declarative nature of SQL. Now according to Martin Fowler they are just a way to get memory cache. Yes right but that is not the way ORMs have been sold ?</p>
 </div>
 </div>
 </div>
