@@ -254,9 +254,9 @@ with (import <nixpkgs> {}).pkgs;
 
 #nix-env# is the command to use to search, install, remove packages locally in user space (or profile). These packages are installed in the `nix-store` but are only accessible inside one environment (aka user/profile).
 
-[WARNING]
+[CAUTION]
 ====
-`nix-env` doesn't require a starting nix expression. As a consequence, `nix-env` does not use `<nixpkgs>` as NIX_PATH. It actually uses `~/.nix-defexpr/channels`.
+`nix-env` doesn't require a starting nix expression. As a consequence, `nix-env` does not use `<nixpkgs>` as NIX_PATH. It actually uses `~/.nix-defexpr/channels`. +
 If you want to use <nixpkgs>, you would explicitly use the `-f` (or `--file`) option on the command line.
 ====
 

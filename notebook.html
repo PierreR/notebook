@@ -492,6 +492,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .listingblock .pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
 </style>
 <style>
+ h1, h2 { font-weight: 400;}
+ h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
+     color: #0b1e54;
+ }
+
  table tr th, table tr td {
      padding: .45em .6em !important;
  }
@@ -643,6 +648,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_lvm">LVM</a></li>
 <li><a href="#_tips_2">Tips</a></li>
 <li><a href="#_definitions">Definitions</a></li>
+<li><a href="#_logs">Logs</a></li>
 </ul>
 </li>
 <li><a href="#_postgres">Postgres</a>
@@ -972,7 +978,16 @@ For a precise status, check <a href="http://howoldis.herokuapp.com">here</a>.</p
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-On <code>nixos</code>, you should stick to <code>nixos-unstable</code> (don&#8217;t use <code>nixpkgs-unstable</code> because specific nixos sanity check won&#8217;t applied)
+<div class="ulist">
+<ul>
+<li>
+<p>In future version of nix, <code>channel</code> might be deprecated to favor <code>NIX_PATH</code> solely.</p>
+</li>
+<li>
+<p>On <code>nixos</code>, you should stick to <code>nixos-unstable</code> (don&#8217;t use <code>nixpkgs-unstable</code> because specific nixos sanity check won&#8217;t applied)</p>
+</li>
+</ul>
+</div>
 </td>
 </tr>
 </table>
@@ -1065,7 +1080,7 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>In Haskell, we can use <a href="https://github.com/NixOS/nixpkgs/blob/b40e1efe000ec5c4616cecc9d6836eade419434e/pkgs/development/haskell-modules/generic-builder.nix#L283">env</a> to build the isolated environment:</p>
+<p>In Haskell, we need the --attr <a href="https://github.com/NixOS/nixpkgs/blob/b40e1efe000ec5c4616cecc9d6836eade419434e/pkgs/development/haskell-modules/generic-builder.nix#L283">env</a> to tell <code>nix-shell</code> to compute the isolated development environment:</p>
 </div>
 <div class="listingblock">
 <div class="title">shell.nix</div>
@@ -1095,15 +1110,15 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 <div class="paragraph">
 <p><mark>nix-env</mark> is the command to use to search, install, remove packages locally in user space (or profile). These packages are installed in the <code>nix-store</code> but are only accessible inside one environment (aka user/profile).</p>
 </div>
-<div class="admonitionblock warning">
+<div class="admonitionblock caution">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p><code>nix-env</code> doesn&#8217;t require a starting nix expression. As a consequence, <code>nix-env</code> does not use <code>&lt;nixpkgs&gt;</code> as NIX_PATH. It actually uses <code>~/.nix-defexpr/channels</code>.
+<p><code>nix-env</code> doesn&#8217;t require a starting nix expression. As a consequence, <code>nix-env</code> does not use <code>&lt;nixpkgs&gt;</code> as NIX_PATH. It actually uses <code>~/.nix-defexpr/channels</code>.<br>
 If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code> (or <code>--file</code>) option on the command line.</p>
 </div>
 </td>
@@ -4785,6 +4800,26 @@ ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn <span class="tok-se">\</span>
 <p>TCP, UDP (SCTP)</p>
 </dd>
 </dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_logs">Logs</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">journalctl -r - show logs in reverse order
+journalctl -b - show logs since last boot
+journalctl -k - show kernel logs
+journalctl -p warning - show logs with warning priority
+journalctl -p error - show logs with error priority
+journalctl --since<span class="tok-o">=</span><span class="tok-m">2016</span>-08-01 - show logs since
+journalctl --until<span class="tok-o">=</span><span class="tok-m">2016</span>-08-03 - show logs <span class="tok-k">until</span>
+journalctl --until<span class="tok-o">=</span>today - show logs <span class="tok-k">until</span> midnight today
+journalctl --since<span class="tok-o">=</span>yesterday - show logs since yesterday midnight
+journalctl --since<span class="tok-o">=</span>-2week - show logs <span class="tok-k">for</span> last <span class="tok-m">2</span> weeks
+journalctl -u &lt;unit-name&gt; - show logs of certain unit
+journalctl /dev/sda - show kernel message of device
+journalctl -o json - show logs in json format</code></pre>
+</div>
 </div>
 </div>
 </div>
