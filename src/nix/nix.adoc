@@ -179,7 +179,12 @@ You can directly use a derivation from master. For instance, after cloning `nixp
 →  NIX_PATH=nixpkgs=/home/vagrant/projects/nix/nixpkgs nix-env -f '<nixpkgs>' -iA haskellPackages.stack
 ```
 
-NOTE: On `nixos`, you should stick to `nixos-unstable` (don't use `nixpkgs-unstable` because specific nixos sanity check won't applied)
+[NOTE]
+====
+- In future version of nix, `channel` might be deprecated to favor `NIX_PATH` solely.
+- On `nixos`, you should stick to `nixos-unstable` (don't use `nixpkgs-unstable` because specific nixos sanity check won't applied)
+
+====
 
 == Nix-shell
 
@@ -233,7 +238,7 @@ or without a default.nix file:
 
 [NOTE]
 ====
-In Haskell, we can use https://github.com/NixOS/nixpkgs/blob/b40e1efe000ec5c4616cecc9d6836eade419434e/pkgs/development/haskell-modules/generic-builder.nix#L283[env] to build the isolated environment:
+In Haskell, we need the --attr https://github.com/NixOS/nixpkgs/blob/b40e1efe000ec5c4616cecc9d6836eade419434e/pkgs/development/haskell-modules/generic-builder.nix#L283[env] to tell `nix-shell` to compute the isolated development environment:
 
 .shell.nix
 ```nix
