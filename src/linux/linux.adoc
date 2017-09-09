@@ -32,7 +32,7 @@ or by adding a new disk using puppet :
 - `puppet agent -t` will now create a new lv `nix`. You can see it with `lvs`
 
 
-## Tips
+== Tips
 
 Add route in windows::
 +
@@ -57,10 +57,29 @@ ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn \
 
 ```
 
-## Definitions
+== Definitions
 
 Push (SSE) vs Pull (REQ/REP)::
 
 Application layer:: HTTP, SNMP, AMQP, XMPP, IRC, DHCP, WebDAV, SSH, FTP, SIP, Telnet
 
 Transport layer:: TCP, UDP (SCTP)
+
+
+== Logs
+
+```
+journalctl -r - show logs in reverse order
+journalctl -b - show logs since last boot
+journalctl -k - show kernel logs
+journalctl -p warning - show logs with warning priority
+journalctl -p error - show logs with error priority
+journalctl --since=2016-08-01 - show logs since
+journalctl --until=2016-08-03 - show logs until
+journalctl --until=today - show logs until midnight today
+journalctl --since=yesterday - show logs since yesterday midnight
+journalctl --since=-2week - show logs for last 2 weeks
+journalctl -u <unit-name> - show logs of certain unit
+journalctl /dev/sda - show kernel message of device
+journalctl -o json - show logs in json format
+```
