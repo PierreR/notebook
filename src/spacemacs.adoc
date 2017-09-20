@@ -35,6 +35,7 @@ c-s      :            - open in a new buffer
 === Misc
 
 :===
+<SPC> v     :        expand region mode
 <SPC> a u   :        "undo-tree-visualize"
 <SPC> p f   :        helm-find file for your project !amazing!
 <SPC> f e h :        open helm spacemacs for help
