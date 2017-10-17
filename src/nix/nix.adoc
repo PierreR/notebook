@@ -407,7 +407,7 @@ e1 // e2 # merge e1 and e2 with e2 taking precedence in case of equally named at
 
 == Tips and tricks
 
-customize nixpkgs locally::
+Customize nixpkgs locally::
 +
 You can override derivation attributes in user space without forking the `nixpkgs` repository.
 In `~/.nixpkgs/config.nix` you typically declare a `packageOverrides` function and then use `override` to customize attributes:
@@ -459,7 +459,7 @@ f = self: super:
 ....
 ****
 
-overlays::
+Overlays::
 
 Since `17.03` there is a more idiomatic way to achieve such local customization:
 +
@@ -487,8 +487,24 @@ in
 ```
 <1> `callCabal2nix` allows to automatically fetch and build any haskell package from the web
 
+Overrides haskell packages for the `ghc821` compiler::
++
+```
+self: super:
+let
+  hlib = super.haskell.lib;
+in
+{
+haskell = super.haskell // { packages = super.haskell.packages // { ghc821 = super.haskell.packages.ghc821.override { <1>
+   overrides =  hpkgs: _hpkgs: {
+     containers = hlib.dontCheck(_hpkgs.containers);
+   };
+};};};
+}
+```
+<1> `haskell` equals `super.haskell` except packages, which equals `super.haskell.packages` except for `ghc821`, which is the overriden version of `super 821`
 
-private packages::
+Private packages::
 +
 You can also extend `nixpkgs` with private derivations without any forking. For instance using a custom file:
 +
@@ -534,7 +550,7 @@ You then build the derivation or install it in the user environment.
 ```
 <1> `nix-env -i` takes the name attribute and strip the version (first numeric after `-`)
 
-pinned a version of nixpkgs::
+Pinned a version of nixpkgs::
 +
 ```
 nixpkgs = (import <nixpkgs> {}).pkgs.fetchgit {
@@ -548,13 +564,13 @@ in
 with import nixpkgs {};
 ```
 
-caching the list of all available package into a local file::
+Caching the list of all available package into a local file::
 +
 ```
 nix-env -qaP --description '*' > ~/allpkgs.desc
 ```
 
-reproduce any hydra build locally::
+Reproduce any hydra build locally::
 +
 ```
 bash <(curl https://hydra.nixos.org/build/57055021/reproduce)
