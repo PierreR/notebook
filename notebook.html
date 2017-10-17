@@ -1399,7 +1399,7 @@ the 'ellipsis' (<code>&#8230;&#8203;</code>) allows the passing of a bigger set,
 <h3 id="_tips_and_tricks">Tips and tricks</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">customize nixpkgs locally</dt>
+<dt class="hdlist1">Customize nixpkgs locally</dt>
 <dd>
 <div class="paragraph">
 <p>You can override derivation attributes in user space without forking the <code>nixpkgs</code> repository.
@@ -1473,7 +1473,7 @@ f = self: super:
 </div>
 </div>
 </dd>
-<dt class="hdlist1">overlays</dt>
+<dt class="hdlist1">Overlays</dt>
 <dd>
 <p>Since <code>17.03</code> there is a more idiomatic way to achieve such local customization:</p>
 <div class="listingblock">
@@ -1509,7 +1509,33 @@ in
 </table>
 </div>
 </dd>
-<dt class="hdlist1">private packages</dt>
+<dt class="hdlist1">Overrides haskell packages for the <code>ghc821</code> compiler</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">self: super:
+<span class="tok-nb">let</span>
+  <span class="tok-nv">hlib</span> <span class="tok-o">=</span> super.haskell.lib<span class="tok-p">;</span>
+in
+<span class="tok-o">{</span>
+<span class="tok-nv">haskell</span> <span class="tok-o">=</span> super.haskell // <span class="tok-o">{</span> <span class="tok-nv">packages</span> <span class="tok-o">=</span> super.haskell.packages // <span class="tok-o">{</span> <span class="tok-nv">ghc821</span> <span class="tok-o">=</span> super.haskell.packages.ghc821.override <span class="tok-o">{</span> <i class="conum" data-value="1"></i><b>(1)</b>
+   <span class="tok-nv">overrides</span> <span class="tok-o">=</span>  hpkgs: _hpkgs: <span class="tok-o">{</span>
+     <span class="tok-nv">containers</span> <span class="tok-o">=</span> hlib.dontCheck<span class="tok-o">(</span>_hpkgs.containers<span class="tok-o">)</span><span class="tok-p">;</span>
+   <span class="tok-o">}</span><span class="tok-p">;</span>
+<span class="tok-o">}</span><span class="tok-p">;</span><span class="tok-o">}</span><span class="tok-p">;</span><span class="tok-o">}</span><span class="tok-p">;</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>haskell</code> equals <code>super.haskell</code> except packages, which equals <code>super.haskell.packages</code> except for <code>ghc821</code>, which is the overriden version of <code>super 821</code></td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Private packages</dt>
 <dd>
 <div class="paragraph">
 <p>You can also extend <code>nixpkgs</code> with private derivations without any forking. For instance using a custom file:</p>
@@ -1583,7 +1609,7 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 </table>
 </div>
 </dd>
-<dt class="hdlist1">pinned a version of nixpkgs</dt>
+<dt class="hdlist1">Pinned a version of nixpkgs</dt>
 <dd>
 <div class="listingblock">
 <div class="content">
@@ -1599,7 +1625,7 @@ with import nixpkgs <span class="tok-o">{}</span><span class="tok-p">;</span></c
 </div>
 </div>
 </dd>
-<dt class="hdlist1">caching the list of all available package into a local file</dt>
+<dt class="hdlist1">Caching the list of all available package into a local file</dt>
 <dd>
 <div class="listingblock">
 <div class="content">
@@ -1607,7 +1633,7 @@ with import nixpkgs <span class="tok-o">{}</span><span class="tok-p">;</span></c
 </div>
 </div>
 </dd>
-<dt class="hdlist1">reproduce any hydra build locally</dt>
+<dt class="hdlist1">Reproduce any hydra build locally</dt>
 <dd>
 <div class="listingblock">
 <div class="content">
@@ -4361,6 +4387,10 @@ When you pattern-match your GADT constructor, the instance implicitly comes into
 </colgroup>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;SPC&gt; v</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">expand region mode</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;SPC&gt; a u</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">"undo-tree-visualize"</p></td>
 </tr>
@@ -4451,7 +4481,8 @@ When you pattern-match your GADT constructor, the instance implicitly comes into
 <div class="sect2">
 <h3 id="_intro">Intro</h3>
 <div class="paragraph">
-<p>At the core of container technology are <code>cGroups</code> and <code>namespaces</code>. Control groups work by allowing the host to share and limit the resources each process or container can consume. Processes are limited
+<p>Containers work by isolating the differences between applications inside the container so that everything outside the container can be standardized.
+At the core of container technology are <code>cGroups</code> and <code>namespaces</code>. Control groups work by allowing the host to share and limit the resources each process or container can consume. Processes are limited
 to see only the process ID in the same namespace.</p>
 </div>
 <div class="paragraph">
