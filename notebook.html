@@ -679,6 +679,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_category_theory">Category theory</a></li>
+<li><a href="#_purescript">Purescript</a></li>
 </ul>
 </div>
 </div>
@@ -5433,6 +5434,44 @@ The structure whatever it is characterizes the category.</p>
 <div class="paragraph">
 <div class="title">Example:</div>
 <p>In a functional programming language, morphisms/arrows are <code>functions</code> and objects are <code>types</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_purescript">Purescript</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Install</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">→ nix-env -iA nixos.purescript
+→ nix-env -iA nixos.psc-package
+→ nix-env -f ~/.config/nixpkgs/pin.nix -iA nodePackages.pulp</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Project setup</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">→ pulp --psc-package init
+→ pulp build --to dist/test.js
+→ cat &gt; dist/test.html <span class="tok-s">&lt;&lt;EOF</span>
+<span class="tok-s">&lt;!doctype html&gt;</span>
+<span class="tok-s">&lt;html&gt;</span>
+<span class="tok-s">  &lt;head&gt;</span>
+<span class="tok-s">    &lt;title&gt;Test Purescript&lt;/title&gt;</span>
+<span class="tok-s">    &lt;style&gt;</span>
+<span class="tok-s">      body {</span>
+<span class="tok-s">        font-family: sans-serif;</span>
+<span class="tok-s">        max-width: 570px;</span>
+<span class="tok-s">        margin: auto;</span>
+<span class="tok-s">      }</span>
+<span class="tok-s">    &lt;/style&gt;</span>
+<span class="tok-s">  &lt;/head&gt;</span>
+<span class="tok-s">  &lt;body&gt;</span>
+<span class="tok-s">    &lt;script src=&quot;test.js&quot;&gt;&lt;/script&gt;</span>
+<span class="tok-s">  &lt;/body&gt;</span>
+<span class="tok-s">&lt;/html&gt;</span>
+<span class="tok-s">EOF</span></code></pre>
+</div>
 </div>
 <script>
 (function() {

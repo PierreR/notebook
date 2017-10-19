@@ -1,0 +1,32 @@
+= Purescript
+
+.Install
+```
+→ nix-env -iA nixos.purescript
+→ nix-env -iA nixos.psc-package
+→ nix-env -f ~/.config/nixpkgs/pin.nix -iA nodePackages.pulp
+```
+
+.Project setup
+```
+→ pulp --psc-package init
+→ pulp build --to dist/test.js
+→ cat > dist/test.html <<EOF
+<!doctype html>
+<html>
+  <head>
+    <title>Test Purescript</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 570px;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="test.js"></script>
+  </body>
+</html>
+EOF
+```

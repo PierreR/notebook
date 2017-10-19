@@ -63,6 +63,8 @@ include::elasticsearch/es.adoc[]
 
 include::category-theory.adoc[]
 
+include::purescript/index.adoc[]
+
 :leveloffset: 0
 
 ++++
