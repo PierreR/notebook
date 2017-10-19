@@ -1,5 +1,7 @@
 = Purescript
 
+== Quick setup
+
 .Install
 ```
 → nix-env -iA nixos.purescript
@@ -7,7 +9,7 @@
 → nix-env -f ~/.config/nixpkgs/pin.nix -iA nodePackages.pulp
 ```
 
-.Project setup
+.Project
 ```
 → pulp --psc-package init
 → pulp build --to dist/test.js
@@ -30,3 +32,12 @@
 </html>
 EOF
 ```
+
+== Tips & tricks
+
+[cols="^,^"]
+|====
+| Purescript | Haskell
+
+| `<<<`  | `.`
+|====
