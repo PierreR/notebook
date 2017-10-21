@@ -10,12 +10,12 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 
 === icon:tasks[] Install
 
-. switch to azerty keyboard
+. Switch to azerty keyboard
 +
 ```
 → loadkeys be-latin1
 ```
-. partition with gdisk (efi) or fdisk (noefi)
+. Partition with gdisk (https://nixos.org/nixos/manual/index.html#sec-uefi-installation[efi]) or fdisk (noefi)
 +
 icon:info-circle[1x] using virtualbox you don't want/need efi
 +
@@ -23,35 +23,51 @@ icon:info-circle[1x] using virtualbox you don't want/need efi
 → (g/f)disk /dev/sda
 ```
 +
-create 2 partitions sda1(83 default)/sda2(82)
-. create file system
+Create 2 partitions sda1(83 default)/sda2(82).
++
+[efi] Create an extra (boot) partition with type EF00.
+
+. Create file system
 +
 ```
-→ mkfs.extmre4 -L nixos /dev/sda1
+→ mkfs.ext4 -L nixos /dev/sda1
 → mkswap -L swap /dev/sda2
 ```
-. mount it
++
+[efi] Choose `vfat`.
+
+. Mount it
 +
 ```
 → mount /dev/disk/by-label/nixos /mnt
 ```
-. generate a default config
-+
-`→ nixos-generate-config --root /mnt`
-. minimal edit the config; don't forget to uncomment the option 'boot.loader.grub.device'
+[efi] `mkdir /mnt/boot` and mount the boot partition in.
+
+. Generate a default config
 +
 ```
-→ nano /mnt/etc/nixos/configuration.nix
+→ nixos-generate-config --root /mnt
 ```
+
+. Minimal edit the config; don't forget to uncomment the option 'boot.loader.grub.device'
++
+```
+→ vim /mnt/etc/nixos/configuration.nix
+```
++
+[efi] No edit required.
+
 . Install
 +
-`→ nixos-install
-. reboot
+```
+→ nixos-install
+```
+. Reboot
 +
 ```
 → reboot
 ```
-. upgrade
+. Upgrade
 +
 ```
 → nixos-rebuild boot --upgrade
