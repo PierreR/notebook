@@ -679,7 +679,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_category_theory">Category theory</a></li>
-<li><a href="#_purescript">Purescript</a></li>
+<li><a href="#_purescript">Purescript</a>
+<ul class="sectlevel2">
+<li><a href="#_quick_setup">Quick setup</a></li>
+<li><a href="#_tips_tricks">Tips &amp; tricks</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -701,7 +706,7 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>switch to azerty keyboard</p>
+<p>Switch to azerty keyboard</p>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">→ loadkeys be-latin1</code></pre>
@@ -709,7 +714,7 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 </div>
 </li>
 <li>
-<p>partition with gdisk (efi) or fdisk (noefi)</p>
+<p>Partition with gdisk (<a href="https://nixos.org/nixos/manual/index.html#sec-uefi-installation">efi</a>) or fdisk (noefi)</p>
 <div class="paragraph">
 <p><span class="icon"><i class="fa fa-info-circle fa-1x"></i></span> using virtualbox you don&#8217;t want/need efi</p>
 </div>
@@ -719,48 +724,64 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 </div>
 </div>
 <div class="paragraph">
-<p>create 2 partitions sda1(83 default)/sda2(82)</p>
+<p>Create 2 partitions sda1(83 default)/sda2(82).</p>
+</div>
+<div class="paragraph">
+<p>[efi] Create an extra (boot) partition with type EF00.</p>
 </div>
 </li>
 <li>
-<p>create file system</p>
+<p>Create file system</p>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">→ mkfs.extmre4 -L nixos /dev/sda1
+<pre class="pygments highlight"><code data-lang="bash">→ mkfs.ext4 -L nixos /dev/sda1
 → mkswap -L swap /dev/sda2</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>[efi] Choose <code>vfat</code>.</p>
+</div>
 </li>
 <li>
-<p>mount it</p>
+<p>Mount it</p>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">→ mount /dev/disk/by-label/nixos /mnt</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>generate a default config</p>
 <div class="paragraph">
-<p><code>→ nixos-generate-config --root /mnt</code></p>
+<p>[efi] <code>mkdir /mnt/boot</code> and mount the boot partition in.</p>
 </div>
 </li>
 <li>
-<p>minimal edit the config; don&#8217;t forget to uncomment the option 'boot.loader.grub.device'</p>
+<p>Generate a default config</p>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">→ nano /mnt/etc/nixos/configuration.nix</code></pre>
+<pre class="pygments highlight"><code data-lang="bash">→ nixos-generate-config --root /mnt</code></pre>
 </div>
+</div>
+</li>
+<li>
+<p>Minimal edit the config; don&#8217;t forget to uncomment the option 'boot.loader.grub.device'</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">→ vim /mnt/etc/nixos/configuration.nix</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>[efi] No edit required.</p>
 </div>
 </li>
 <li>
 <p>Install</p>
-<div class="paragraph">
-<p>`→ nixos-install</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">→ nixos-install</code></pre>
+</div>
 </div>
 </li>
 <li>
-<p>reboot</p>
+<p>Reboot</p>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">→ reboot</code></pre>
@@ -768,7 +789,7 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 </div>
 </li>
 <li>
-<p>upgrade</p>
+<p>Upgrade</p>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">→ nixos-rebuild boot --upgrade
@@ -5440,6 +5461,8 @@ The structure whatever it is characterizes the category.</p>
 <div class="sect1">
 <h2 id="_purescript">Purescript</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_quick_setup">Quick setup</h3>
 <div class="listingblock">
 <div class="title">Install</div>
 <div class="content">
@@ -5449,7 +5472,7 @@ The structure whatever it is characterizes the category.</p>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">Project setup</div>
+<div class="title">Project</div>
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">→ pulp --psc-package init
 → pulp build --to dist/test.js
@@ -5473,6 +5496,27 @@ The structure whatever it is characterizes the category.</p>
 <span class="tok-s">EOF</span></code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_tips_tricks">Tips &amp; tricks</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Purescript</th>
+<th class="tableblock halign-center valign-top">Haskell</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>&lt;&lt;&lt;</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>.</code></p></td>
+</tr>
+</tbody>
+</table>
 <script>
 (function() {
     var sidetext = document.getElementsByClassName("sidebarblock");
@@ -5497,6 +5541,7 @@ The structure whatever it is characterizes the category.</p>
     }
 })();
 </script>
+</div>
 </div>
 </div>
 </div>
