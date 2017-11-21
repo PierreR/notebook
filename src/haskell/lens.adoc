@@ -25,6 +25,7 @@ makeField ''Person
 A lens is a first-class reference to a subpart of some data type.
 
 `Lens' s a` operates on a container `s` and put the focus on 'a'.
+`Lens' s t a b` when you replace `a` in `s` with `b`, its type changes to `t`.
 
 Note that lenses are not `accessors` but `focusers`. It focus on a particular location of a structure. These are the types we want for `view`, `set` and `over/update`:
 
@@ -43,13 +44,6 @@ type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s <1>
 
 
 
-.Common operators
-:===
-^. : view
-.~ : set
-%~ : over
-.= : state monad view
-:===
 
 NOTE: Lenses form a category where `.` is composition and `id` is the identity.
 
@@ -67,28 +61,17 @@ NOTE: Lenses form a category where `.` is composition and `id` is the identity.
 It is defined as the reverse of `$` operator.
 
 
-== Prims
+== Common operators
 
-Prisms are kind of like Lenses that can fail or miss.
+:===
+^.     : view
+^?   : preview
+^..  : toListOf
+.~   : set
+%~   : over
+.=   : state monad view
+:===
 
-preview `(^?)` is like `(^.)` for Prism's or Traversal's. It handles access that focuses on either 0 or 1 targets.
-
-Note how the monoid instance of String allows us to get a native String from this expression:
-....
-> s = (Left "hello", 5)
-> s ^. _1._Left
-"hello"
-> s ^. _1._Right
-""
-....
-But without a monoid instance it cannot work and the `(^?)` is necessary:
-```shell
-> s = (Left 5, 5)
-> s ^? _1._Left
-Just 5
-> s ^? _1._Right
-Nothing
-```
 == Traverse
 
 Traversals are Lenses which focus on multiple targets simultaneously. We actually don't know how many targets they might be focusing on: it could be exactly 1 (like a Lens) or maybe 0 (like a Prism) or several. In that regard, a traversal is a like a Lens' except weaker (more general):
@@ -106,7 +89,39 @@ firstOf/lastOf traverse :: Traversable t => t a -> Maybe a
 8
 
 ```
-toListOf `(^..)` view list of targets
+
+====
+
+`toListOf (^..)` :: view list of targets
+
+`preview (^?)` :: like `view` for Prism's or Traversal's. It handles access that focuses on either 0 or 1 targets.
+
+====
+
+== Prims
+
+Prisms are kind of like Lenses that can fail or miss.
+
+
+Note how the monoid instance of String allows us to get a native String from this expression:
+....
+> s = (Left "hello", 5)
+> s ^. _1._Left
+"hello"
+> s ^. _1._Right
+""
+....
+But without a monoid instance it cannot work and the `(^?)` is necessary:
+```shell
+> s = (Left 5, 5)
+> s ^? _1._Left
+Just 5
+> s ^? _1._Right
+Nothing
+> :t preview _Right (Right 1)
+Num b => Maybe b
+
+```
 
 == Utils
 
