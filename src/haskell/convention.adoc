@@ -17,14 +17,14 @@ data MyProduct = MyProduct Int String
 
 == Record
 
-The most common (used in the `lens`, `fpcomplete`, `servant`, `tibbe`):
+The most common (used in the `lens`, `fpcomplete`, `servant`, `tibbe`, `hindent`):
 ```
 data Person = Person
   { _firstName :: String -- ^ First name
   , _lastName  :: String -- ^ Last name
   } deriving (Eq, Show)
 ```
-In order to mimic ADT and to make it easy with the haskell-indentation we could go with this instead:
+In order to mimic ADT and to make it easy with the haskell-indentation we could go with this instead (but it is less common !):
 ```
 data Person
   = Person

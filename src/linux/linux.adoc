@@ -27,10 +27,15 @@ or by adding a new disk using puppet :
 
 - add a new disk on the VCloud
 - after a few delay, VCloud will automatically create a new partition for instance '/dev/sdd'
-- add this new partition as a new physical volume: `pvcreate /dev/sdd`. You can see it with `pvs`
+- add this new partition as a new physical volume: `pvcreate /dev/sdd`. You bb can see it with `pvs`
 - `vgextend vg_rhel /dev/sdd` (the name to 'vg_rhel' is fixed for our new RHEL 7 template)
 - `puppet agent -t` will now create a new lv `nix`. You can see it with `lvs`
 
+at the CIRB the easier is:
+
+- to ask for a machine with 40G (second disk usually /dev/sdb)
+- The machine will be received with a full `vg_rhel` of 40G. Go to the vcloud console and extend the second disk to 60G
+- The machine now has a /dev/sdb disk with 60G. Extends the pv using `pvresize -v /dev/sdb`. And check with `vgdisplay or pvs`.
 
 == Tips
 
