@@ -654,16 +654,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_postgres">Postgres</a>
 <ul class="sectlevel2">
-<li><a href="#_nixos_setup">NixOS setup</a></li>
-<li><a href="#_glossary">Glossary</a></li>
-<li><a href="#_servers">Servers</a></li>
-<li><a href="#_architecture">Architecture</a></li>
-<li><a href="#_cluster">Cluster</a></li>
-<li><a href="#_exercices">Exercices</a></li>
-<li><a href="#_backup_recovery">Backup &amp; Recovery</a></li>
-<li><a href="#_migration">Migration</a></li>
+<li><a href="#_general">General</a></li>
+<li><a href="#_nixos_2">NixOS</a></li>
+<li><a href="#_tips_3">Tips</a></li>
 <li><a href="#_replication">Replication</a></li>
-<li><a href="#_shell_utils_practices">Shell utils practices</a></li>
 </ul>
 </li>
 <li><a href="#_programming_notes">Programming Notes</a>
@@ -2567,7 +2561,8 @@ The function <code>traverse</code> is exactly <code>mapM</code> generalized for 
 <p>A lens is a first-class reference to a subpart of some data type.</p>
 </div>
 <div class="paragraph">
-<p><code>Lens' s a</code> operates on a container <code>s</code> and put the focus on 'a'.</p>
+<p><code>Lens' s a</code> operates on a container <code>s</code> and put the focus on 'a'.
+<code>Lens' s t a b</code> when you replace <code>a</code> in <code>s</code> with <code>b</code>, its type changes to <code>t</code>.</p>
 </div>
 <div class="paragraph">
 <p>Note that lenses are not <code>accessors</code> but <code>focusers</code>. It focus on a particular location of a structure. These are the types we want for <code>view</code>, <code>set</code> and <code>over/update</code>:</p>
@@ -2595,31 +2590,6 @@ The function <code>traverse</code> is exactly <code>mapM</code> generalized for 
 </tr>
 </table>
 </div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Common operators</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">^.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">view</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">.~</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">set</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">%~</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">over</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">.=</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">state monad view</p></td>
-</tr>
-</tbody>
-</table>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -2653,37 +2623,39 @@ It is defined as the reverse of <code>$</code> operator.</td>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_prims">Prims</h4>
-<div class="paragraph">
-<p>Prisms are kind of like Lenses that can fail or miss.</p>
-</div>
-<div class="paragraph">
-<p>preview <code>(^?)</code> is like <code>(^.)</code> for Prism&#8217;s or Traversal&#8217;s. It handles access that focuses on either 0 or 1 targets.</p>
-</div>
-<div class="paragraph">
-<p>Note how the monoid instance of String allows us to get a native String from this expression:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>&gt; s = (Left "hello", 5)
-&gt; s ^. _1._Left
-"hello"
-&gt; s ^. _1._Right
-""</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>But without a monoid instance it cannot work and the <code>(^?)</code> is necessary:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="shell">&gt; s = (Left 5, 5)
-&gt; s ^? _1._Left
-Just 5
-&gt; s ^? _1._Right
-Nothing</code></pre>
-</div>
-</div>
+<h4 id="_common_operators">Common operators</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">^.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">view</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">^?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">preview</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">^..</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">toListOf</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">.~</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">%~</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">over</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">.=</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">state monad view</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_traverse">Traverse</h4>
@@ -2706,8 +2678,53 @@ Nothing</code></pre>
 <span class="tok-mi">8</span></code></pre>
 </div>
 </div>
+<div class="exampleblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>toListOf (^..)</code> </dt>
+<dd>
+<p>view list of targets</p>
+</dd>
+<dt class="hdlist1"><code>preview (^?)</code> </dt>
+<dd>
+<p>like <code>view</code> for Prism&#8217;s or Traversal&#8217;s. It handles access that focuses on either 0 or 1 targets.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_prims">Prims</h4>
 <div class="paragraph">
-<p>toListOf <code>(^..)</code> view list of targets</p>
+<p>Prisms are kind of like Lenses that can fail or miss.</p>
+</div>
+<div class="paragraph">
+<p>Note how the monoid instance of String allows us to get a native String from this expression:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>&gt; s = (Left "hello", 5)
+&gt; s ^. _1._Left
+"hello"
+&gt; s ^. _1._Right
+""</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But without a monoid instance it cannot work and the <code>(^?)</code> is necessary:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">&gt; s = (Left 5, 5)
+&gt; s ^? _1._Left
+Just 5
+&gt; s ^? _1._Right
+Nothing
+&gt; :t preview _Right (Right 1)
+Num b =&gt; Maybe b</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -3828,7 +3845,7 @@ readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</sp
 <div class="sect3">
 <h4 id="_record">Record</h4>
 <div class="paragraph">
-<p>The most common (used in the <code>lens</code>, <code>fpcomplete</code>, <code>servant</code>, <code>tibbe</code>):</p>
+<p>The most common (used in the <code>lens</code>, <code>fpcomplete</code>, <code>servant</code>, <code>tibbe</code>, <code>hindent</code>):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3839,7 +3856,7 @@ readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</sp
 </div>
 </div>
 <div class="paragraph">
-<p>In order to mimic ADT and to make it easy with the haskell-indentation we could go with this instead:</p>
+<p>In order to mimic ADT and to make it easy with the haskell-indentation we could go with this instead (but it is less common !):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4794,13 +4811,29 @@ excludesfile = /home/username/.gitignore
 <p>after a few delay, VCloud will automatically create a new partition for instance '/dev/sdd'</p>
 </li>
 <li>
-<p>add this new partition as a new physical volume: <code>pvcreate /dev/sdd</code>. You can see it with <code>pvs</code></p>
+<p>add this new partition as a new physical volume: <code>pvcreate /dev/sdd</code>. You bb can see it with <code>pvs</code></p>
 </li>
 <li>
 <p><code>vgextend vg_rhel /dev/sdd</code> (the name to 'vg_rhel' is fixed for our new RHEL 7 template)</p>
 </li>
 <li>
 <p><code>puppet agent -t</code> will now create a new lv <code>nix</code>. You can see it with <code>lvs</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>at the CIRB the easier is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>to ask for a machine with 40G (second disk usually /dev/sdb)</p>
+</li>
+<li>
+<p>The machine will be received with a full <code>vg_rhel</code> of 40G. Go to the vcloud console and extend the second disk to 60G</p>
+</li>
+<li>
+<p>The machine now has a /dev/sdb disk with 60G. Extends the pv using <code>pvresize -v /dev/sdb</code>. And check with <code>vgdisplay or pvs</code>.</p>
 </li>
 </ul>
 </div>
@@ -4882,7 +4915,73 @@ journalctl -o json - show logs in json format</code></pre>
 <h2 id="_postgres">Postgres</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_nixos_setup">NixOS setup</h3>
+<h3 id="_general">General</h3>
+<div class="sect3">
+<h4 id="_glossary">Glossary</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">PEM</dt>
+<dd>
+<p>Postgres Enterprise Manager</p>
+</dd>
+<dt class="hdlist1">PPAS</dt>
+<dd>
+<p>Postgres Plus Advanced Server</p>
+</dd>
+<dt class="hdlist1">WAL</dt>
+<dd>
+<div class="paragraph">
+<p>At all times, PostgreSQL maintains a WAL (Write Ahead Log) in the pg_xlog/ subdirectory of the cluster&#8217;s data directory. The log describes every change made to the database&#8217;s data files. This log exists primarily for crash-safety purposes: if the system crashes, the database can be restored to consistency by "replaying" the log entries made since the last checkpoint. However, the existence of the log makes it possible to use a third strategy for backing up databases: we can combine a file-system-level backup with backup of the WAL files. If recovery is needed, we restore the backup and then replay from the backed-up WAL files to bring the backup up to current time.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architecture">Architecture</h4>
+<div class="paragraph">
+<p>One process per user, NO THREAD !
+Processes are managed by Postmaster that acts as a listener for new connection and as a supervisor to restart them.</p>
+</div>
+<div class="paragraph">
+<p>The term "buffer" is usually used for blocks in memory.</p>
+</div>
+<div class="paragraph">
+<p>7500 concurrent user &#8594; connection pooling</p>
+</div>
+<div class="paragraph">
+<p>16MB</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cluster">Cluster</h4>
+<div class="paragraph">
+<p>A cluster is a collection of databases. Clusters have separate:
+	* data directory
+	* TCP port
+	* set of processes</p>
+</div>
+<div class="paragraph">
+<p>To create a cluster execute the following comming with the postgres user (! not root !):
+	[postgres]$ initdb --locale en_US.UTF-8 -E UTF8 -D '/var/lib/postgres/data'</p>
+</div>
+<div class="paragraph">
+<p>To create a second cluster on the same machine you need to:
+	* as root, create a DATA directory
+	* as root, change owner of the DATA directory to enterprisedb or postgres (depending on the version of postgres enterprise or community)
+	* as postgres (or enterprisedb), do:
+		initdb  -D '/var/lib/postgres/data'</p>
+</div>
+<div class="paragraph">
+<p>There is a little tricky behavior with the second cluster when you want to connect with a client. By default, connections will be refused for user "enterprisedb" &#8230;&#8203; You need to change the pg_hba file and set "trust" for enterprisedb &#8230;&#8203; Then set a password with the client and put it pack to md5.</p>
+</div>
+<div class="paragraph">
+<p>host    all             enterprisedb    192.168.104.0/24        trust</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nixos_2">NixOS</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash">services.postgresql <span class="tok-o">=</span> <span class="tok-o">{</span>
@@ -4922,116 +5021,86 @@ psql saltstack -U salt <i class="conum" data-value="3"></i><b>(3)</b></code></pr
 </div>
 </div>
 <div class="sect2">
-<h3 id="_glossary">Glossary</h3>
+<h3 id="_tips_3">Tips</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">PEM</dt>
-<dd>
-<p>Postgres Enterprise Manager</p>
-</dd>
-<dt class="hdlist1">PPAS</dt>
-<dd>
-<p>Postgres Plus Advanced Server</p>
-</dd>
-<dt class="hdlist1">WAL</dt>
-<dd>
-<div class="paragraph">
-<p>At all times, PostgreSQL maintains a WAL (Write Ahead Log) in the pg_xlog/ subdirectory of the cluster&#8217;s data directory. The log describes every change made to the database&#8217;s data files. This log exists primarily for crash-safety purposes: if the system crashes, the database can be restored to consistency by "replaying" the log entries made since the last checkpoint. However, the existence of the log makes it possible to use a third strategy for backing up databases: we can combine a file-system-level backup with backup of the WAL files. If recovery is needed, we restore the backup and then replay from the backed-up WAL files to bring the backup up to current time.</p>
+<dt class="hdlist1">Allocate a multiple records select in a variable in psql</dt>
+</dl>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">CREATE OR REPLACE FUNCTION notify_result<span class="tok-o">()</span> RETURNS TRIGGER AS <span class="tok-nv">$$</span>
+
+DECLARE
+notification jsonb<span class="tok-p">;</span>
+chan text<span class="tok-p">;</span>
+
+BEGIN
+
+-- Get the user as the name of the channel
+SELECT load-&gt;&gt;<span class="tok-s1">&#39;user&#39;</span> into chan from jids where <span class="tok-nv">jid</span> <span class="tok-o">=</span> NEW.jid<span class="tok-p">;</span>
+-- This is not working because salt_returns table haven<span class="tok-err">&#39;</span>t been filled in yet ...
+notification :<span class="tok-o">=</span> <span class="tok-o">(</span>SELECT array_to_json<span class="tok-o">(</span>array_agg<span class="tok-o">(</span>row_to_json<span class="tok-o">(</span>t<span class="tok-o">)))</span> from <span class="tok-o">(</span>SELECT r.full_ret FROM salt_returns r where r.jid <span class="tok-o">=</span> NEW.jid<span class="tok-o">)</span> t<span class="tok-o">)</span><span class="tok-p">;</span>
+
+-- Execute pg_notify<span class="tok-o">(</span>channel, notification<span class="tok-o">)</span>
+PERFORM pg_notify<span class="tok-o">(</span>chan, NEW.jid<span class="tok-o">)</span><span class="tok-p">;</span>
+
+-- Result is ignored since this is an AFTER trigger
+RETURN NULL<span class="tok-p">;</span>
+END<span class="tok-p">;</span>
+
+<span class="tok-nv">$$</span> LANGUAGE plpgsql<span class="tok-p">;</span>
+
+DROP TRIGGER IF EXISTS notify_result on jids<span class="tok-p">;</span>
+CREATE TRIGGER notify_result AFTER INSERT ON jids
+    FOR EACH ROW EXECUTE PROCEDURE notify_result<span class="tok-o">()</span><span class="tok-p">;</span></code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">COPY</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">COPY edbstore.categories TO <span class="tok-s1">&#39;/tmp/test.csv&#39;</span> WITH <span class="tok-o">(</span>FORMAT <span class="tok-s1">&#39;csv&#39;</span><span class="tok-o">)</span><span class="tok-p">;</span></code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Backup &amp; Recovery</dt>
+<dd>
+<p>for small DB, we can use a sql dump several time a day:</p>
 </dd>
 </dl>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_servers">Servers</h3>
-<div class="paragraph">
-<p>CIRB PROD: 192.168.14.41</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_architecture">Architecture</h3>
-<div class="paragraph">
-<p>One process per user, NO THREAD !
-Processes are managed by Postmaster that acts as a listener for new connection and as a supervisor to restart them.</p>
-</div>
-<div class="paragraph">
-<p>The term "buffer" is usually used for blocks in memory.</p>
-</div>
-<div class="paragraph">
-<p>7500 concurrent user &#8594; connection pooling</p>
-</div>
-<div class="paragraph">
-<p>16MB</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">pg_dump dbname <span class="tok-p">|</span> gzip &gt; filename.gz
+pg_dump dbname <span class="tok-p">|</span> split -b 1m - filename
+
+psql dbname &lt; infile</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_cluster">Cluster</h3>
-<div class="paragraph">
-<p>A cluster is a collection of databases. Clusters have separate:
-	* data directory
-	* TCP port
-	* set of processes</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Shell</dt>
+</dl>
 </div>
-<div class="paragraph">
-<p>To create a cluster execute the following comming with the postgres user (! not root !):
-	[postgres]$ initdb --locale en_US.UTF-8 -E UTF8 -D '/var/lib/postgres/data'</p>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">psql -h <span class="tok-m">192</span>.168.14.62 -W -U pradermecker postgres &lt; create_PGPUPPETDB.sql
+
+<span class="tok-nb">export</span> <span class="tok-nv">PGPASSWORD</span><span class="tok-o">=</span>dbpasswordforpuppetdb
+ssh puppetmaster-prod <span class="tok-s1">&#39;sudo -u postgres pg_dump puppetdb &#39;</span> <span class="tok-p">|</span> psql -h <span class="tok-m">192</span>.168.14.62 -U puppetdb -w PGPUPPETDB
+
+<span class="tok-k">for</span> t in <span class="tok-k">$(</span>pqsl -U enterprisedb -d edbstore -t -c <span class="tok-s2">&quot;select tablename from pg_tables where tableowner=&#39;edbstore&#39;&quot;</span><span class="tok-k">)</span><span class="tok-p">;</span> <span class="tok-k">do</span>
+  pg_dump -t edbstore.<span class="tok-nv">$t</span> -U enterprisedb edbstore &gt; <span class="tok-nv">$t</span>.sql<span class="tok-p">;</span>
+<span class="tok-k">done</span>
+
+<span class="tok-k">select</span> tablename from pg_tables where <span class="tok-nv">tableowner</span><span class="tok-o">=</span><span class="tok-s1">&#39;edbstore&#39;</span><span class="tok-p">;</span>
+<span class="tok-k">select</span> table_name from information_schema.tables where <span class="tok-nv">table_schema</span><span class="tok-o">=</span><span class="tok-s1">&#39;edbstore&#39;</span><span class="tok-p">;</span></code></pre>
 </div>
-<div class="paragraph">
-<p>To create a second cluster on the same machine you need to:
-	* as root, create a DATA directory
-	* as root, change owner of the DATA directory to enterprisedb or postgres (depending on the version of postgres enterprise or community)
-	* as postgres (or enterprisedb), do:
-		initdb  -D '/var/lib/postgres/data'</p>
-</div>
-<div class="paragraph">
-<p>There is a little tricky behavior with the second cluster when you want to connect with a client. By default, connections will be refused for user "enterprisedb" &#8230;&#8203; You need to change the pg_hba file and set "trust" for enterprisedb &#8230;&#8203; Then set a password with the client and put it pack to md5.</p>
-</div>
-<div class="paragraph">
-<p>host    all             enterprisedb    192.168.104.0/24        trust</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_exercices">Exercices</h3>
-<div class="paragraph">
-<p>COPY edbstore.categories TO '/tmp/test.csv' WITH (FORMAT 'csv');</p>
-</div>
-<div class="paragraph">
-<p>select tablename from pg_tables where tableowner='edbstore';</p>
-</div>
-<div class="paragraph">
-<p>for t in $(pqsl -U enterprisedb -d edbstore -t
--c "select tablename from pg_tables where tableowner='edbstore'"); do pg_dump
--t edbstore.$t -U enterprisedb edbstore &gt; $t.sql;done</p>
-</div>
-<div class="paragraph">
-<p>select table_name from information_schema.tables where table_schema='edbstore';</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_backup_recovery">Backup &amp; Recovery</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>for small DB, we can use a sql dump several time a day:
-pg_dump dbname | gzip &gt; filename.gz
-pg_dump dbname | split -b 1m - filename</p>
-</li>
-</ul>
-</div>
-<div class="sect3">
-<h4 id="_restore">Restore</h4>
-<div class="paragraph">
-<p>psql dbname &lt; infile</p>
-</div>
-<div class="paragraph">
-<p>One of the problem with DRP is the human factor. This is not so much a problem with a database such as datomic.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_migration">Migration</h3>
-<div class="paragraph">
-<p>Use pgdump to migrate from postgres to postgres.</p>
 </div>
 </div>
 <div class="sect2">
@@ -5143,17 +5212,6 @@ There is a daemon process started by the PostMaster</p>
 select * from pg</pre>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_shell_utils_practices">Shell utils practices</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="bash">psql -h <span class="tok-m">192</span>.168.14.62 -W -U pradermecker postgres &lt; create_PGPUPPETDB.sql
-
-<span class="tok-nb">export</span> <span class="tok-nv">PGPASSWORD</span><span class="tok-o">=</span>dbpasswordforpuppetdb
-ssh puppetmaster-prod <span class="tok-s1">&#39;sudo -u postgres pg_dump puppetdb &#39;</span> <span class="tok-p">|</span> psql -h <span class="tok-m">192</span>.168.14.62 -U puppetdb -w PGPUPPETDB</code></pre>
 </div>
 </div>
 </div>
