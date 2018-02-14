@@ -1,5 +1,4 @@
-= SALT TECHNICAL NOTE
-Pierre Radermecker
+= Salt
 
 == Targeting
 
@@ -250,7 +249,7 @@ make salt-ssh HOST=jenkins2 ZONE=prod CMD="state.sls utils.migrate_puppet3"
 
 ```shell
 salt '*' saltutil.sync_all
-pep 'svappcavl704.dev.srv.cirb.lan' cmd.run "cat /etc/salt/master" | jq '.return[]' | jq -r '.[]' 
+pep 'svappcavl704.dev.srv.cirb.lan' cmd.run "cat /etc/salt/master" | jq '.return[]' | jq -r '.[]'
 pep 'svappcsvl028.prd.srv.cirb.lan' cmd.run "cat /etc/salt/master" | jq '.return[]' | jq -r '.[]'
 ```
 

@@ -637,6 +637,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_dns">DNS</a></li>
 </ul>
 </li>
+<li><a href="#_salt">Salt</a>
+<ul class="sectlevel2">
+<li><a href="#_targeting">Targeting</a></li>
+<li><a href="#_salt_states">Salt states</a></li>
+<li><a href="#_external_auth">External Auth</a></li>
+<li><a href="#_standalone_minions">Standalone minions</a></li>
+<li><a href="#_master_event">Master Event</a></li>
+<li><a href="#_pillars">Pillars</a></li>
+<li><a href="#_gitfs">GITFS</a></li>
+<li><a href="#_salt_api">Salt API</a></li>
+<li><a href="#_orchestration">Orchestration</a></li>
+<li><a href="#_salt_ssl">Salt SSL</a></li>
+<li><a href="#_useful_commands">Useful commands</a></li>
+<li><a href="#_postgrest">Postgrest</a></li>
+<li><a href="#_install_prd_bootstrap">Install PRD / Bootstrap</a></li>
+<li><a href="#_issues">Issues</a></li>
+</ul>
+</li>
 <li><a href="#_git">Git</a>
 <ul class="sectlevel2">
 <li><a href="#_internals">Internals</a></li>
@@ -4685,6 +4703,475 @@ docker run -it -v /media/puppet-stack-middleware:/etc/puppet/environments/middle
 <h3 id="_dns">DNS</h3>
 <div class="paragraph">
 <p>You can use <code>Consul</code> as a DNS service. <code>dnsmask</code> is configured within each swarm node while every dockers inside a node is running with <code>--dns 172.17.0.1</code>.<sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_salt">Salt</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_targeting">Targeting</h3>
+<div class="sect3">
+<h4 id="_minion_id">Minion id</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>unique (FQDN by default)</p>
+</li>
+<li>
+<p>can be overridden in the minion config file</p>
+</li>
+<li>
+<p>if changed, P/P keys need to be regenerated</p>
+</li>
+<li>
+<p>match by shell-style globbing around the minion id or top file</p>
+</li>
+<li>
+<p>use single quote</p>
+</li>
+<li>
+<p>Perl-compatible regex can be used with the -E option</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="Shell">salt &#39;*.be.brussels&#39; test.ping
+salt -L &#39;web1,web2,web3&#39; disk.usage
+salt -E &#39;web[0-9]&#39; cmd.exec_code python &#39;import sys; print sys.version&#39;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">base:
+<span class="tok-s1">&#39;web-(develjstaging)&#39;</span>
+  - match: pcre
+  - webserver</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_grains">Grains</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>static bits of information that a minion collects when the minion starts</p>
+</li>
+<li>
+<p>can be statically described in the minion config file with the option grains</p>
+</li>
+<li>
+<p>available to Salt modules</p>
+</li>
+<li>
+<p>automatically sync when state.highstate is called.</p>
+<div class="literalblock">
+<div class="content">
+<pre>salt -G 'os:CentOS' --batch-size 25% grains.item num_cpus</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_node_groups">Node groups</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>predefined group of minions declared in the master</p>
+</li>
+<li>
+<p>declared using compound matchers (see doc)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_salt_states">Salt states</h3>
+<div class="paragraph">
+<p>Use SLS files (SaLt State) to represent the state of a system.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SLS files are just dictionaries, lists, strings, and numbers (HighState data structure)</p>
+</li>
+<li>
+<p>default serialization format is YAML with the Jinja2 templating system</p>
+</li>
+<li>
+<p>system data and function can be used via salt, grain and pillar</p>
+</li>
+<li>
+<p>files are combined to form a salt state tree using source, include and extend</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">declaration-id</span><span class="tok-p tok-p-Indicator">:</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">pkg</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">installed</span>
+  <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">service</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">running</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">watch</span><span class="tok-p tok-p-Indicator">:</span> <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">pkg</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">apache</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">file</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/etc/httpd/conf/httpd.conf</span>
+
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/etc/httpd/conf/httpd.conf</span><span class="tok-p tok-p-Indicator">:</span>
+  <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">file.managed</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">source</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">salt://apache/httpd.conf</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">user</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">root</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">group</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">root</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">mode</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">644</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><strong>declaration-id</strong> set the name of the thing that needs to be manipulated</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><strong>watch</strong> &amp; <strong>require</strong> to manage order and events</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell"># given a sls web/apache.sls
+salt &#39;*&#39; state.sls web.apache</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_salt_file_server_top_file_environment">Salt file server &amp; top file &amp; environment</h4>
+<div class="paragraph">
+<p>The <strong>top file</strong> is used to map what modules get loaded onto what minions</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">base</span><span class="tok-p tok-p-Indicator">:</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tok-s">&#39;bmob&#39;</span><span class="tok-p tok-p-Indicator">:</span> <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">packages</span> <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>environment</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>target for state.highstate</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>sls module name</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <strong>file server</strong> is  suitable for distributing files to minions</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">file_roots</span><span class="tok-p tok-p-Indicator">:</span>
+  <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">base</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/srv/salt</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_external_auth">External Auth</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-c1"># The external auth system</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">external_auth</span><span class="tok-p tok-p-Indicator">:</span>
+  <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">ldap</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">GP_APP_JENKINS%</span><span class="tok-p tok-p-Indicator">:</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;test.*&#39;</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;grains.*&#39;</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;pillar.*&#39;</span>
+    <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">pradermecker</span><span class="tok-p tok-p-Indicator">:</span>
+      <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;G@hostname:middleware&#39;</span><span class="tok-p tok-p-Indicator">:</span> <i class="conum" data-value="1"></i><b>(1)</b>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;.*&#39;</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;@runner&#39;</span> <i class="conum" data-value="2"></i><b>(2)</b>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;@wheel&#39;</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;@jobs&#39;</span>
+    <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">jfroche</span><span class="tok-p tok-p-Indicator">:</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;saltutil.*&#39;</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;@runner&#39;</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;@wheel&#39;</span>
+         <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;@jobs&#39;</span>
+
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.basedn</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.binddn</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">CN=&lt;%= @ldap_name %&gt;,OU=Saltmasters,OU=Apps,OU=Service_Groups_Accounts,OU=ACCOUNTS,OU=CIRB-CIBG,DC=ad,DC=cirb,DC=lan</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.bindpw</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">&lt;%= @ldap_pwd %&gt;</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.filter</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">(sAMAccountName={{username}})</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.port</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">389</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.server</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">svidscavw003.prd.srv.cirb.lan</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.tls</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">False</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.no_verify</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">True</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.activedirectory</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">True</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.groupclass</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">group</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.accountattributename</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">sAMAccountName</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">auth.ldap.persontype</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">person</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define the allow targets (compount). No relation to the salt notion of environment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Access to the runner module but this work only via the <code>salt-api</code>
+On the command line, <code>salt-run</code> does not support the <code>pam</code> or <code>ldap</code> flag.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_standalone_minions">Standalone minions</h3>
+<div class="paragraph">
+<p>Minion can run without master.
+In the minion config file, set the option <code>file client: local</code></p>
+</div>
+<div class="paragraph">
+<p>By default the contents of the master configuration file are loaded into pillar for all minions, this is to enable the master configuration file to be used for global configuration of minions. To disable the master config from being added to the pillar set pillar_opts to False.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_master_event">Master Event</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nv">event</span> <span class="tok-o">=</span> salt.utils.event.MasterEvent<span class="tok-o">(</span><span class="tok-s1">&#39;/home/vagrant/projects/jules/var/run/salt/master&#39;</span><span class="tok-o">)</span>
+event.get_event<span class="tok-o">(</span><span class="tok-nv">wait</span><span class="tok-o">=</span><span class="tok-m">20</span>, <span class="tok-nv">tag</span><span class="tok-o">=</span><span class="tok-s1">&#39;salt&#39;</span><span class="tok-o">)</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pillars">Pillars</h3>
+<div class="paragraph">
+<p>The data can be arbitrary.
+The pillar is built in a similar fashion as the state tree, it is comprised of sls files and has a top file, just like the state
+tree.
+The default location for the pillar is in /srv/pillar ("pillar_roots" master config key).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gitfs">GITFS</h3>
+<div class="paragraph">
+<p>When using the gitfs backend, Salt translates git branches and tags into environments, making environment management very simple.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">fileserver_backend</span><span class="tok-p tok-p-Indicator">:</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">git</span>
+
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">gitfs_remotes</span><span class="tok-p tok-p-Indicator">:</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">http://stash.cirb.lan/scm/middleware/salt-stack.git</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_salt_api">Salt API</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">curl -si 192.168.30.100:8000/login \
+        -H &quot;Accept: application/json&quot; \
+        -d username=&#39;jfroche&#39; \
+        -d password=&#39;xMLrzzzz&#39; \
+        -d eauth=&#39;pam&#39; &gt; /tmp/cookies.txt
+curl -b /tmp/cookies.txt -si 192.168.30.100:8000 \
+    -d client=&#39;runner&#39; \
+    -d mods=&#39;orchestration.bootstrap-puppet&#39; \
+    -d fun=&#39;state.orchestrate&#39; \
+    -d eauth=&#39;pam&#39;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_orchestration">Orchestration</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-o">[</span>main<span class="tok-o">]</span>
+<span class="tok-nv">SALTAPI_URL</span><span class="tok-o">=</span>http://saltmaster.sandbox.srv.cirb.lan:8000
+<span class="tok-nv">SALTAPI_USER</span><span class="tok-o">=</span>pradermecker
+<span class="tok-nv">SALTAPI_PASS</span><span class="tok-o">=</span>pass
+<span class="tok-nv">SALTAPI_EAUTH</span><span class="tok-o">=</span>pam</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">salt-run state.orchestrate orch.test <span class="tok-nv">saltenv</span><span class="tok-o">=</span>middleware <i class="conum" data-value="1"></i><b>(1)</b>
+pepper <span class="tok-s1">&#39;*&#39;</span> test.ping
+pepper <span class="tok-s1">&#39;puppetmaster2*&#39;</span>  grains.item subgroup role
+pepper --client<span class="tok-o">=</span>runner state.orchestrate <span class="tok-nv">mods</span><span class="tok-o">=</span>orchestration.bootstrap-puppet</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>pick up the gitfs branch that host <code>orch.test</code> source</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">set_puppet_role_to_master</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">salt.function</span><span class="tok-p tok-p-Indicator">:</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">name</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">utils.set_role</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">tgt</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-s">&#39;G@role:server</span><span class="tok-nv"> </span><span class="tok-s">and</span><span class="tok-nv"> </span><span class="tok-s">G@subgroup:puppet&#39;</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">kwarg</span><span class="tok-p tok-p-Indicator">:</span>
+            <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">role</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">master</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">require</span><span class="tok-p tok-p-Indicator">:</span>
+          <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">salt</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">run_saltmaster</span>
+
+<span class="tok-c1"># /srv/salt/orch/test-puppet.sls</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">run_puppet_jenkinsmaster</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">salt.state</span><span class="tok-p tok-p-Indicator">:</span> 
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">sls</span><span class="tok-p tok-p-Indicator">:</span><i class="conum" data-value="3"></i><b>(3)</b>
+          <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">puppet</span> 
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">tgt</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-s">&#39;G@role:master</span><span class="tok-nv"> </span><span class="tok-s">and</span><span class="tok-nv"> </span><span class="tok-s">G@subgroup:jenkins&#39;</span><i class="conum" data-value="4"></i><b>(4)</b>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">tgt_type</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">compound</span>
+
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">ping_saltmaster</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">salt.function</span><span class="tok-p tok-p-Indicator">:</span> 
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">name</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">test.ping</span><i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">tgt</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-s">&#39;role:saltmaster&#39;</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">tgt_type</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">grain</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">require</span><span class="tok-p tok-p-Indicator">:</span> 
+           <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">salt</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">run_puppet_jenkinsmaster</span><i class="conum" data-value="2"></i><b>(2)</b>
+
+<span class="tok-c1"># /srv/salt/puppet.sls:</span>
+<span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">puppet</span><span class="tok-p tok-p-Indicator">:</span>
+    <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">module.run</span><span class="tok-p tok-p-Indicator">:</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">name</span><span class="tok-p tok-p-Indicator">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">cmd.run</span>
+        <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">arg</span><span class="tok-p tok-p-Indicator">:</span>
+           <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">&#39;puppet</span><span class="tok-nv"> </span><span class="tok-s">agent</span><span class="tok-nv"> </span><span class="tok-s">--verbose</span><span class="tok-nv"> </span><span class="tok-s">--onetime</span><span class="tok-nv"> </span><span class="tok-s">--no-daemonize</span><span class="tok-nv"> </span><span class="tok-s">--color</span><span class="tok-nv"> </span><span class="tok-s">false&#39;</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To execute a function, use salt.function</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Force order</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>To execute a module, use salt.state</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Execute the module /srv/salt/puppet.sls</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_salt_ssl">Salt SSL</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">make salt-ssh HOST=jenkins2 ZONE=prod CMD=&quot;state.sls utils.migrate_puppet3&quot;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_useful_commands">Useful commands</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">salt &#39;*&#39; saltutil.sync_all
+pep &#39;svappcavl704.dev.srv.cirb.lan&#39; cmd.run &quot;cat /etc/salt/master&quot; | jq &#39;.return[]&#39; | jq -r &#39;.[]&#39;
+pep &#39;svappcsvl028.prd.srv.cirb.lan&#39; cmd.run &quot;cat /etc/salt/master&quot; | jq &#39;.return[]&#39; | jq -r &#39;.[]&#39;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_postgrest">Postgrest</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">http://pgserver.sandbox.srv.cirb.lan:3000/jids?jid<span class="tok-o">=</span>eq.20150831150415858891
+http://pgserver.sandbox.srv.cirb.lan:3000/salt_returns?full_ret-&gt;&gt;jid<span class="tok-o">=</span>eq.20150831150437889173</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_install_prd_bootstrap">Install PRD / Bootstrap</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c1">## get salt/puppet version we want</span>
+<span class="tok-c1">## We do need to update puppet because the current salt config does not work wih &lt; 3.8</span>
+yum versionlock delete <span class="tok-m">0</span>:*
+yum install salt-master salt-minion puppet
+<span class="tok-c1"># temp /etc/hosts to point to the new salt master</span>
+systemctl start salt-master
+systemctl start salt-minion
+salt <span class="tok-s1">&#39;*&#39;</span> saltutil.sync_all
+
+<span class="tok-c1">## we need to manually change the config of /etc/salt/master:</span>
+<span class="tok-c1">#</span>
+<span class="tok-c1">#  file_roots:</span>
+<span class="tok-c1">#    base:</span>
+<span class="tok-c1">#      - /srv/salt/</span>
+<span class="tok-c1">#    middleware:</span>
+<span class="tok-c1">#      - /srv/salt/middleware</span>
+
+<span class="tok-c1">## new puppetmaster, foreman, puppetdb, pgserver</span>
+<span class="tok-c1"># temp /etc/hosts to point to the new salt master</span>
+
+<span class="tok-c1"># we still need to manually</span>
+yum makecache fast
+yum update -y
+yum clean all
+
+<span class="tok-c1"># we still need to manually</span>
+mkdir -p /etc/facter/facts.d/
+vim /etc/facter/facts.d/host-info.txt
+
+<span class="tok-c1"># and finally we need piera to get hiera data before we can bootstrap ...</span>
+
+
+<span class="tok-c1">## Do test every pings are working correctly</span>
+
+salt-run state.orchestrate orch.ping <span class="tok-nv">saltenv</span><span class="tok-o">=</span>middleware
+
+<span class="tok-c1">## There are issues when puppetconfig restart the minion during the orchestration process</span>
+<span class="tok-c1">## Let&#39;s do it manually</span>
+
+salt -C <span class="tok-s1">&#39;G@role:master and G@subgroup:puppet and G@hostgroup:middleware&#39;</span> puppetutils.run_apply  <span class="tok-nv">hostgroup</span><span class="tok-o">=</span>middleware <span class="tok-nv">role</span><span class="tok-o">=</span>server <span class="tok-nv">zone</span><span class="tok-o">=</span>prod <span class="tok-nv">subgroup</span><span class="tok-o">=</span>puppet
+
+
+salt -C <span class="tok-s1">&#39;G@role:saltmaster and G@hostgroup:middleware and G@zone:prod&#39;</span> puppetutils.install_stackrpm <span class="tok-nv">hostgroup</span><span class="tok-o">=</span>middleware <span class="tok-nv">zone</span><span class="tok-o">=</span>prod
+
+salt -C <span class="tok-s1">&#39;G@role:saltmaster and G@hostgroup:middleware and G@zone:prod&#39;</span> puppetutils.run_apply <span class="tok-nv">hostgroup</span><span class="tok-o">=</span>middleware <span class="tok-nv">role</span><span class="tok-o">=</span>saltmaster <span class="tok-nv">zone</span><span class="tok-o">=</span>prod
+
+salt -C <span class="tok-s1">&#39;G@role:pgserver and G@hostgroup:middleware and G@zone:prod&#39;</span> puppetutils.run_agent <span class="tok-nv">hostgroup</span><span class="tok-o">=</span>middleware <span class="tok-nv">zone</span><span class="tok-o">=</span>prod</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_issues">Issues</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>When the master restart, windows minion does not seem to be able to reconnect (without a minion restart)
+/etc/httpd/conf/httpd.conf:</p>
+</li>
+</ul>
 </div>
 </div>
 </div>

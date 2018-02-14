@@ -51,6 +51,8 @@ include::spacemacs.adoc[]
 
 include::cicd/docker.adoc[]
 
+include::cicd/salt.adoc[]
+
 include::git/git.adoc[]
 
 include::linux/linux.adoc[]
