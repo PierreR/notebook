@@ -20,9 +20,7 @@ callCmd prg out = do
 main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
 
-  want [ "notebook.html", "tutorial.pdf"]
-
-  "notebook.html" %> callCmd "asciidoctor"
+  "notebook.html" %> callCmd "asciidoctor --trace"
 
   "notebook.pdf" %> callCmd "asciidoctor-pdf"
 
