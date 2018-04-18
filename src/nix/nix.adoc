@@ -149,7 +149,7 @@ for `wifi`, manually configure it by using `NetworkManager` through the `nmtui` 
 Nix produces build product by following a two steps phase:
 
 ====
-Nix expression  (evaluation) ->   Derivation   (realisation) ->  Build product
+Nix expression {nbsp}{nbsp} _(evaluation)_ -> {nbsp}{nbsp} Derivation {nbsp}{nbsp} _(realisation)_ -> {nbsp}{nbsp} Build product
 ====
 
 Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it's a little more complex than this), and name is the name of the derivation.
