@@ -146,6 +146,12 @@ for `wifi`, manually configure it by using `NetworkManager` through the `nmtui` 
 
 == Derivation
 
+Nix produces build product by following a two steps phase:
+
+====
+Nix expression  (evaluation) ->   Derivation   (realisation) ->  Build product
+====
+
 Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it's a little more complex than this), and name is the name of the derivation.
 
 From a nix language point of view, a derivation is simply a set, with some attributes.
@@ -249,8 +255,13 @@ or without a default.nix file:
 
 ```
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p pythonPackages.pyyaml -p '(import <nixpkgs> {}).haskellPackages.ghcWithPackages (p: with p; [shake])'
+#! nix-shell --pure
+#! nix-shell -p asciidoctor -p pythonPackages.pygments
+#! nix-shell -p "haskellPackages.ghcWithPackages(p: with p; [shake])" <1>
+#! nix-shell -i bash
+#! /usr/bin/env nix-shell
 ```
+<1> Double quotes are required. Don't add `-p ghc` as you will end up with two different ghcs !
 
 [NOTE]
 ====
