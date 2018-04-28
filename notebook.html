@@ -1679,15 +1679,29 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-nv">nixpkgs</span> <span class="tok-o">=</span> <span class="tok-o">(</span>import &lt;nixpkgs&gt; <span class="tok-o">{})</span>.pkgs.fetchgit <span class="tok-o">{</span>
-            <span class="tok-nv">url</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;https://github.com/nixos/nixpkgs-channels&quot;</span><span class="tok-p">;</span>
-            <span class="tok-nv">rev</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;f93a8ee1105f4cc3770ce339a8c1a4acea3b2fb6&quot;</span><span class="tok-p">;</span>
-            <span class="tok-nv">sha256</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;01fnyw711p6kf9qpdabys9im10hlih1l1pxwp06wkq7b9wsljawd&quot;</span><span class="tok-p">;</span>
-          <span class="tok-o">}</span><span class="tok-p">;</span>
-
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-nb">let</span>
+  <span class="tok-nv">nixpkgs</span> <span class="tok-o">=</span> builtins.fromJSON <span class="tok-o">(</span>builtins.readFile ./.nixpkgs.json<span class="tok-o">)</span><span class="tok-p">;</span>
+  <span class="tok-nv">fetchTarballFromGitHub</span> <span class="tok-o">=</span> <span class="tok-o">{</span> repo, owner, rev, sha256, name ? <span class="tok-s2">&quot;&quot;</span> <span class="tok-o">}</span>:
+    fetchTarball <span class="tok-o">{</span>
+      <span class="tok-nv">url</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;https://github.com/</span><span class="tok-si">${</span><span class="tok-nv">owner</span><span class="tok-si">}</span><span class="tok-s2">/</span><span class="tok-si">${</span><span class="tok-nv">repo</span><span class="tok-si">}</span><span class="tok-s2">/archive/</span><span class="tok-si">${</span><span class="tok-nv">rev</span><span class="tok-si">}</span><span class="tok-s2">.tar.gz&quot;</span><span class="tok-p">;</span>
+      inherit name sha256<span class="tok-p">;</span>
+    <span class="tok-o">}</span><span class="tok-p">;</span>
 in
-
-with import nixpkgs <span class="tok-o">{}</span><span class="tok-p">;</span></code></pre>
+import <span class="tok-o">(</span>fetchTarballFromGitHub <span class="tok-o">{</span>
+  <span class="tok-nv">owner</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;NixOS&quot;</span><span class="tok-p">;</span>
+  <span class="tok-nv">repo</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;nixpkgs&quot;</span><span class="tok-p">;</span>
+  inherit <span class="tok-o">(</span>nixpkgs<span class="tok-o">)</span> rev sha256<span class="tok-p">;</span>
+<span class="tok-o">})</span> <span class="tok-o">{}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Updating <code>.nixpkgs.json</code> is realized with such a zsh function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-k">function</span> updateNixpkgs <span class="tok-o">()</span> <span class="tok-o">{</span>
+    nix-prefetch-git https://github.com/NixOS/nixpkgs.git <span class="tok-s2">&quot;</span><span class="tok-nv">$1</span><span class="tok-s2">&quot;</span> &gt; ~/.config/nixpkgs/.nixpkgs.json
+<span class="tok-o">}</span></code></pre>
 </div>
 </div>
 </dd>

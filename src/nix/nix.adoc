@@ -582,15 +582,27 @@ You then build the derivation or install it in the user environment.
 Pinned a version of nixpkgs::
 +
 ```
-nixpkgs = (import <nixpkgs> {}).pkgs.fetchgit {
-            url = "https://github.com/nixos/nixpkgs-channels";
-            rev = "f93a8ee1105f4cc3770ce339a8c1a4acea3b2fb6";
-            sha256 = "01fnyw711p6kf9qpdabys9im10hlih1l1pxwp06wkq7b9wsljawd";
-          };
-
+let
+  nixpkgs = builtins.fromJSON (builtins.readFile ./.nixpkgs.json);
+  fetchTarballFromGitHub = { repo, owner, rev, sha256, name ? "" }:
+    fetchTarball {
+      url = "https://github.com/${owner}/${repo}/archive/${rev}.tar.gz";
+      inherit name sha256;
+    };
 in
+import (fetchTarballFromGitHub {
+  owner = "NixOS";
+  repo = "nixpkgs";
+  inherit (nixpkgs) rev sha256;
+}) {}
 
-with import nixpkgs {};
+```
+Updating `.nixpkgs.json` is realized with such a zsh function:
++
+```
+function updateNixpkgs () {
+    nix-prefetch-git https://github.com/NixOS/nixpkgs.git "$1" > ~/.config/nixpkgs/.nixpkgs.json
+}
 ```
 
 Caching the list of all available package into a local file::
