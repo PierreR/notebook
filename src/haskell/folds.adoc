@@ -6,7 +6,6 @@ Folding is the act of reducing a structure to a single value.
 
 We can see them as consumers or `comonads`.footnote:[Unfolding is then associated to producers or `monads`.]
 
-
 == foldl/foldr
 ```
 foldr :: (a -> b -> b) -> b -> [a] -> b
@@ -18,7 +17,19 @@ foldl  f v []     =  v
 foldl  f v (x:xs) =  foldl f (f v x) xs
 ```
 
-You can think of `foldr` *non-recursively* as simultaneously replacing each (:) in a list by a given function, and [] by a given value.
+Both functions take 3 arguments:
+- a combining function 'f'
+- a default value 'v'
+- the data to be folded.
+
+The default value 'v' deals with the empty element of the list #[]#. For non empty list, `foldl1/foldr1` is best suited.
+
+=== foldr
+
+You can think of `foldr` *non-recursively* as simultaneously replacing each (:) in a list by a given function, and [] by a given value:
+```
+foldr (-) 0 (1:2:3:[]) = (1 - ( 2 - (3 - 0))) = (1 - (2 - 3) = (1 - ( -1 ) = 2
+```
 
 image::right-fold-transformation.png[Foldr]
 
@@ -38,13 +49,17 @@ map' f (x:xs) = f x : (map f xs)
 takeWhile (< 12) $ map (*2) [1..]
 ```
 
+=== foldl
+
 On the other hand, when the whole list needs to be traversed (`sum` or `reverse` are two examples), `foldl'` is actually more efficient in term of memory space.
 
 ```
+foldl (-) 0 (1:2:3:[]) = (0 - 1) - 2 - 3 = -6
+
 reverse = foldl' (flip (:)) []
 ```
 
-The strict version `foldl'` should always be used instead of foldl (don't ever use `foldl` from Prelude)
+The strict version `List.foldl'` should always be used instead of the foldl from Prelude. The `Foldable` type class comes with `foldl` defined strictly.
 
 image::left-fold-transformation.png[Foldl]
 

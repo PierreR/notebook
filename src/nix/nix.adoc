@@ -152,6 +152,8 @@ Nix produces build product by following a two steps phase:
 Nix expression {nbsp}{nbsp} _(evaluation)_ -> {nbsp}{nbsp} Derivation {nbsp}{nbsp} _(realisation)_ -> {nbsp}{nbsp} Build product
 ====
 
+The first evaluation step is pure. The produced drv file acts as an intermediate specification for a build that can be freely redistribute to a set of machines.
+
 Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it's a little more complex than this), and name is the name of the derivation.
 
 From a nix language point of view, a derivation is simply a set, with some attributes.
@@ -330,7 +332,7 @@ You can also omit the channel namespace and specify the input for `nixpkgs` expl
 
 nix-build tool does two main jobs:
 
-* nix-instantiate: parse the `.nix` file and return the .drv file
+* nix-instantiate: parse the `.nix` file and return the .drv file (the evaluation step)
 * nix-store -r: realise the .drv, which actually builds the derivation
 
 ****
