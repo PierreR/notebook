@@ -1681,17 +1681,11 @@ stdenv<span class="tok-o">.</span>mkDerivation <span class="tok-p">{</span>
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-nb">let</span>
   <span class="tok-nv">nixpkgs</span> <span class="tok-o">=</span> builtins.fromJSON <span class="tok-o">(</span>builtins.readFile ./.nixpkgs.json<span class="tok-o">)</span><span class="tok-p">;</span>
-  <span class="tok-nv">fetchTarballFromGitHub</span> <span class="tok-o">=</span> <span class="tok-o">{</span> repo, owner, rev, sha256, name ? <span class="tok-s2">&quot;&quot;</span> <span class="tok-o">}</span>:
-    fetchTarball <span class="tok-o">{</span>
-      <span class="tok-nv">url</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;https://github.com/</span><span class="tok-si">${</span><span class="tok-nv">owner</span><span class="tok-si">}</span><span class="tok-s2">/</span><span class="tok-si">${</span><span class="tok-nv">repo</span><span class="tok-si">}</span><span class="tok-s2">/archive/</span><span class="tok-si">${</span><span class="tok-nv">rev</span><span class="tok-si">}</span><span class="tok-s2">.tar.gz&quot;</span><span class="tok-p">;</span>
-      inherit name sha256<span class="tok-p">;</span>
-    <span class="tok-o">}</span><span class="tok-p">;</span>
 in
-import <span class="tok-o">(</span>fetchTarballFromGitHub <span class="tok-o">{</span>
-  <span class="tok-nv">owner</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;NixOS&quot;</span><span class="tok-p">;</span>
-  <span class="tok-nv">repo</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;nixpkgs&quot;</span><span class="tok-p">;</span>
-  inherit <span class="tok-o">(</span>nixpkgs<span class="tok-o">)</span> rev sha256<span class="tok-p">;</span>
-<span class="tok-o">})</span> <span class="tok-o">{}</span></code></pre>
+import <span class="tok-o">(</span>fetchTarball <span class="tok-o">{</span>
+  <span class="tok-nv">url</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;https://github.com/NixOS/nixpkgs/archive/</span><span class="tok-si">${</span><span class="tok-nv">nixpkgs</span><span class="tok-p">.rev</span><span class="tok-si">}</span><span class="tok-s2">.tar.gz&quot;</span><span class="tok-p">;</span>
+  inherit <span class="tok-o">(</span>nixpkgs<span class="tok-o">)</span> sha256<span class="tok-p">;</span>
+<span class="tok-o">})</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

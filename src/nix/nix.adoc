@@ -584,18 +584,11 @@ Pinned a version of nixpkgs::
 ```
 let
   nixpkgs = builtins.fromJSON (builtins.readFile ./.nixpkgs.json);
-  fetchTarballFromGitHub = { repo, owner, rev, sha256, name ? "" }:
-    fetchTarball {
-      url = "https://github.com/${owner}/${repo}/archive/${rev}.tar.gz";
-      inherit name sha256;
-    };
 in
-import (fetchTarballFromGitHub {
-  owner = "NixOS";
-  repo = "nixpkgs";
-  inherit (nixpkgs) rev sha256;
-}) {}
-
+import (fetchTarball {
+  url = "https://github.com/NixOS/nixpkgs/archive/${nixpkgs.rev}.tar.gz";
+  inherit (nixpkgs) sha256;
+})
 ```
 Updating `.nixpkgs.json` is realized with such a zsh function:
 +
