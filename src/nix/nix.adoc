@@ -85,7 +85,7 @@ Some nix properties are set up in `/etc/nix/nix.conf`
 for `wifi`, manually configure it by using `NetworkManager` through the `nmtui` text interface
 ====
 
-./etc/nixos/configuration
+./etc/nixos/configuration.nix
 ```nix
   nixpkgs.config.allowUnfree = true;
 
