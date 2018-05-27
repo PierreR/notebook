@@ -940,7 +940,7 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 </div>
 </div>
 <div class="paragraph">
-<p>The first evaluation step is pure. The produced drv file acts as an intermediate specification for a build that can be freely redistribute to a set of machines.</p>
+<p>The first evaluation step is pure. The produced <strong>drv</strong> file acts as an intermediate specification for a build that can be freely redistribute to a set of machines.</p>
 </div>
 <div class="paragraph">
 <p>Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it&#8217;s a little more complex than this), and name is the name of the derivation.</p>
@@ -981,7 +981,7 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>additional requirement needed to build the derivation</td>
+<td>additional input required to build the derivation<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup></td>
 </tr>
 </table>
 </div>
@@ -990,13 +990,13 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 </div>
 <div class="exampleblock">
 <div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">drv files</dt>
-<dd>
-<p>specification of how to build a derivation similar to the <code>.o</code> file in C.</p>
-</dd>
-</dl>
+<div class="paragraph">
+<p>Derivation never specifies runtime dependencies. These are automatically computes by Nix. You can print them with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>nix-store -q --tree <span class="tok-k">$(</span>nix-store -qd <span class="tok-k">$(</span>which cabal2nix<span class="tok-k">))</span></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1071,7 +1071,7 @@ This is what the <mark>nix-shell</mark> is about: it will build the dependencies
 </table>
 </div>
 <div class="paragraph">
-<p>If a path is not given, nix-shell defaults to <code>shell.nix</code> if it exists, and <code>default.nix</code> otherwise.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup></p>
+<p>If a path is not given, nix-shell defaults to <code>shell.nix</code> if it exists, and <code>default.nix</code> otherwise.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup></p>
 </div>
 <div class="paragraph">
 <p>This allows for a nice trick. We can decribe a virtual dev environment (of any sort for any language) by decribing a derivation in <code>default.nix</code> like so:</p>
@@ -1275,7 +1275,7 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 <p>nix-instantiate: parse the <code>.nix</code> file and return the .drv file (the evaluation step)</p>
 </li>
 <li>
-<p>nix-store -r: realise the .drv, which actually builds the derivation</p>
+<p>nix-store -r: realise the build product from the input .drv derivation</p>
 </li>
 </ul>
 </div>
@@ -1494,7 +1494,7 @@ In <code>~/.nixpkgs/config.nix</code> you typically declare a <code>packageOverr
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td><mark>packageOverrides</mark> takes the original (super) nixpkgs set and return a new (self) record set.
-<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup></td>
+<sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1805,7 +1805,7 @@ import <span class="tok-o">(</span>fetchTarball <span class="tok-o">{</span>
 <p>Type classes are in a sense dual to type declarations. Whereas the latter defines how types are created, type class defines how a set of types are consumed.</p>
 </div>
 <div class="paragraph">
-<p>When talking about polymorphism, type class enables a form of <code>adhoc polymorphism</code>  or <code>overloading</code> <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup> that needs to be delimited as such to play well with <code>parametric polymorphism</code> and keeping the type checking sane.</p>
+<p>When talking about polymorphism, type class enables a form of <code>adhoc polymorphism</code>  or <code>overloading</code> <sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup> that needs to be delimited as such to play well with <code>parametric polymorphism</code> and keeping the type checking sane.</p>
 </div>
 <div class="paragraph">
 <p>Type class are not first class in Haskell. They cannot be used in place of type (as you would in Java with interface).</p>
@@ -2358,7 +2358,7 @@ fix f = f (fix f)</p>
 <p>Folding is the act of reducing a structure to a single value.</p>
 </div>
 <div class="paragraph">
-<p>We can see them as consumers or <code>comonads</code>.<sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup></p>
+<p>We can see them as consumers or <code>comonads</code>.<sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup></p>
 </div>
 </div>
 <div class="sect3">
@@ -2841,7 +2841,7 @@ Num b =&gt; Maybe b</code></pre>
 <div class="sect3">
 <h4 id="_st">ST</h4>
 <div class="paragraph">
-<p>The ST<sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup> monad lets you use update-in-place, but unlike IO it is escapable.
+<p>The ST<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup> monad lets you use update-in-place, but unlike IO it is escapable.
 This means it uses system trickery to ensure that mutable data can&#8217;t escape the monad; that is, when you run an ST computation you get a pure result.</p>
 </div>
 <div class="paragraph">
@@ -3224,7 +3224,7 @@ So you can concatenate two Shell streams using <code>&lt;|&gt;</code>.</p>
 <div class="sect3">
 <h4 id="_filepath">FilePath</h4>
 <div class="paragraph">
-<p><code>Turtle</code> is using the deprecated <code>system-filepath package</code> to handle filepaths in a more secure way<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup>. Watch out as it is at time a bit surprising:</p>
+<p><code>Turtle</code> is using the deprecated <code>system-filepath package</code> to handle filepaths in a more secure way<sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup>. Watch out as it is at time a bit surprising:</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -4764,7 +4764,7 @@ docker run -it -v /media/puppet-stack-middleware:/etc/puppet/environments/middle
 <div class="sect2">
 <h3 id="_dns">DNS</h3>
 <div class="paragraph">
-<p>You can use <code>Consul</code> as a DNS service. <code>dnsmask</code> is configured within each swarm node while every dockers inside a node is running with <code>--dns 172.17.0.1</code>.<sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup></p>
+<p>You can use <code>Consul</code> as a DNS service. <code>dnsmask</code> is configured within each swarm node while every dockers inside a node is running with <code>--dns 172.17.0.1</code>.<sup class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</sup></p>
 </div>
 </div>
 </div>
@@ -6043,9 +6043,9 @@ In category theory we never look inside objects. All information about objects i
 <dl>
 <dt class="hdlist1">definition</dt>
 <dd>
-<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</sup>.
+<p>A category is a bunch of objects together with <code>morphisms</code> <sup class="footnote">[<a id="_footnoteref_9" class="footnote" href="#_footnote_9" title="View footnote.">9</a>]</sup>.
 The objects have not structure or meaning, actually they only serve to mark the beginning or end of an arrow.
-Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_9" class="footnote" href="#_footnote_9" title="View footnote.">9</a>]</sup> that preverse a <code>structure</code>.
+Morphisms are direct mappings between these objects <sup class="footnote">[<a id="_footnoteref_10" class="footnote" href="#_footnote_10" title="View footnote.">10</a>]</sup> that preverse a <code>structure</code>.
 The structure whatever it is characterizes the category.</p>
 <div class="ulist">
 <ul>
@@ -6157,31 +6157,34 @@ The structure whatever it is characterizes the category.</p>
 <div id="footnotes">
 <hr>
 <div class="footnote" id="_footnote_1">
-<a href="#_footnoteref_1">1</a>. If no such files exists, it will default to <code>&lt;nixpkgs&gt;</code>
+<a href="#_footnoteref_1">1</a>. This means that if a package provides a bin subdirectory, it&#8217;s added to PATH; if it has a include subdirectory, it&#8217;s added to GCC&#8217;s header search path; and so on
 </div>
 <div class="footnote" id="_footnote_2">
-<a href="#_footnoteref_2">2</a>. similar to <code>overrridePackages</code> which is only used outside of the special <code>config.nix</code> for specific use cases
+<a href="#_footnoteref_2">2</a>. If no such files exists, it will default to <code>&lt;nixpkgs&gt;</code>
 </div>
 <div class="footnote" id="_footnote_3">
-<a href="#_footnoteref_3">3</a>. Each instance implements the same function differently or to say it  diffently one function will behave diffently according to the types of its arguments
+<a href="#_footnoteref_3">3</a>. similar to <code>overrridePackages</code> which is only used outside of the special <code>config.nix</code> for specific use cases
 </div>
 <div class="footnote" id="_footnote_4">
-<a href="#_footnoteref_4">4</a>. Unfolding is then associated to producers or <code>monads</code>.
+<a href="#_footnoteref_4">4</a>. Each instance implements the same function differently or to say it  diffently one function will behave diffently according to the types of its arguments
 </div>
 <div class="footnote" id="_footnote_5">
-<a href="#_footnoteref_5">5</a>. state monad transformer.
+<a href="#_footnoteref_5">5</a>. Unfolding is then associated to producers or <code>monads</code>.
 </div>
 <div class="footnote" id="_footnote_6">
-<a href="#_footnoteref_6">6</a>. a mental model that might help is to look at each filepath as being a list of string not just one string
+<a href="#_footnoteref_6">6</a>. state monad transformer.
 </div>
 <div class="footnote" id="_footnote_7">
-<a href="#_footnoteref_7">7</a>. the DNS host for every docker is always 172.17.0.1
+<a href="#_footnoteref_7">7</a>. a mental model that might help is to look at each filepath as being a list of string not just one string
 </div>
 <div class="footnote" id="_footnote_8">
-<a href="#_footnoteref_8">8</a>. also called arrows
+<a href="#_footnoteref_8">8</a>. the DNS host for every docker is always 172.17.0.1
 </div>
 <div class="footnote" id="_footnote_9">
-<a href="#_footnoteref_9">9</a>. you can have zero, one or many arrows from one object to another
+<a href="#_footnoteref_9">9</a>. also called arrows
+</div>
+<div class="footnote" id="_footnote_10">
+<a href="#_footnoteref_10">10</a>. you can have zero, one or many arrows from one object to another
 </div>
 </div>
 </body>
