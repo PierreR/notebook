@@ -1,12 +1,20 @@
-phony: clean html
+exec := result/build
 
-all: html
+default: html
 
-html:
-	build/build.sh html
+phony: clean rebuild
+
+rebuild:
+	nix build -f release.nix
+
+$(exec):
+	rebuild
+
+html: $(exec)
+	@$(exec) html
 
 pdf:
-	build/build.sh pdf
+	@$(exec) pdf
 
 clean:
-	@rm -rf css
+	@$(exec) clean

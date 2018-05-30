@@ -25,8 +25,8 @@ main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
   "notebook.pdf" %> callCmd "asciidoctor-pdf"
 
   "clean" ~> do
-    removeFilesAfter "" ["notebook.html"]
-    removeFilesAfter "" ["notebook.pdf"]
+    removeFilesAfter "." ["notebook.html"]
+    removeFilesAfter "." ["notebook.pdf"]
 
   "html" ~> need [ "notebook.html"]
 

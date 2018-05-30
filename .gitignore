@@ -15,5 +15,6 @@ _arch/
 _shake/
 out/
 arch/
+result
 build/.stack-work/
 build/stack.yaml
