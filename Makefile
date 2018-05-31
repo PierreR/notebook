@@ -5,16 +5,13 @@ default: html
 phony: clean rebuild
 
 rebuild:
-	nix build -f release.nix
+	@nix build -f release.nix
 
-$(exec):
-	rebuild
-
-html: $(exec)
+html: rebuild
 	@$(exec) html
 
-pdf:
+pdf: rebuild
 	@$(exec) pdf
 
-clean:
+clean: rebuild
 	@$(exec) clean
