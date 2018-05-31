@@ -1762,18 +1762,49 @@ import <span class="tok-o">(</span>fetchTarball <span class="tok-o">{</span>
 <p>Create or copy a Gemfile at the root dir of the project</p>
 </li>
 <li>
-<p>Install bundler in my user profile if it is not already there.</p>
+<p>Create a <code>default.nix</code> file :</p>
 </li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>
+<span class="tok-o">{</span> bundlerEnv <span class="tok-o">}</span>:
+
+bundlerEnv rec <span class="tok-o">{</span>
+  <span class="tok-nv">name</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;xxx-</span><span class="tok-si">${</span><span class="tok-nv">version</span><span class="tok-si">}</span><span class="tok-s2">&quot;</span><span class="tok-p">;</span>
+  <span class="tok-nv">version</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;4.10.11&quot;</span><span class="tok-p">;</span>
+  <span class="tok-nv">gemdir</span> <span class="tok-o">=</span> ./.<span class="tok-p">;</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>Create a Gemfile.lock by running bundler lock</p>
+<p>Use bundix in the target directory:</p>
 </li>
-<li>
-<p>Use bundix in the target directory: $(nix-build '&lt;nixpkgs&gt;' -A bundix)/bin/bundix. It will create a gimset.nix file</p>
-</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-k">$(</span>nix-build <span class="tok-s1">&#39;&lt;nixpkgs&gt;&#39;</span> -A bundix --no-out-link<span class="tok-k">)</span>/bin/bundix --magic <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><mark>magic</mark> lock,pack and write dependencies
+It will create both  a <code>gimset.nix</code> file and a <code>Gemfile.lock</code>
+<div class="ulist">
+<ul>
 <li>
 <p>Create a default.nix file</p>
 </li>
 </ul>
+</div></td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">

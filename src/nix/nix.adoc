@@ -641,9 +641,23 @@ rec {
 == Ruby
 
 * Create or copy a Gemfile at the root dir of the project
-* Install bundler in my user profile if it is not already there.
-* Create a Gemfile.lock by running bundler lock
-* Use bundix in the target directory: $(nix-build '<nixpkgs>' -A bundix)/bin/bundix. It will create a gimset.nix file
+* Create a `default.nix` file :
+```
+
+{ bundlerEnv }:
+
+bundlerEnv rec {
+  name = "xxx-${version}";
+  version = "4.10.11";
+  gemdir = ./.;
+}
+```
+* Use bundix in the target directory:
+```
+$(nix-build '<nixpkgs>' -A bundix --no-out-link)/bin/bundix --magic <1>
+```
+<1> #magic# lock,pack and write dependencies
+It will create both  a `gimset.nix` file and a `Gemfile.lock`
 * Create a default.nix file
 
 == References
