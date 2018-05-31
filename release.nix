@@ -2,9 +2,14 @@ with import <nixpkgs> {};
 
 let
 ghc = haskellPackages.ghcWithPackages (p: with p; [shake]);
-scriptfile = ./build/Build.hs;
+scriptFile = ./build/Build.hs;
 in
-runCommand "asciidoc-runner" { buildInputs = [ asciidoctor pythonPackages.pygments ghc ]; } ''
-  mkdir -p $out
-  ghc --make ${scriptfile} -rtsopts -with-rtsopts=-I0 -outputdir=$out -o $out/build && $out/build "$@"
-''
+stdenv.mkDerivation {
+  name = "asciidoc-runner";
+  buildInputs = [ asciidoctor pythonPackages.pygments ghc ];
+  unpackPhase = "true";
+  installPhase = ''
+    mkdir -p $out
+    ${ghc}/bin/ghc --make ${scriptFile} -rtsopts -with-rtsopts=-I0  -o $out/build
+  '';
+}
