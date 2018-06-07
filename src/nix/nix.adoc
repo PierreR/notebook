@@ -446,6 +446,38 @@ e1 -> e2 <1>
 ```
 <1> if #e1# is false, return true else check that e2 is true otherwise return false (in order word return e2). Useful with #assert#
 
+== Nix modules
+
+A NixOS module is a file that handles one logical aspect of the configuration.
+
+```
+{ config, lib, pkgs, ... }: <1>
+
+{
+  imports = <2>
+    [
+    ];
+
+   options.services.foo = { <3>
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+
+      '';
+    };
+    ...
+  };
+
+  config = mkIf config.services.foo.enable { <4>
+    environment.systemPackages = [ ... ];
+  };
+}
+```
+<1> function declaration with access to the full system configuration and nixpkgs
+<2> paths to other modules that should be included in the evaluation
+<3> options declaration
+<4> option definition
 
 == Tips and tricks
 
