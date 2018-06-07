@@ -4,11 +4,14 @@
 
 ```
 #!/bin/bash -xe
+set -euo pipefail <1>
+
 while read host
 do
        cat plone_team.pub | ssh alhazen@"$host".prd.srv.cirb.lan "grep plone ~/.ssh/authorized_keys || cat >> ~/.ssh/authorized_keys"
 done < plone-prod-uniq.txt
 ```
+<1> exits immediately when a command fails (`e`) even within a pipe (`o pipefail`), treat unset variables as an error (`u`)
 
 ```
 pandoc --latex-engine=xelatex -o blog.pdf http://blog.jakubarnold.cz/2014/07/22/building-monad-transformers-part-1.html

@@ -179,14 +179,14 @@ stdenv.mkDerivation rec {
 
 The output of a derivation needs to be deterministic. That's why you can fetch source remotely iff you know the hash beforehand.
 
-====
-Derivation never specifies runtime dependencies. These are automatically computed by Nix. You can print them with:
+runtime dependencies::
+derivation never specifies runtime dependencies. These are automatically computed by Nix. You can print them with:
++
 ```
 nix-store -q --tree $(nix-store -qd $(which cabal2nix))
 ```
-====
-
-
+overrideDerivation _drv f_::
+takes a derivation and returns a new derivation in which the attributes of the original are overriden according to the function f.
 
 == Channels
 
@@ -365,7 +365,7 @@ List::
 [ 123 ./foo.nix "abc" (f { x = y; }) ]
 ```
 
-Set::
+Attribute Set::
 
 +
 ```nix
@@ -438,6 +438,14 @@ Merge sets::
 ```nix
 e1 // e2 # merge e1 and e2 with e2 taking precedence in case of equally named attribute
 ```
+
+Logical implication::
++
+```
+e1 -> e2 <1>
+```
+<1> if #e1# is false, return true else check that e2 is true otherwise return false (in order word return e2). Useful with #assert#
+
 
 == Tips and tricks
 
