@@ -594,6 +594,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_nix_env">Nix-env</a></li>
 <li><a href="#_nix_build">Nix-build</a></li>
 <li><a href="#_language_expressions">Language Expressions</a></li>
+<li><a href="#_nix_modules">Nix modules</a></li>
 <li><a href="#_tips_and_tricks">Tips and tricks</a></li>
 <li><a href="#_bootstrap">Bootstrap</a></li>
 <li><a href="#_ruby">Ruby</a></li>
@@ -988,17 +989,22 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 <div class="paragraph">
 <p>The output of a derivation needs to be deterministic. That&#8217;s why you can fetch source remotely iff you know the hash beforehand.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>Derivation never specifies runtime dependencies. These are automatically computed by Nix. You can print them with:</p>
-</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">runtime dependencies</dt>
+<dd>
+<p>derivation never specifies runtime dependencies. These are automatically computed by Nix. You can print them with:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash"><span></span>nix-store -q --tree <span class="tok-k">$(</span>nix-store -qd <span class="tok-k">$(</span>which cabal2nix<span class="tok-k">))</span></code></pre>
 </div>
 </div>
-</div>
+</dd>
+<dt class="hdlist1">overrideDerivation <em>drv f</em></dt>
+<dd>
+<p>takes a derivation and returns a new derivation in which the attributes of the original are overriden according to the function f.</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -1330,7 +1336,7 @@ If you want to use &lt;nixpkgs&gt;, you would explicitly use the <code>-f</code>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">Set</dt>
+<dt class="hdlist1">Attribute Set</dt>
 <dd>
 <div class="listingblock">
 <div class="content">
@@ -1458,7 +1464,75 @@ the 'ellipsis' (<code>&#8230;&#8203;</code>) allows the passing of a bigger set,
 </div>
 </div>
 </dd>
+<dt class="hdlist1">Logical implication</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>e1 -&gt; e2 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>if <mark>e1</mark> is false, return true else check that e2 is true otherwise return false (in order word return e2). Useful with <mark>assert</mark></td>
+</tr>
+</table>
+</div>
+</dd>
 </dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nix_modules">Nix modules</h3>
+<div class="paragraph">
+<p>A NixOS module is a file that handles one logical aspect of the configuration.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-o">{</span> config, lib, pkgs, ... <span class="tok-o">}</span>: <i class="conum" data-value="1"></i><b>(1)</b>
+
+<span class="tok-o">{</span>
+  <span class="tok-nv">imports</span> <span class="tok-o">=</span> <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="tok-o">[</span>
+    <span class="tok-o">]</span><span class="tok-p">;</span>
+
+   options.services.foo <span class="tok-o">=</span> <span class="tok-o">{</span> <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="tok-nb">enable</span> <span class="tok-o">=</span> mkOption <span class="tok-o">{</span>
+      <span class="tok-nb">type</span> <span class="tok-o">=</span> types.bool<span class="tok-p">;</span>
+      <span class="tok-nv">default</span> <span class="tok-o">=</span> false<span class="tok-p">;</span>
+      <span class="tok-nv">description</span> <span class="tok-o">=</span> <span class="tok-s1">&#39;&#39;</span>
+
+      <span class="tok-s1">&#39;&#39;</span><span class="tok-p">;</span>
+    <span class="tok-o">}</span><span class="tok-p">;</span>
+    ...
+  <span class="tok-o">}</span><span class="tok-p">;</span>
+
+  <span class="tok-nv">config</span> <span class="tok-o">=</span> mkIf config.services.foo.enable <span class="tok-o">{</span> <i class="conum" data-value="4"></i><b>(4)</b>
+    environment.systemPackages <span class="tok-o">=</span> <span class="tok-o">[</span> ... <span class="tok-o">]</span><span class="tok-p">;</span>
+  <span class="tok-o">}</span><span class="tok-p">;</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>function declaration with access to the full system configuration and nixpkgs</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>paths to other modules that should be included in the evaluation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>options declaration</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>option definition</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -5344,11 +5418,21 @@ excludesfile = /home/username/.gitignore
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-ch">#!/bin/bash -xe</span>
+<span class="tok-nb">set</span> -euo pipefail <i class="conum" data-value="1"></i><b>(1)</b>
+
 <span class="tok-k">while</span> <span class="tok-nb">read</span> host
 <span class="tok-k">do</span>
        cat plone_team.pub <span class="tok-p">|</span> ssh alhazen@<span class="tok-s2">&quot;</span><span class="tok-nv">$host</span><span class="tok-s2">&quot;</span>.prd.srv.cirb.lan <span class="tok-s2">&quot;grep plone ~/.ssh/authorized_keys || cat &gt;&gt; ~/.ssh/authorized_keys&quot;</span>
 <span class="tok-k">done</span> &lt; plone-prod-uniq.txt</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>exits immediately when a command fails (<code>e</code>) even within a pipe (<code>o pipefail</code>), treat unset variables as an error (<code>u</code>)</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="content">
