@@ -6,6 +6,13 @@ Nix is not a configuration management tool alike `Puppet`, `Chef` or `Salt`. It 
 In that regard, unless you are running `nixos`, `disnix` (or use other tricks), nix won't configure systemd services for instance.
 Nix only operates on its store (usually located in '/nix') to gather packages called `derivations` in nix parlance.
 
+Nix is a radical rethink of the distribution model. It offers:
+
+- best possible build reproducibility
+- self-contained environments
+- easy rollback
+- composability of derivation
+
 == NixOS
 
 === icon:tasks[] Install

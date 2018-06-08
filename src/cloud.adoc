@@ -1,0 +1,10 @@
+= Cloud
+
+== AWS
+
+=== EC2
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html[2 kinds] of virtualization
+
+- hvm : hardware virtualization machine
+- pvm : paravirtual
