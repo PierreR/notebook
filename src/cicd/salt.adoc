@@ -171,16 +171,25 @@ gitfs_remotes:
 == Salt API
 
 ```shell
-curl -si 192.168.30.100:8000/login \
+curl -si salt.sta.srv.cirb.lan:8000/login \
         -H "Accept: application/json" \
         -d username='jfroche' \
         -d password='xMLrzzzz' \
         -d eauth='pam' > /tmp/cookies.txt
-curl -b /tmp/cookies.txt -si 192.168.30.100:8000 \
+curl -b /tmp/cookies.txt -si salt.sta.srv.cirb.lan:8000 \
     -d client='runner' \
     -d mods='orchestration.bootstrap-puppet' \
     -d fun='state.orchestrate' \
     -d eauth='pam'
+
+curl -ssik https://salt.sta.srv.cirb.lan:8000/run  \
+      -H 'content-type: application/json' -H 'Accept: application/x-yaml'  -d '[{
+      "username": "xxx",
+      "password": "xxxxxx",
+      "eauth": "ldap",
+      "client": "runner",
+      "fun": "doc.execution"
+     }]'
 ```
 
 == Orchestration

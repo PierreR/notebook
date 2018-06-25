@@ -62,8 +62,28 @@ ssh-add ~/.ssh/alhazen_rsa
 # Give alhazen the permission to write on targetfqdn:/srv/tmp
 ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn \
 "scp -o StrictHostKeyChecking=No /srv/data/pgserver.dump alhazen@targetfqdn:/srv/tmp"
+```
+
+SSH with password for a specific host::
++
+.ssh/config
+```
+Host 192.168.xx.xx
+  PreferredAuthentications password
+```
+
+NsLookup::
+```
+$ nslookup.exe stash.cirb.lan 192.168.34.2xx <1>
+Non-authoritative answer:
+Server:  svidscapw000.ad.cirb.lan
+Address:  192.168.34.2xx
+
+Name:    stash.cirb.lan
+Address:  192.168.34.xx
 
 ```
+<1> DNS to lookup + DNS server
 
 == Definitions
 

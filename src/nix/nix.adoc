@@ -420,6 +420,16 @@ min = x: y: if x < y then x else y; <1>
 the 'ellipsis' (`...`) allows the passing of a bigger set, one that contains more than the 3 required arguments.
 <2> function call passing a set as argument
 
+Common functions::
++
+```
+listToAttrs <1>
+  [ { name = "foo"; value = 123; }
+    { name = "bar"; value = 456; }
+  ]
+```
+<1> alike fromList from Haskell except there is no tuple type in Nix
+
 With::
 +
 ```nix
