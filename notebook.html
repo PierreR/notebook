@@ -1441,6 +1441,25 @@ the 'ellipsis' (<code>&#8230;&#8203;</code>) allows the passing of a bigger set,
 </table>
 </div>
 </dd>
+<dt class="hdlist1">Common functions</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>listToAttrs <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tok-o">[</span> <span class="tok-o">{</span> <span class="tok-nv">name</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;foo&quot;</span><span class="tok-p">;</span> <span class="tok-nv">value</span> <span class="tok-o">=</span> <span class="tok-m">123</span><span class="tok-p">;</span> <span class="tok-o">}</span>
+    <span class="tok-o">{</span> <span class="tok-nv">name</span> <span class="tok-o">=</span> <span class="tok-s2">&quot;bar&quot;</span><span class="tok-p">;</span> <span class="tok-nv">value</span> <span class="tok-o">=</span> <span class="tok-m">456</span><span class="tok-p">;</span> <span class="tok-o">}</span>
+  <span class="tok-o">]</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>alike fromList from Haskell except there is no tuple type in Nix</td>
+</tr>
+</table>
+</div>
+</dd>
 <dt class="hdlist1">With</dt>
 <dd>
 <div class="listingblock">
@@ -5172,16 +5191,25 @@ The default location for the pillar is in /srv/pillar ("pillar_roots" master con
 <h3 id="_salt_api">Salt API</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell"><span></span>curl -si 192.168.30.100:8000/login \
+<pre class="pygments highlight"><code data-lang="shell"><span></span>curl -si salt.sta.srv.cirb.lan:8000/login \
         -H &quot;Accept: application/json&quot; \
         -d username=&#39;jfroche&#39; \
         -d password=&#39;xMLrzzzz&#39; \
         -d eauth=&#39;pam&#39; &gt; /tmp/cookies.txt
-curl -b /tmp/cookies.txt -si 192.168.30.100:8000 \
+curl -b /tmp/cookies.txt -si salt.sta.srv.cirb.lan:8000 \
     -d client=&#39;runner&#39; \
     -d mods=&#39;orchestration.bootstrap-puppet&#39; \
     -d fun=&#39;state.orchestrate&#39; \
-    -d eauth=&#39;pam&#39;</code></pre>
+    -d eauth=&#39;pam&#39;
+
+curl -ssik https://salt.sta.srv.cirb.lan:8000/run  \
+      -H &#39;content-type: application/json&#39; -H &#39;Accept: application/x-yaml&#39;  -d &#39;[{
+      &quot;username&quot;: &quot;xxx&quot;,
+      &quot;password&quot;: &quot;xxxxxx&quot;,
+      &quot;eauth&quot;: &quot;ldap&quot;,
+      &quot;client&quot;: &quot;runner&quot;,
+      &quot;fun&quot;: &quot;doc.execution&quot;
+     }]&#39;</code></pre>
 </div>
 </div>
 </div>
@@ -5554,7 +5582,37 @@ ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn <span class="tok-se">\</span>
 </div>
 </div>
 </dd>
+<dt class="hdlist1">SSH with password for a specific host</dt>
+<dd>
+<div class="listingblock">
+<div class="title">ssh/config</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>Host <span class="tok-m">192</span>.168.xx.xx
+  PreferredAuthentications password</code></pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">NsLookup</dt>
 </dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>$ nslookup.exe stash.cirb.lan <span class="tok-m">192</span>.168.34.2xx <i class="conum" data-value="1"></i><b>(1)</b>
+Non-authoritative answer:
+Server:  svidscapw000.ad.cirb.lan
+Address:  <span class="tok-m">192</span>.168.34.2xx
+
+Name:    stash.cirb.lan
+Address:  <span class="tok-m">192</span>.168.34.xx</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>DNS to lookup + DNS server</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
