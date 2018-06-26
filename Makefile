@@ -1,17 +1,19 @@
-exec := result/build
+cmd = "mkdir -p out && ghc --make build/Build.hs -rtsopts -with-rtsopts=-I0 -outputdir=out -o out/build && out/build $@"
 
 default: html
 
-phony: clean rebuild
+phony: clean
 
-rebuild:
-	@nix build -f release.nix
+html:
+	@nix-shell --run $(cmd)
 
-html: rebuild
-	@$(exec) html
+pdf:
+	@nix-shell --run $(cmd)
 
-pdf: rebuild
-	@$(exec) pdf
+clean:
+	@echo "Cleaning ..."
+	@nix-shell --run $(cmd)
 
-clean: rebuild
-	@$(exec) clean
+purge: clean
+	@echo "Purging ..."
+	@rm -rf out

@@ -18,7 +18,7 @@ callCmd prg out = do
   cmd prg srcfile "-o" out
 
 main :: IO ()
-main = shakeArgs shakeOptions{shakeFiles="build/_shake"} $ do
+main = shakeArgs shakeOptions{shakeFiles="out/_shake"} $ do
 
   "notebook.html" %> callCmd "asciidoctor --trace"
 
