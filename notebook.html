@@ -696,6 +696,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_elastic_search">Elastic Search</a>
 <ul class="sectlevel2">
 <li><a href="#_characteristics">Characteristics</a></li>
+<li><a href="#_terminology">Terminology</a></li>
+<li><a href="#_data_types">Data types</a></li>
+<li><a href="#_apis">APIs</a></li>
+<li><a href="#_node_roles">Node roles</a></li>
+<li><a href="#_logstash">Logstash</a></li>
+<li><a href="#_beats">Beats</a></li>
 </ul>
 </li>
 <li><a href="#_category_theory">Category theory</a></li>
@@ -6198,25 +6204,234 @@ REF TYPE BOXES TO VALUES</p>
 <div class="sect2">
 <h3 id="_characteristics">Characteristics</h3>
 <div class="paragraph">
-<p>ES only keeps one version of a document</p>
+<p>EL is built upon the Lucene search engine.
+Everything is stored in an inversed index.
+It features:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>HA</p>
+</li>
+<li>
+<p>automatic index creation by generating a "mapping"</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_terminology">Terminology</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">index</dt>
+<dd>
+<p>All documents live in an index.  An index is roughtly the same as a database which mean it is just a namespace.</p>
+</dd>
+<dt class="hdlist1">type</dt>
+<dd>
+<p>Before version 6, a index could have on or more type. A type was like a table, a collection of similar thing.
+This notion of type is totally deprecated. In version 6, you still have to indicate one type (usually called <code>_doc</code> by convention.
+From version 7, the type would be optional and it will ultimately disappear from EL jargon.</p>
+</dd>
+<dt class="hdlist1">document</dt>
+<dd>
+<p>A document is like a row. It is composed of field/value (a field is alike a column in RDB).</p>
+</dd>
+<dt class="hdlist1">version</dt>
+<dd>
+<p>ES only keeps one version of a document. The version number is kept by ES for engineering purpose but should not be used in the applicative/business layer.</p>
+</dd>
+<dt class="hdlist1">mappings</dt>
+<dd>
+<p>Map fields with data types.</p>
+</dd>
+<dt class="hdlist1">analysis</dt>
+<dd>
+<p>process of converting full text into <code>terms</code> for the inverted index</p>
+</dd>
+<dt class="hdlist1">node</dt>
+<dd>
+<p>An instance of EL. Usually one per machine.</p>
+</dd>
+<dt class="hdlist1">cluster</dt>
+<dd>
+<p>A set of nodes.
+You might separate nodes into cluster because:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>the usage/ownership/&#8230;&#8203; of the data are different</p>
+</li>
+<li>
+<p>the nodes are located in two different datacenter</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">shards</dt>
+<dd>
+<p>By default each index is divided in 5 pieces called <code>shards</code>.
+A document will live on a single shard.
+EL tries to evenly distribute documents within an index among all the shards.</p>
 <div class="paragraph">
-<p>Automatic index creation by generating a "mapping"</p>
+<p>A shard is a single instance of Lucene and would roughly reach for a size of about 10G.</p>
 </div>
+</dd>
+<dt class="hdlist1">replica</dt>
+<dd>
+<p>Shards are replicated usually by 2 (number of replica = 1)</p>
+</dd>
+<dt class="hdlist1">segments</dt>
+<dd>
+<p>A shard is written on disks in multiple segment files.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_data_types">Data types</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Simple</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>text</code>: full text analyzed strings</p>
+</li>
+<li>
+<p><code>keyword</code>: sorting/aggregation of exact values (not analyzed).</p>
+</li>
+<li>
+<p><code>byte/short/integer/float/double</code>: numeric value</p>
+</li>
+<li>
+<p><code>date</code></p>
+</li>
+<li>
+<p><code>boolean</code></p>
+</li>
+<li>
+<p><code>ip</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Hierarchical: object, nested</p>
+</li>
+<li>
+<p>Range</p>
+</li>
+<li>
+<p>Specialized: geo_point, percolator</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apis">APIs</h3>
+<div class="listingblock">
+<div class="title">Index search</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>GET blogs/_search
+<span class="tok-o">{</span>
+  <span class="tok-s2">&quot;query&quot;</span>: <span class="tok-o">{</span>
+    <span class="tok-s2">&quot;match&quot;</span>: <span class="tok-o">{</span>
+      <span class="tok-s2">&quot;content&quot;</span>: <span class="tok-s2">&quot;ingest nodes&quot;</span>
+    <span class="tok-o">}</span>
+  <span class="tok-o">}</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Create your own mapping</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>PUT blogs
+<span class="tok-o">{</span>
+  <span class="tok-s2">&quot;mappings&quot;</span>: <span class="tok-o">{</span>
+    <span class="tok-s2">&quot;_doc&quot;</span>: <span class="tok-o">{</span>
+      <span class="tok-s2">&quot;properties&quot;</span>: <span class="tok-o">{</span>
+        <span class="tok-s2">&quot;content&quot;</span>: <span class="tok-o">{</span>
+          <span class="tok-s2">&quot;type&quot;</span>: <span class="tok-s2">&quot;text&quot;</span>
+        <span class="tok-o">}</span>,
+        ...
+      <span class="tok-o">}</span>
+    <span class="tok-o">}</span>
+  <span class="tok-o">}</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Test the analyzer</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>GET _analyze</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Cluster</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>GET _cluster/state</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Update index settings</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>PUT blogs/_settings
+<span class="tok-o">{</span>
+  <span class="tok-s2">&quot;settings&quot;</span>: <span class="tok-o">{</span>
+    <span class="tok-s2">&quot;number_of_replicas&quot;</span>: <span class="tok-m">0</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tok-o">}</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>you can dynamically change the number of replicas but not the <mark>number_of_shards</mark></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_node_roles">Node roles</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>master</code> eligible</p>
 <div class="paragraph">
-<p>All documents live in an index.  An index is roughtly the same as a database which mean it is just a namespace. A type is like a table, a collection of similar thing. A document is like a row and a field is similar to a column.</p>
+<p>Only one master node per cluster. It is the sole capable of changing the cluster state.</p>
 </div>
+</li>
+<li>
+<p><code>data</code></p>
 <div class="paragraph">
-<p>Everything is stored in an inversed index.</p>
+<p>Hold the shards and execute CRUD operations.</p>
 </div>
+</li>
+<li>
+<p><code>ingest</code></p>
+</li>
+<li>
+<p><code>coordinator</code></p>
 <div class="paragraph">
-<p>a namespace
-* index
-* index type</p>
+<p>Receive client request. Every node is implicitly a coordinating node.</p>
 </div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_logstash">Logstash</h3>
 <div class="paragraph">
-<p>By default each index is divided in 5 pieces called Shards. A document will live on a single shard + by default on replica for each shard.</p>
+<p>The main role of Logsatsh is to transform (in a centralized place) a stream of data  before it is indexed in EL.
+For some data input such as SQL database it is the only official "supported" way to get the data into EL.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_beats">Beats</h3>
+
 </div>
 </div>
 </div>
