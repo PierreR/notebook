@@ -2,16 +2,139 @@
 
 ## Characteristics
 
-ES only keeps one version of a document
-
-Automatic index creation by generating a "mapping"
-
-All documents live in an index.  An index is roughtly the same as a database which mean it is just a namespace. A type is like a table, a collection of similar thing. A document is like a row and a field is similar to a column.
-
+EL is built upon the Lucene search engine.
 Everything is stored in an inversed index.
+It features:
 
-a namespace
-* index
-* index type
+- HA
+- automatic index creation by generating a "mapping"
 
-By default each index is divided in 5 pieces called Shards. A document will live on a single shard + by default on replica for each shard.
+
+## Terminology
+
+index::
+All documents live in an index.  An index is roughtly the same as a database which mean it is just a namespace.
+
+type::
+Before version 6, a index could have on or more type. A type was like a table, a collection of similar thing.
+This notion of type is totally deprecated. In version 6, you still have to indicate one type (usually called `_doc` by convention.
+From version 7, the type would be optional and it will ultimately disappear from EL jargon.
+
+document::
+A document is like a row. It is composed of field/value (a field is alike a column in RDB).
+
+version::
+ES only keeps one version of a document. The version number is kept by ES for engineering purpose but should not be used in the applicative/business layer.
+
+mappings::
+Map fields with data types.
+
+analysis:: process of converting full text into `terms` for the inverted index
+
+node::
+An instance of EL. Usually one per machine.
+
+cluster::
+A set of nodes.
+You might separate nodes into cluster because:
+- the usage/ownership/... of the data are different
+- the nodes are located in two different datacenter
+
+shards::
+By default each index is divided in 5 pieces called `shards`.
+A document will live on a single shard.
+EL tries to evenly distribute documents within an index among all the shards.
++
+A shard is a single instance of Lucene and would roughly reach for a size of about 10G.
+
+replica::
+Shards are replicated usually by 2 (number of replica = 1)
+
+segments::
+A shard is written on disks in multiple segment files.
+
+## Data types
+
+- Simple
+* `text`: full text analyzed strings
+* `keyword`: sorting/aggregation of exact values (not analyzed).
+* `byte/short/integer/float/double`: numeric value
+*  `date`
+* `boolean`
+* `ip`
+- Hierarchical: object, nested
+- Range
+- Specialized: geo_point, percolator
+
+## APIs
+
+.Index search
+```
+GET blogs/_search
+{
+  "query": {
+    "match": {
+      "content": "ingest nodes"
+    }
+  }
+}
+```
+
+.Create your own mapping
+```
+PUT blogs
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "content": {
+          "type": "text"
+        },
+        ...
+      }
+    }
+  }
+}
+```
+
+.Test the analyzer
+```
+GET _analyze
+```
+
+.Cluster
+```
+GET _cluster/state
+```
+
+.Update index settings
+```
+PUT blogs/_settings
+{
+  "settings": {
+    "number_of_replicas": 0 <1>
+  }
+}
+```
+<1> you can dynamically change the number of replicas but not the #number_of_shards#
+
+## Node roles
+
+- `master` eligible
++
+Only one master node per cluster. It is the sole capable of changing the cluster state.
+- `data`
++
+Hold the shards and execute CRUD operations.
+- `ingest`
+- `coordinator`
++
+Receive client request. Every node is implicitly a coordinating node.
+
+
+## Logstash
+
+The main role of Logsatsh is to transform (in a centralized place) a stream of data  before it is indexed in EL.
+For some data input such as SQL database it is the only official "supported" way to get the data into EL.
+
+## Beats
