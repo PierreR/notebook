@@ -1,0 +1,41 @@
+# Intero setup
+
+Setting up a working Intero/Spacemacs environment is not that easy. The following method does not use a `.dev/dev-ghc-env` file.
+Install Stack::
+
+`Intero` requires `stack`. Install it `system wide` (in `/etc/nixos/local-configuration.nix`)
+
+Current used version is `1.6.5 x86_64` as defined by the nixpkgs stable 18.03 channel.
+
+Build with Stack::
++
+.$HOME/.dev/stack.yaml
+```
+resolver: lts-11.17
+nix:
+  enable: true
+  packages:
+    - zlib.dev
+    - gcc
+    - ruby
+    - pkgconfig
+
+system-ghc: true
+skip-ghc-check: true
+
+```
+Stack downloads all the haskell libs but it seems to do so in a global user space (?) `stack clean` or `removing $PROJECT/.stack-work` won't erase them.
+
+Install intero::
+
+Even if you install `Intero` in user space with `stack install intero` inside a nix shell
+(`nix-shell -p gcc 'haskellPackages.ghcWithPackages(p: with p; [syb ghc-paths mtl network random])'`)
+it would not be recognize within `Spacemacs`.
++
+This is true with `Intero 0.1.32`.
++
+The only way seems to let `emacs` install `intero` the first time. This will work only if `ghc`, `binutils` and `gcc` are on the `$PATH`.
+You will need to add those to `local-configuration.nix`.
++
+The installation will work but it won't find intero because it believe it is in `x86_64-linux-nix` folder that does not exist.
+The easy fix is to add a symlink: `cd $HOME/.stack/compiler-tools; ln -s x86_64-linux x86_64-linux-nix`.
