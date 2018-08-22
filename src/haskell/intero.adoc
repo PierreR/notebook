@@ -1,5 +1,8 @@
 # Intero setup
 
+WARNING: The following procedure only works when the ghc version of the lts resolver matches the one used for installing Stack.
+
+
 Setting up a working Intero/Spacemacs environment is not that easy. The following method does not use a `.dev/dev-ghc-env` file.
 Install Stack::
 
