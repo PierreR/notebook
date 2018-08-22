@@ -118,6 +118,48 @@ PUT blogs/_settings
 ```
 <1> you can dynamically change the number of replicas but not the #number_of_shards#
 
+.Reindex
+```
+POST _reindex
+{
+  "source": {
+    "index": "blogs",
+      "query": {
+        ...
+      }
+  },
+  "dest": {
+    "index": "blogs_fixed"
+  }
+}
+```
+
+.Ingest
+```
+PUT _ingest/pipeline/fix_locales
+{
+  "processors": [
+    {
+      "script": {
+        "source": """
+if("".equals(ctx.locales)) {
+  ctx.locales = "en-en";
+}
+ctx.reindexBatch = 3;
+"""
+      }
+    },
+    {
+      "split": {
+        "field": "locales",
+        "separator": ","
+      }
+    }
+  ]
+}
+```
+
+
 ## Node roles
 
 - `master` eligible
@@ -130,6 +172,12 @@ Hold the shards and execute CRUD operations.
 - `coordinator`
 +
 Receive client request. Every node is implicitly a coordinating node.
+
+## Cluster management
+
+### shard filtering
+
+### shard allocation awareness
 
 
 ## Logstash

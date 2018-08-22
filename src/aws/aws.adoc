@@ -1,0 +1,4 @@
+# AWS
+
+VPC:: Virtual Private Cloud
+ElasticIP:: As close as you can get to a virtual IP address. See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html[online doc]
