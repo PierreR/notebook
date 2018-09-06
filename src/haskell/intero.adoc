@@ -42,3 +42,12 @@ You will need to add those to `local-configuration.nix`.
 +
 The installation will work but it won't find intero because it believe it is in `x86_64-linux-nix` folder that does not exist.
 The easy fix is to add a symlink: `cd $HOME/.stack/compiler-tools; ln -s x86_64-linux x86_64-linux-nix`.
++
+With stack version < 1.7 you will need to forcefully enable nix in `.stack/config.yaml`:
++
+```
+nix:
+  enable: true
+```
++
+If you don't, intero will try to install `ghc` and it will fail.
