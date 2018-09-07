@@ -194,6 +194,7 @@ nix-store -q --tree $(nix-store -qd $(which cabal2nix))
 ```
 overrideDerivation _drv f_::
 takes a derivation and returns a new derivation in which the attributes of the original are overriden according to the function f.
+Most of the time, you should prefer `overrideAttrs`.
 
 == Channels
 

@@ -42,6 +42,7 @@ You might separate nodes into cluster because:
 
 shards::
 By default each index is divided in 5 pieces called `shards`.
+This number is defined at index creation.
 A document will live on a single shard.
 EL tries to evenly distribute documents within an index among all the shards.
 +
@@ -165,13 +166,17 @@ ctx.reindexBatch = 3;
 - `master` eligible
 +
 Only one master node per cluster. It is the sole capable of changing the cluster state.
+You need an odd number of eligible master nodes (quorum) to avoid split brains.
 - `data`
 +
 Hold the shards and execute CRUD operations.
 - `ingest`
++
+Receive query.
 - `coordinator`
 +
 Receive client request. Every node is implicitly a coordinating node.
+Act as smart load balancers.
 
 ## Cluster management
 

@@ -74,6 +74,13 @@ main = do
   when (not_found) $ do ...
 ```
 
+Similarly here is an utility function that checks if a file is empty:
+```
+isFileEmpty :: MonadIO io => FilePath -> io Bool
+isFileEmpty path =
+  fold (input path) Fold.null
+```
+
 == FilePath
 
 `Turtle` is using the deprecated `system-filepath package` to handle filepaths in a more secure wayfootnote:[a mental model that might help is to look at each filepath as being a list of string not just one string]. Watch out as it is at time a bit surprising:

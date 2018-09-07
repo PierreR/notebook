@@ -1,0 +1,9 @@
+# Storage
+
+## Shared storage
+
+NAS::
+...
+
+SAN::
+...
