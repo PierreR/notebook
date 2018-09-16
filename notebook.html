@@ -700,8 +700,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_data_types">Data types</a></li>
 <li><a href="#_apis">APIs</a></li>
 <li><a href="#_node_roles">Node roles</a></li>
+<li><a href="#_cluster_management">Cluster management</a></li>
 <li><a href="#_logstash">Logstash</a></li>
 <li><a href="#_beats">Beats</a></li>
+<li><a href="#_apm">APM</a></li>
 </ul>
 </li>
 <li><a href="#_category_theory">Category theory</a></li>
@@ -1027,7 +1029,8 @@ Nix only operates on its store (usually located in '/nix') to gather packages ca
 </dd>
 <dt class="hdlist1">overrideDerivation <em>drv f</em></dt>
 <dd>
-<p>takes a derivation and returns a new derivation in which the attributes of the original are overriden according to the function f.</p>
+<p>takes a derivation and returns a new derivation in which the attributes of the original are overriden according to the function f.
+Most of the time, you should prefer <code>overrideAttrs</code>.</p>
 </dd>
 </dl>
 </div>
@@ -3368,6 +3371,16 @@ So you can concatenate two Shell streams using <code>&lt;|&gt;</code>.</p>
   <span class="tok-n">when</span> <span class="tok-p">(</span><span class="tok-n">not_found</span><span class="tok-p">)</span> <span class="tok-o">$</span> <span class="tok-kr">do</span> <span class="tok-o">...</span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Similarly here is an utility function that checks if a file is empty:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span></span><span class="tok-nf">isFileEmpty</span> <span class="tok-ow">::</span> <span class="tok-kt">MonadIO</span> <span class="tok-n">io</span> <span class="tok-ow">=&gt;</span> <span class="tok-kt">FilePath</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">io</span> <span class="tok-kt">Bool</span>
+<span class="tok-nf">isFileEmpty</span> <span class="tok-n">path</span> <span class="tok-ow">=</span>
+  <span class="tok-n">fold</span> <span class="tok-p">(</span><span class="tok-n">input</span> <span class="tok-n">path</span><span class="tok-p">)</span> <span class="tok-kt">Fold</span><span class="tok-o">.</span><span class="tok-n">null</span></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -3989,6 +4002,12 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 <p>Dhall is a programming language specialized for configuration files.</p>
 </div>
 <div class="listingblock">
+<div class="title">function</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="haskell"><span></span><span class="tok-kr">let</span> <span class="tok-n">double</span> <span class="tok-ow">=</span> <span class="tok-nf">\</span><span class="tok-p">(</span><span class="tok-n">n</span> <span class="tok-kt">:</span> <span class="tok-kt">Natural</span><span class="tok-p">)</span> <span class="tok-ow">-&gt;</span> <span class="tok-n">n</span> <span class="tok-o">*</span> <span class="tok-mi">2</span> <span class="tok-kr">in</span> <span class="tok-n">double</span> <span class="tok-mi">4</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
 <div class="title">/config/box</div>
 <div class="content">
 <pre class="pygments highlight"><code data-lang="haskell"><span></span><span class="tok-p">{</span> <span class="tok-n">userName</span>         <span class="tok-ow">=</span> <span class="tok-s">&quot;&quot;</span>
@@ -4005,11 +4024,10 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 
 <span class="tok-kr">data</span> <span class="tok-kt">BoxConfig</span>
   <span class="tok-ow">=</span> <span class="tok-kt">BoxConfig</span>
-  <span class="tok-p">{</span> <span class="tok-n">_userName</span>        <span class="tok-ow">::</span> <span class="tok-kt">LText</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="tok-p">,</span> <span class="tok-n">_userEmail</span>       <span class="tok-ow">::</span> <span class="tok-kt">LText</span>
-  <span class="tok-p">,</span> <span class="tok-n">_userStacks</span>      <span class="tok-ow">::</span> <span class="tok-kt">Vector</span> <span class="tok-kt">LText</span> <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="tok-p">,</span> <span class="tok-n">_plugins</span>         <span class="tok-ow">::</span> <span class="tok-kt">Bool</span>
-  <span class="tok-p">,</span> <span class="tok-n">_mrRepoUrl</span>       <span class="tok-ow">::</span> <span class="tok-kt">LText</span>
+  <span class="tok-p">{</span> <span class="tok-n">_userName</span>        <span class="tok-ow">::</span> <span class="tok-kt">Text</span>
+  <span class="tok-p">,</span> <span class="tok-n">_userEmail</span>       <span class="tok-ow">::</span> <span class="tok-kt">Text</span>
+  <span class="tok-p">,</span> <span class="tok-n">_repos</span>           <span class="tok-ow">::</span> <span class="tok-kt">Vector</span> <span class="tok-kt">Text</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="tok-p">,</span> <span class="tok-n">_eclipse</span>         <span class="tok-ow">::</span> <span class="tok-kt">Bool</span>
   <span class="tok-p">}</span> <span class="tok-kr">deriving</span> <span class="tok-p">(</span><span class="tok-kt">Generic</span><span class="tok-p">,</span> <span class="tok-kt">Show</span><span class="tok-p">)</span>
 
 <span class="tok-nf">makeLenses</span> <span class="tok-kt">&#39;&#39;BoxConfig</span>
@@ -4021,10 +4039,6 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Dhall uses lazy text by default</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Dhall uses vector instead of list</td>
 </tr>
 </table>
@@ -4034,13 +4048,13 @@ You can test this pure kernel by swapping out controllers with predicable inputs
 <pre class="pygments highlight"><code data-lang="haskell"><span></span><span class="tok-nf">main</span> <span class="tok-ow">::</span> <span class="tok-kt">IO</span> <span class="tok-nb">()</span>
 <span class="tok-nf">main</span> <span class="tok-ow">=</span> <span class="tok-kr">do</span>
   <span class="tok-n">box_config</span>  <span class="tok-ow">&lt;-</span> <span class="tok-kt">Dhall</span><span class="tok-o">.</span><span class="tok-n">input</span> <span class="tok-n">auto</span> <span class="tok-s">&quot;./config/box&quot;</span>
-  <span class="tok-n">configure</span> <span class="tok-p">(</span><span class="tok-n">box_config</span><span class="tok-o">^.</span><span class="tok-n">userName</span><span class="tok-o">.</span><span class="tok-n">strict</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">box_config</span><span class="tok-o">^.</span><span class="tok-n">userEmail</span><span class="tok-o">.</span><span class="tok-n">strict</span><span class="tok-p">)</span></code></pre>
+  <span class="tok-n">configure</span> <span class="tok-p">(</span><span class="tok-n">box_config</span><span class="tok-o">^.</span><span class="tok-n">userName</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-n">box_config</span><span class="tok-o">^.</span><span class="tok-n">userEmail</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-ch">#! /usr/bin/env bash</span>
-readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</span>dhall <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-s1">&#39;(./config/box ).userStacks&#39;</span> <span class="tok-m">2</span>&gt; /dev/null <span class="tok-p">|</span> jq -r <span class="tok-s1">&#39;join (&quot; &quot;)&#39;</span><span class="tok-k">)</span>
+readarray arr <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-k">$(</span>dhall <span class="tok-o">&lt;&lt;&lt;</span> <span class="tok-s1">&#39;(./config/box ).repos&#39;</span> <span class="tok-m">2</span>&gt; /dev/null <span class="tok-p">|</span> jq -r <span class="tok-s1">&#39;join (&quot; &quot;)&#39;</span><span class="tok-k">)</span>
 <span class="tok-k">for</span> s in <span class="tok-si">${</span><span class="tok-nv">arr</span><span class="tok-si">}</span><span class="tok-p">;</span> <span class="tok-k">do</span>
     <span class="tok-nb">echo</span> <span class="tok-s2">&quot;</span><span class="tok-nv">$s</span><span class="tok-s2">&quot;</span>
 <span class="tok-k">done</span></code></pre>
@@ -6271,6 +6285,7 @@ You might separate nodes into cluster because:</p>
 <dt class="hdlist1">shards</dt>
 <dd>
 <p>By default each index is divided in 5 pieces called <code>shards</code>.
+This number is defined at index creation.
 A document will live on a single shard.
 EL tries to evenly distribute documents within an index among all the shards.</p>
 <div class="paragraph">
@@ -6393,6 +6408,49 @@ EL tries to evenly distribute documents within an index among all the shards.</p
 </tr>
 </table>
 </div>
+<div class="listingblock">
+<div class="title">Reindex</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>POST _reindex
+<span class="tok-o">{</span>
+  <span class="tok-s2">&quot;source&quot;</span>: <span class="tok-o">{</span>
+    <span class="tok-s2">&quot;index&quot;</span>: <span class="tok-s2">&quot;blogs&quot;</span>,
+      <span class="tok-s2">&quot;query&quot;</span>: <span class="tok-o">{</span>
+        ...
+      <span class="tok-o">}</span>
+  <span class="tok-o">}</span>,
+  <span class="tok-s2">&quot;dest&quot;</span>: <span class="tok-o">{</span>
+    <span class="tok-s2">&quot;index&quot;</span>: <span class="tok-s2">&quot;blogs_fixed&quot;</span>
+  <span class="tok-o">}</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Ingest</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>PUT _ingest/pipeline/fix_locales
+<span class="tok-o">{</span>
+  <span class="tok-s2">&quot;processors&quot;</span>: <span class="tok-o">[</span>
+    <span class="tok-o">{</span>
+      <span class="tok-s2">&quot;script&quot;</span>: <span class="tok-o">{</span>
+        <span class="tok-s2">&quot;source&quot;</span>: <span class="tok-s2">&quot;&quot;&quot;</span>
+<span class="tok-s2">if(&quot;&quot;.equals(ctx.locales)) {</span>
+<span class="tok-s2">  ctx.locales = &quot;</span>en-en<span class="tok-s2">&quot;;</span>
+<span class="tok-s2">}</span>
+<span class="tok-s2">ctx.reindexBatch = 3;</span>
+<span class="tok-s2">&quot;&quot;&quot;</span>
+      <span class="tok-o">}</span>
+    <span class="tok-o">}</span>,
+    <span class="tok-o">{</span>
+      <span class="tok-s2">&quot;split&quot;</span>: <span class="tok-o">{</span>
+        <span class="tok-s2">&quot;field&quot;</span>: <span class="tok-s2">&quot;locales&quot;</span>,
+        <span class="tok-s2">&quot;separator&quot;</span>: <span class="tok-s2">&quot;,&quot;</span>
+      <span class="tok-o">}</span>
+    <span class="tok-o">}</span>
+  <span class="tok-o">]</span>
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_node_roles">Node roles</h3>
@@ -6401,7 +6459,8 @@ EL tries to evenly distribute documents within an index among all the shards.</p
 <li>
 <p><code>master</code> eligible</p>
 <div class="paragraph">
-<p>Only one master node per cluster. It is the sole capable of changing the cluster state.</p>
+<p>Only one master node per cluster. It is the sole capable of changing the cluster state.
+You need an odd number of eligible master nodes (quorum) to avoid split brains.</p>
 </div>
 </li>
 <li>
@@ -6412,14 +6471,29 @@ EL tries to evenly distribute documents within an index among all the shards.</p
 </li>
 <li>
 <p><code>ingest</code></p>
+<div class="paragraph">
+<p>Receive query.</p>
+</div>
 </li>
 <li>
 <p><code>coordinator</code></p>
 <div class="paragraph">
-<p>Receive client request. Every node is implicitly a coordinating node.</p>
+<p>Receive client request. Every node is implicitly a coordinating node.
+Act as smart load balancers.</p>
 </div>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cluster_management">Cluster management</h3>
+<div class="sect3">
+<h4 id="_shard_filtering">shard filtering</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_shard_allocation_awareness">shard allocation awareness</h4>
+
 </div>
 </div>
 <div class="sect2">
@@ -6431,6 +6505,10 @@ For some data input such as SQL database it is the only official "supported" way
 </div>
 <div class="sect2">
 <h3 id="_beats">Beats</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_apm">APM</h3>
 
 </div>
 </div>
