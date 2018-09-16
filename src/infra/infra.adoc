@@ -1,0 +1,19 @@
+# Infra
+
+## VMWare
+
+ESXi:: hypervisor
+
+## Network
+
+ACI:: microsegmentation
+
+## Storage
+
+### Shared storage
+
+NAS::
+...
+
+SAN::
+...

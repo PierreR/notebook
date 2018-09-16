@@ -1,5 +1,11 @@
 =  Dhall
+
 Dhall is a programming language specialized for configuration files.
+
+.function
+```
+let double = \(n : Natural) -> n * 2 in double 4
+```
 
 ./config/box
 ```
@@ -16,31 +22,29 @@ Dhall is a programming language specialized for configuration files.
 
 data BoxConfig
   = BoxConfig
-  { _userName        :: LText <1>
-  , _userEmail       :: LText
-  , _userStacks      :: Vector LText <2>
-  , _plugins         :: Bool
-  , _mrRepoUrl       :: LText
+  { _userName        :: Text
+  , _userEmail       :: Text
+  , _repos           :: Vector Text <1>
+  , _eclipse         :: Bool
   } deriving (Generic, Show)
 
 makeLenses ''BoxConfig
 
 instance Interpret BoxConfig
 ```
-<1> Dhall uses lazy text by default
-<2> Dhall uses vector instead of list
+<1> Dhall uses vector instead of list
 
 
 ```
 main :: IO ()
 main = do
   box_config  <- Dhall.input auto "./config/box"
-  configure (box_config^.userName.strict) (box_config^.userEmail.strict)
+  configure (box_config^.userName) (box_config^.userEmail)
 ```
 
 ```bash
 #! /usr/bin/env bash
-readarray arr <<< $(dhall <<< '(./config/box ).userStacks' 2> /dev/null | jq -r 'join (" ")')
+readarray arr <<< $(dhall <<< '(./config/box ).repos' 2> /dev/null | jq -r 'join (" ")')
 for s in ${arr}; do
     echo "$s"
 done
