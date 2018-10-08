@@ -185,12 +185,4 @@ Act as smart load balancers.
 ### shard allocation awareness
 
 
-## Logstash
-
-The main role of Logsatsh is to transform (in a centralized place) a stream of data  before it is indexed in EL.
-For some data input such as SQL database it is the only official "supported" way to get the data into EL.
-
-## Beats
-
-
 ## APM

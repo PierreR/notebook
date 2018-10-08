@@ -1,0 +1,45 @@
+# Apache Kafka
+
+Kafka is a distributed streaming platform.
+It deals with publisher-consumer and queue semantics by grouping data into topics.
+
+## Use cases
+
+- Event spikes
+- Elasticsearch not reachable
+
+You don't necessary need Kafka if you can tolerate a relaxed search latency.
+If your application is emitting more logs than Logstash/Elasticsearch can ingest at real time, logs can be rotated and ships by `Filebeat`.
+In that your local filesystem will become the temporary buffer.
+
+## Topics
+
+Topics are logical grouping of messages. They provide a way to isolate data from other consumers if necessary.
+For logging and event driven data, you might group multiple users in one topic based on attributes like data volume and expected search latency.
+
+A good analogy is an expressway — you mostly want the fast lane to be free flowing, so slower vehicles are expected to move to other lanes.
+Think of Kafka topics as lanes and events as cars!
+
+Topics can be created on the fly when data is first published to a non-existent one.
+
+## Logstash
+.logstash config
+```
+kafka {
+   zk_connect => "hostname:port"
+   topic_id => "apache_logs"
+   ...
+}
+```
+
+Another reason to use multiple Logstash instances is to add fault tolerance.
+
+## Partitions
+
+The partition count controls how many logs the topic will be sharded into.
+First each partition must fit entirely on a single server.
+The more partitions you have, the more throughput you get when consuming data.
+
+## ZooKeeper
+
+Kafka has a dependency on Apache ZooKeeper.
