@@ -59,13 +59,12 @@ In the meanwhile it is possible to use any image as your base image in the Dockf
 
 == Mount
 
-You cannot mount a host dir with the VOLUME instruction inside the Dockerfile. You need to pass it at runtime :
+The `VOLUME` instruction from the Dockerfile is used to indicate to the destination volume inside the container. It is only there for documentation sake.
+
+Volumes are initialized when a container is created. To do so, you will pass the option `-v` to `docker run`:
 
 ```
-# !! first -v, then -t !!
-run -it -v /media/puppet-stack-middleware:/etc/puppet/environments/middleware_local:ro pra/puppetmaster /bin/bash
-
-docker run -it -v /media/puppet-stack-middleware:/etc/puppet/environments/middleware_local:ro pra/puppetmaster /bin/bash
+docker run -it -v /path/host:/path/container:ro nginx:latest /bin/bash
 ```
 
 == Initial Win7 host setup
