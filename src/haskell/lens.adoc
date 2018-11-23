@@ -52,10 +52,11 @@ NOTE: Lenses form a category where `.` is composition and `id` is the identity.
 
 ....
 > over _1 (++ "!!!") ("goal", "the crowd goes wild")
-> ("goal", "the crowd goes wild") & _1 %~ (++ "!!!") <1>
+> ("goal", "the crowd goes wild") & _1 %~ (<> "!!!") <1>
 ("goal!!!", "the crowd goes wild")
 
 > ("world", "world") & _1 .~ "hello" & _2 .~ "hello" <1>
+> ([1], 2) & _1 <>~ [2,3,4]
 ....
 <1> `&` allows to start the expression from `s` and then compose.
 It is defined as the reverse of `$` operator.
@@ -69,6 +70,7 @@ It is defined as the reverse of `$` operator.
 ^..  : toListOf
 .~   : set
 %~   : over
+<>~  : apply the func '<>'
 .=   : state monad view
 :===
 

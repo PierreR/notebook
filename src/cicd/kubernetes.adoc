@@ -1,3 +1,5 @@
 = Kubernetes
 
-Kubernetes is a scheduler.
+Kubernetes is a scheduler. It uses `etcd`.
+
+Container Network Interface (CNI):: ex: `flannel`

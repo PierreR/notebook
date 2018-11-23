@@ -14,10 +14,19 @@ ACI:: microsegmentation
 
 ## Storage
 
-### Shared storage
+IBM SVC::
+SAN Volume Controler.
 
 NAS::
-...
+Storage Area Network
 
 SAN::
-...
+Network Attached Storage
+
+Object storage::
+Object storage adds comprehensive metadata to the file, eliminating the tiered file structure used in file storage, and places everything into a flat address space.
+
+Block storage::
+..
+
+At the CIRB, the VMWare (SVC) and GlusterFS storage are totally separated. GlusterFS is backed up by Redhad physical appliance.
