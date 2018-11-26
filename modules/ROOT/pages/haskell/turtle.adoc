@@ -85,10 +85,8 @@ isFileEmpty path =
 
 `Turtle` is using the deprecated `system-filepath package` to handle filepaths in a more secure wayfootnote:[a mental model that might help is to look at each filepath as being a list of string not just one string]. Watch out as it is at time a bit surprising:
 
-.common traps
-[IMPORTANT]
+[IMPORTANT,caption=Common trap]
 ====
-
 ```
 let first = "/home/vagrant" :: FilePath
      second = "/plugin" <1>
@@ -99,7 +97,8 @@ let fp = "foo" </> "bar_" <> eclipseVersion </> "plugin" -> foo/bar_/4.5/plugin 
 ```
 <1> don't start with a `/` as it means you want to concatenate an absolute path
 <2> give you an filepath type automatically thanks to the `IsString` instance
-<3> in system-filepath `<>` and `</>` are both alias for `append` icon:frown-o[]
+<3> in system-filepath `<>` and `</>` are both alias for `append`
+
 ====
 
 When appending `filepath` and `text` the best strategy is probably to keep the filepath encoding and then convert to text if necessary:

@@ -1,0 +1,10 @@
+= Notebook
+
+Ongoing work to gather personal notes on various topics.
+
+[CAUTION, caption=Notice]
+====
+This notebook serves as a reminder tool more than anything.
+
+It doesn't try to meet a certain level of quality in term of pedagogical value.
+====
