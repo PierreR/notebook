@@ -1,0 +1,79 @@
+= Idioms & conventions
+
+== Naming convention
+
+== Algebraic Data Type
+
+Quite common (used in `pipes`, `ekmett`, `servant`, `tibbe`):
+
+```
+data List a
+  = Cons a (List a)
+  | Nil
+```
+Also used for simple `sum` or `product` declaration:
+```
+data MySum = A | B
+data MyProduct = MyProduct Int String
+```
+
+== Record
+
+The most common (used in the `lens`, `fpcomplete`, `servant`, `tibbe`, `hindent`):
+```
+data Person = Person
+  { _firstName :: String -- ^ First name
+  , _lastName  :: String -- ^ Last name
+  } deriving (Eq, Show)
+```
+In order to mimic ADT and to make it easy with the haskell-indentation we could go with this instead (but it is less common !):
+```
+data Person
+  = Person
+  { _firstName :: String
+  , _lastName  :: String
+  } deriving (Eq, Show)
+```
+
+== Module
+
+```
+module Puppet.Parser (
+         expression
+       , puppetParser
+       , runPParser
+       ) where
+```
+
+== Code convention
+
+=== Maybe
+
+Use of a `case` to pattern match a `maybe` value is quite common:
+```
+  readline >>= \case
+    Just "Y" -> pure ()
+    _        -> die "Abort"
+
+```
+
+You might want to define a `unwrapWith` utility mimicking `rust` `unwrap_with` but it would be limited and unpractical:
+
+```
+-- | Unwrap a maybe value in an io computation
+-- passing an alert action in case of Nothing
+unwrapWith :: MonadIO io => io a -> Maybe a -> io a <1>
+unwrapWith io_alert v = maybe io_alert pure v
+<1> Note how `a` fixes the input/output
+```
+
+At the end of the day it is better to stick with the 'case pattern-matching' idiom even for simple cases and avoid the less readable `maybe` variant:
+
+```
+ readline >>= \case
+   Nothing -> die "Abort"
+   Just v  -> pure v
+
+  readline >>= maybe (die "Abort") pure <1>
+```
+<1> shorter but arguably more cryptic

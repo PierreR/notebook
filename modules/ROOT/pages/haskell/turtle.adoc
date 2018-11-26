@@ -51,7 +51,7 @@ WARNING: When using #inshell# you lose the ability to care about the exit code o
 `Shell` is also an instance of `MonadPlus` (and thus Alternative).
 So you can concatenate two Shell streams using `<|>`.
 
-=== Folding
+== Folding
 Whenever you peek into the value of a shell stream using `<-` you are effectively looping over all values (as the list monad does). For instance this code is bogus :
 
 .bogus

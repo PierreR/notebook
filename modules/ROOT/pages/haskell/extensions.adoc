@@ -1,0 +1,32 @@
+# Extensions
+
+Syntax::
+- LambdaCase
+- GADTSyntax
+- RankNTypes
+- BangPatterns
+- RecordWildCards
+- DuplicateRecordFields
+- MultiWayIf
+
+
+Common::
+- ScopedTypeVariables (69)
+- DeriveGeneric (66)
+- TupleSections (59)
+- MultiParamTypeClasses (56)
+- FlexibleInstances (33)
+- FlexibleContexts (31)
+- TypeOperators (29)
+- FunctionalDependencies (15)
+
+Unknown::
+- MonadComprehensions (12)
+- EmptyCase (3)
+- DisambiguateRecordFields (14)
+- RecursiveDo (10)
+- ParallelListComp
+- TypeFamilies,
+- PatternSynonyms
+- PartialTypeSignatures
+- TypeApplications

@@ -1,0 +1,14 @@
+# Blast
+
+Two main ideas:
+
+- build two 'isomorphic' AST for the slave and the master. The nodes (shape) is the same but each node is slighlty different in the master and slaves
+
+- find a way so that the execution of `f x` can be done in a typed safed way on the slaves using the cache
+
+- you know from the start how many slaves you have
+
+Kubernetes::
+Chaque pod dans Kubernetes possède une adresse IP unique -> One slave == one pod
+
+One slave is failing, you get another one inside the pod -> same IP
