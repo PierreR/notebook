@@ -1,7 +1,4 @@
-= Programming Notes
-
-
-== Notion
+= Notion
 
 Functional Programming::
 
@@ -77,53 +74,16 @@ CAP::
 - Availability
 - Partition
 
-
-Glossary::
-+
-.nibble
+nibble::
 Half of one byte. So 4 bits/digits -> 16 values
-+
-.subroutine
+
+subroutine::
 Synonym for function
-+
-.subtype
+
+subtype::
 ....
 Circle <: Shape
 ....
-+
-.Object Orientated Programming
+
+Object Orientated Programming::
 Objects by definition include mutable state -> intensional object identity !!
-
-
-== Quotes
-
-Monitoring::
-
-""
-Software should be designed from the start to be monitored
-""
-
-ORM::
-
-""
-ORMs are mixing different concerns. There were introduced by OO zealots to avoid the declarative nature of SQL. Now according to Martin Fowler they are just a way to get memory cache. Yes right but that is not the way ORMs have been sold ?
-
-The whole ORM story looks like a complete disaster. Building a graph of objects in memory across sessions has proven to make little sense in many projects I had worked on.
-
-If you deal with a relational database, abstracting it with mutable pojos is dubious at best. I am pretty convinced a nice API query interface such as LINQ can solve the problems of the myriads of SQL statements to handle.
-
-Here is the problem, at the end, data are used to be feed into viewer. So let's get this straight. Output JSON directly from a query language interface !
-""
-
-== Scrible
-
-
-Please do understand the difference between -> and => ... what you need here is "lead to" maybe implies
-
-RAM : Heap & Stack
-
-IDENDITY LABEL FOR A TIMELINE
-CONFLATE ID WITH STATE
-REF TYPE BOXES TO VALUES
-
-How do we express polymorphism in UML. You mark class with a stereotype. You have to see class as something really global in UML. It is just a blueprint of code.

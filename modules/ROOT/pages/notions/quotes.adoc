@@ -1,0 +1,19 @@
+= Quotes
+
+Monitoring::
+
+""
+Software should be designed from the start to be monitored
+""
+
+ORM::
+
+""
+ORMs are mixing different concerns. There were introduced by OO zealots to avoid the declarative nature of SQL. Now according to Martin Fowler they are just a way to get memory cache. Yes right but that is not the way ORMs have been sold ?
+
+The whole ORM story looks like a complete disaster. Building a graph of objects in memory across sessions has proven to make little sense in many projects I had worked on.
+
+If you deal with a relational database, abstracting it with mutable pojos is dubious at best. I am pretty convinced a nice API query interface such as LINQ can solve the problems of the myriads of SQL statements to handle.
+
+Here is the problem, at the end, data are used to be feed into viewer. So let's get this straight. Output JSON directly from a query language interface !
+""
