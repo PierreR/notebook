@@ -1,7 +1,5 @@
 # Vagrant
 
-# Create & import  a Vagrant box
-
 . Create a box:
 +
 ```
