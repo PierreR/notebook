@@ -1,5 +1,116 @@
 = Kubernetes
 
-Kubernetes is a scheduler. It uses `etcd`.
+
+Control plane::
+Kubernetes master cluster that includes `etcd`, the kube `apiserver`, `scheduler` and `controller managers`.
 
 Container Network Interface (CNI):: ex: `flannel`
+
+Deployments::
+collection of resources and references
+
+== EKS
+
+
+It is easy to create all required AWS resources by using the following terraform module:
+
+https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/2.0.0
+
+.main.tf
+```
+provider "aws" {
+  region = "eu-central-1"
+}
+
+data "aws_region" "current" {}
+
+data "aws_availability_zones" "available" {}
+
+locals {
+  cluster_name = "lab"
+  worker_groups = [
+    {
+      asg_desired_capacity = 2
+      instance_type        = "m4.large"
+      subnets              = "${join(",", module.vpc.private_subnets)}"
+    }
+  ]
+  tags = {
+    Environment = "test"
+  }
+}
+
+module "vpc" {
+  source             = "terraform-aws-modules/vpc/aws"
+  version            = "1.14.0"
+  name               = "lab-vpc"
+  cidr               = "10.0.0.0/16"
+  azs                = ["${data.aws_availability_zones.available.names[0]}", "${data.aws_availability_zones.available.names[1]}", "${data.aws_availability_zones.available.names[2]}"]
+  private_subnets    = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets     = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  enable_nat_gateway = true
+  single_nat_gateway = true
+  tags               = "${merge(local.tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
+}
+
+module "eks" {
+  source            = "terraform-aws-modules/eks/aws"
+  cluster_name      = "${local.cluster_name}"
+  subnets           = ["${module.vpc.private_subnets}"]
+  tags              = "${local.tags}"
+  vpc_id            = "${module.vpc.vpc_id}"
+  worker_groups     = "${local.worker_groups}"
+}
+```
+
+The module will create:
+
+- A specific `IAM` role associated with the cluster
+- the VPC with its subnets, gateway and route table
+- the cluster (control plane)
+- Security Group to allow networking traffic with EKS cluster
+- AutoScaling Group to launch worker instances
+- Output for the kubectl configuration
+
+You will need to provide the necessary credentials:
+
+.aws/credential
+```
+[default]
+aws_access_key_id=
+aws_secret_access_key=
+```
+
+You can optionally define an default region:
+
+.aws/config
+```
+[default]
+region=eu-north-1
+```
+
+
+== Probes
+
+Liveness::
+Detect if a container becomes unresponsive (need to be restarted)
+
+Readiness::
+Detect if a ready to start accepting traffic.
+
+See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/[Probe configuration]
+
+== Helm
+
+To install `helm`, install the client using the package manager of your OS.
+You currently need to deploy the server into your cluster with the `helm init` command :
+
+```
+→ kubectl apply -f helm-rbac.yaml
+→ helm init --service-account tiller
+→ helm version
+→ helm search stable/jenkins
+→ helm install --name mediawiki stable/mediawiki
+→ helm ls
+→ helm delete mediawiki
+```

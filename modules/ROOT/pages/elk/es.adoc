@@ -172,7 +172,11 @@ You need an odd number of eligible master nodes (quorum) to avoid split brains.
 Hold the shards and execute CRUD operations.
 - `ingest`
 +
-Receive query.
+se to perform common data transformation and enrichments. Each task is represented by a processor.
+By default, the ingest functionality is enabled on any node.
++
+The ingest node is a push-based system. Beats can directly push data into it but ingest nodes will not read from a message queue.
+For the latter case (and for more complex transformation), it’s necessary to use Logstash.
 - `coordinator`
 +
 Receive client request. Every node is implicitly a coordinating node.
@@ -186,3 +190,5 @@ Act as smart load balancers.
 
 
 ## Application Performance Monitoring (APM)
+
+Application performance monitoring system built on the Elastic Stack

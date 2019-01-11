@@ -20,23 +20,28 @@ docker commit containerid imagename
 docker ps
 docker images
 docker run -i -t initial/name /bin/bash
-docker run -d --net compose_default puppet/puppet-agent-centos <1> <2>
-docker exec <3>
+docker run -it --rm -p 8888:8080 tomcat:8.0 <1>
+docker run -d --net compose_default puppet/puppet-agent-centos <2> <3>
+docker history busybox:1.24 <4>
+docker exec -it containerid bash
+docker inspect
 ```
-<1> `-d` for detached (will run in the background)
-<2>  `--net compose_default` specify the network (this one is created by default by docker-compose)
-<3>
+<1> map tomcat 8080 port to the host on port 8888
+<2> `-d` for detached (will run in the background)
+<3>  `--net compose_default` specify the network (this one is created by default by docker-compose)
+<4> show image layers
 
 == Link
 
-Links is used to enable secure communication between two containers. The first container is oddly enough called the child. This is odd because it is usually a server and it has to be started first ... The first container will expose a port and be labelled with a name.
+Links is used to enable secure communication between two containers.  The first container (also called child footnote:[This is odd because the source is usually a server and it has to be started first ...]) will expose a port and be labelled with a name.
+
 
 ```
-# Child or first container
-sudo docker run -i -t -h puppet -name puppetmaster pra/pmaster /bin/bash
+# Source or first container
+sudo docker run -it -name puppetmaster pra/pmaster /bin/bash
 
-# Parent or second container have all info to connect to the first
-sudo docker run -i -t -h minion -name minion -link puppetmaster:puppet pra/minion /bin/bash
+# Recipient (also called parent have all info to connect to the first
+sudo docker run -it -name minion -link puppetmaster pra/minion /bin/bash
 
 ```
 
@@ -65,6 +70,51 @@ Volumes are initialized when a container is created. To do so, you will pass the
 
 ```
 docker run -it -v /path/host:/path/container:ro nginx:latest /bin/bash
+```
+
+== Docker compose
+
+.docker-compose.yml
+```
+version: '3'
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+
+networks:
+  esnet:
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:<%= @version %>
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - esnet
+```
+
+Some common commands:
+
+```
+docker-compose up
+docker-compose ps
+docker-compose logs -f
+docker-compose stop
+docker-compose rm
 ```
 
 == Initial Win7 host setup

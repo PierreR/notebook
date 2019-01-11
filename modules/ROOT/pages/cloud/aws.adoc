@@ -1,6 +1,11 @@
 # AWS
 
-VPC:: Virtual Private Cloud
+VPC::
+Virtual Private Cloud.
++
+Logically isolated section of AWS where you can launch AWS resources in a virtual network that you define.
+
+CIDR:: Classless Inter-Domain Routing
 
 ElasticIP:: As close as you can get to a virtual IP address. See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html[online doc]
 
