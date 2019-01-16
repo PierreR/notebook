@@ -1,5 +1,10 @@
 = Notion
 
+Base64::
+
+Standardized way to turn any data (binary or text) into a text string without any large problem.
+Note that the size of the data will increase significantly (~ one third).
+
 Functional Programming::
 
 The meaning of the programs is centered around evaluating expressions rather than executing instructions.

@@ -4,10 +4,24 @@
 Control plane::
 Kubernetes master cluster that includes `etcd`, the kube `apiserver`, `scheduler` and `controller managers`.
 
-Container Network Interface (CNI):: ex: `flannel`
-
 Deployments::
-collection of resources and references
+Collection of resources and references
+
+DaemonSet::
+Ensures that all (or some) Nodes run a copy of a Pod.
+
+Secrets::
+- Separate sensible information and flag them as such.
+- Don't provide encryption (Base64 encoded).
+- Set of key/value pairs
+
+Namespaces::
+Create multiple virtual clusters on the same physical clusters.
+You can limit resources such as CPU per namespace.
+
+Container Network Interface (CNI)::
+ex: `flannel`
+
 
 == EKS
 
@@ -89,7 +103,6 @@ You can optionally define an default region:
 region=eu-north-1
 ```
 
-
 == Probes
 
 Liveness::
@@ -99,6 +112,11 @@ Readiness::
 Detect if a ready to start accepting traffic.
 
 See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/[Probe configuration]
+
+
+== Auto-Scaling
+
+:Todo:
 
 == Helm
 
