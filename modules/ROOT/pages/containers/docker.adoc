@@ -117,7 +117,15 @@ docker-compose stop
 docker-compose rm
 ```
 
-== Initial Win7 host setup
+== Swarm
+
+Manager are just worker with extra permissions to control the swarm cluster.
+
+
+== POC (2017)
+
+
+=== Initial Win7 host setup
 
 Win7 hosts a docker ubuntu VM (standard install) using vagrant.
 
@@ -133,7 +141,7 @@ Create a dir `puppetmaster` and a file inside called `Dockerfile`. Build with `s
 
 Then you need to ssh-copy-id your public id_rsa.pub key to be able to fetch the Docker configuration from Github.
 
-== Trouble Shouting
+=== Trouble Shouting
 
 WARNING::
 In centos `6.4` `usePAM` needs to be set to `no` while it needs to be set to `yes` in `6.5`
@@ -144,10 +152,7 @@ The Centos latest official images, currently 6.5, comes with a broken `centos.pl
 yum downgrade --skip-broken libselinux libselinux-utils
 ```
 
-
-== Docker compose
-
-== Swarm node
+=== Swarm node
 
 Each node is configured by puppet and contain:
 
@@ -155,6 +160,6 @@ Each node is configured by puppet and contain:
 - a docker registrator running inside a docker (spawn with the docker engine daemon)
 - a consult agent (doesn't run within a docker)
 
-== DNS
+=== DNS
 
 You can use `Consul` as a DNS service. `dnsmask` is configured within each swarm node while every dockers inside a node is running with `--dns 172.17.0.1`.footnote:[the DNS host for every docker is always 172.17.0.1]

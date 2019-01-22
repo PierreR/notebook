@@ -1,7 +1,18 @@
 # Apache Kafka
 
-Kafka is a distributed streaming platform.
-It deals with publisher-consumer and queue semantics by grouping data into topics.
+## What it is
+
+Kafka is an open source distributed real-time messaging system originally developed by LinkedIn.
+A Kafka cluster consists of a set of brokers that process messages from producers.
+
+Kafka deals with publisher-consumer and queue semantics by grouping data into topics.
+
+|===
+| Pub/Sub | Queue
+
+| Each message is received by all the subscribers | Each message has to be comsumed by only one consumer
+| Each subscriber receives all the messages | Each message is consumed by any one of the available consumers
+|===
 
 ## Use cases
 
@@ -36,10 +47,16 @@ Another reason to use multiple Logstash instances is to add fault tolerance.
 
 ## Partitions
 
+Topics are divided into one or more partitions.
+Each contains an ordered set of messages.
+Partitions allows messages in a topic to be distributed to multiple servers.
+Each partition must fit entirely on a single server.
+Partition can be replicated across several servers for fault-tolerance.
+One server is marked as a `leader` and control the read and write for the partition. The others are the `followers` and replicate the data.
+When a leader fails, one of the followers automatically become the leader (using ZooKeeper).
 The partition count controls how many logs the topic will be sharded into.
-First each partition must fit entirely on a single server.
 The more partitions you have, the more throughput you get when consuming data.
 
-## ZooKeeper
+## Consumer
 
-Kafka has a dependency on Apache ZooKeeper.
+Consumers are divided into consumer groups.

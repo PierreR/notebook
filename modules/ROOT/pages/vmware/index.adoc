@@ -2,8 +2,8 @@
 
 VCloud:: Manage one or multiple VCenter(s)
 
-VCenter:: centralized management application that lets you manage virtual machines and ESXi hosts centrally
+VCenter:: Centralized management application that lets you manage virtual machines and ESXi hosts centrally
 
-VSphere Client:: manage ESXi units
+VSphere Client:: Manage ESXi units
 
-ESXi:: hypervisor installed on a physical machine
+ESXi:: Hypervisor installed on a physical machine
