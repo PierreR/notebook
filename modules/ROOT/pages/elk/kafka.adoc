@@ -60,3 +60,11 @@ The more partitions you have, the more throughput you get when consuming data.
 ## Consumer
 
 Consumers are divided into consumer groups.
+
+## Listeners
+
+A listener is a combination of
+
+    Host/IP
+    Port
+    Protocol

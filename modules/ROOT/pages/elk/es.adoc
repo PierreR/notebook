@@ -172,7 +172,7 @@ You need an odd number of eligible master nodes (quorum) to avoid split brains.
 Hold the shards and execute CRUD operations.
 - `ingest`
 +
-se to perform common data transformation and enrichments. Each task is represented by a processor.
+Use to perform common data transformation and enrichments. Each task is represented by a processor.
 By default, the ingest functionality is enabled on any node.
 +
 The ingest node is a push-based system. Beats can directly push data into it but ingest nodes will not read from a message queue.
