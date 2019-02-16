@@ -10,7 +10,11 @@ ESXi:: hypervisor
 
 ## Network
 
-ACI:: microsegmentation
+VLAN:: Level 2 segmentation of a network
+
+Subnet:: Level 3 segmentation of a network
+
+ACI:: microsegmentation (by Cisco)
 
 ## Storage
 

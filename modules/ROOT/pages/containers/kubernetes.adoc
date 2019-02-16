@@ -2,7 +2,8 @@
 
 
 Control plane::
-Kubernetes master cluster that includes `etcd`, the kube `apiserver`, `scheduler` and `controller managers`.
+Kubernetes master cluster that includes the kube `apiserver`, `scheduler` and `controller managers`.
+Usually the `etcd` cluster is part of it too (but it can be separated).
 
 Deployments::
 Collection of resources and references
@@ -22,8 +23,93 @@ You can limit resources such as CPU per namespace.
 Container Network Interface (CNI)::
 ex: `flannel`
 
+IPVS::
+IP Virtual Server is built on top of the Netfilter and implements transport-layer load balancing as part of the Linux kernel.
+It can now be use instead of iptables to scale `kube-proxy` (services L4).
+
+== Control plane
+
+=== Pods
+
+- kube-apiserver
+- kube-scheduler
+- kube-controller-manager
+- kube-proxy
+- kube-flannel
+- https://coredns.io/[coredns]
+
+
+=== Namespaces
+
+- kube-public
+- kube-system
+- default
+
+
+== Dashboard
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+```
+
+.dashboard-user.yaml
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kube-system
+```
+
+```
+kubectl apply -f dashboard-user.yaml
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | cut -f1 -d ' ')
+```
+
+```
+kubectl proxy
+```
+
+== Services
+
+
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+  type: ClusterIP <1>
+```
+<1> NodePort | LoadBalancer | ExternalName
+
+A NodePort service is the most primitive way to get external traffic directly to your service. NodePort opens a specific port on all the nodes, and any traffic that is sent to this port is forwarded to the service.
+
+kube-proxy::
+responsible for implementing a form of virtual IP for Services (of type other than ExternalName).
+
 
 == EKS
+
 
 
 It is easy to create all required AWS resources by using the following terraform module:
@@ -132,3 +218,17 @@ You currently need to deploy the server into your cluster with the `helm init` c
 → helm ls
 → helm delete mediawiki
 ```
+
+
+== On premise
+
+ kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+
+== Swarm comparison
+
+- attach volumes
+
+== Resources
+
+https://metallb.universe.tf/[metalLB]::
+a load-balancer implementation for bare metal Kubernetes clusters, using standard routing protocols.

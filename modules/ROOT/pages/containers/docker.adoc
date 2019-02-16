@@ -31,6 +31,16 @@ docker inspect
 <3>  `--net compose_default` specify the network (this one is created by default by docker-compose)
 <4> show image layers
 
+== Standard
+
+OCI:: Open Container Image
+
+runC:: Lightweight universal run time container, which abides by the OCI specification
+
+containerd:: container runtime which can manage a complete container lifecycle (spins up runC)
+
+docker engine:: communicates with containerd
+
 == Link
 
 Links is used to enable secure communication between two containers.  The first container (also called child footnote:[This is odd because the source is usually a server and it has to be started first ...]) will expose a port and be labelled with a name.
