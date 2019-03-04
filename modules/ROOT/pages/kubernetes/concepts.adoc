@@ -1,0 +1,99 @@
+= Concepts
+
+== Services
+
+
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+  type: ClusterIP <1>
+```
+<1> NodePort | LoadBalancer | ExternalName
+
+A NodePort service is the most primitive way to get external traffic directly to your service. NodePort opens a specific port on all the nodes, and any traffic that is sent to this port is forwarded to the service.
+
+kube-proxy::
+responsible for implementing a form of virtual IP for Services (of type other than ExternalName).
+
+
+
+== Probes
+
+Liveness::
+Detect if a container becomes unresponsive (need to be restarted)
+
+Readiness::
+Detect if a ready to start accepting traffic.
+
+See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/[Probe configuration]
+
+
+
+== Persistent Volume
+
+*PV* is an object representing storage. It is independent of any single pod and doesn't belong to any namespace (alike node).
+
+*PVC* results in a mapping of a PV to a pod (within a namespace).
+The request PV will be bind-mounted to the container itself
+
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: thisclaim
+spec:
+  accessModes:
+    - ReadWriteOnce <1>
+  resources:
+    requests:
+      storage: 8Gi
+
+```
+<1> “ReadWriteOnce” tells Kubernetes that this storage can only be mounted by a single container host in read-write mode
+In contrast “ReadWriteMany” tells Kubernetes that the storage can be mounted from multiple containers on different hosts.
+
+
+=== Static provisioning
+
+With static provisioning, PVs are created beforehand by an administrator and expected to match a future claim.
+
+=== Dynamic provisioning
+
+Provider -*StorageClass*- knows how to provision storage on-the fly when a request comes in.
+
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://127.0.0.1:8081"
+  restauthenabled: "true"
+  restuser: "admin"
+  secretNamespace: "default"
+  secretName: "heketi-secret"
+
+```
+PVCs referring to that particular storage class will get their PV objects created on-demand in a completely transparent fashion.
+
+=== Storage plugin/class choices
+
+“ReadWriteMany” is not supported by all storages. Currently GCE Persistent Disk / AWS EBS / AzureDisk don't support it.
+These might have performance issues on small capacities (<100GB, typical for PVCs)
+
+OpenEBS:: (relies on iSCSI)
+
+
+== Auto-Scaling
+
+:Todo:

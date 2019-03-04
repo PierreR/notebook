@@ -15,8 +15,9 @@ Interruptible actions:: Some operations are https://www.stackage.org/haddock/nig
 
 .Throwing
 ```
-throwIO :: Exception e => e -> IO a
+throwIO :: Exception e => e -> IO a <1>
 ```
+<1> you should always prefer `throwIO` to `throw`
 
 .Catching
 ```

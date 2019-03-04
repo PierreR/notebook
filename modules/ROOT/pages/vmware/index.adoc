@@ -7,3 +7,5 @@ VCenter:: Centralized management application that lets you manage virtual machin
 VSphere Client:: Manage ESXi units
 
 ESXi:: Hypervisor installed on a physical machine
+
+VIDM:: Vmware Identity manager

@@ -1,0 +1,7 @@
+= Windows
+
+== Useful commands
+
+```
+gpresult /V
+```

@@ -1,0 +1,25 @@
+= On premise
+
+== Load balancer
+
+```
+ kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+
+```
+
+== Cluster update
+
+=== Kubernetes version
+
+==== master
+
+CAUTION: We should watch out for split brain situation. We might need to taint some master before proceeding.
+
+. kubeadm upgrade apply v1.13.3
+. kubectl drain $NODE --ignore-daemonsets
+. kubeadm upgrade node config --kubelet-version v1.13.3
+. runpuppet
+. yum update --exclude=puppet*
+. reboot
+. rm /etc/kubernetes/manifests/kube-*
+. runpuppet

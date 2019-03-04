@@ -85,29 +85,50 @@ Address:  192.168.34.xx
 ```
 <1> DNS to lookup + DNS server
 
-== Definitions
+== Concepts
 
-Push (SSE) vs Pull (REQ/REP)::
+=== Glossary
+
+The iSCSI (Internet Small Computer System Interface)::
+is a TCP / IP-based protocol used to establish and manage interconnections between IP storage devices, hosts and clients, and to create storage area networks (SANs )
 
 Application layer:: HTTP, SNMP, AMQP, XMPP, IRC, DHCP, WebDAV, SSH, FTP, SIP, Telnet
 
 Transport layer:: TCP, UDP (SCTP)
 
+Protocol buffers:: language-neutral, platform-neutral extensible mechanism for serializing structured data.
+
+Push (SSE) vs Pull (REQ/REP):: Server Send Events
+
+=== CIDR
+
+|=======
+| 32 | 1
+| 31 | 2
+| 30 | 4
+| 29 | 8
+| 28 | 16
+| 27 | 32
+| 26 | 64
+| 25 | 128
+| 24 | 256
+| 16 | 65536
+|=======
+
 
 == Logs
 
-```
-journalctl -r - show logs in reverse order
-journalctl -b - show logs since last boot
-journalctl -k - show kernel logs
-journalctl -p warning - show logs with warning priority
-journalctl -p error - show logs with error priority
-journalctl --since=2016-08-01 - show logs since
-journalctl --until=2016-08-03 - show logs until
-journalctl --until=today - show logs until midnight today
-journalctl --since=yesterday - show logs since yesterday midnight
-journalctl --since=-2week - show logs for last 2 weeks
-journalctl -u <unit-name> - show logs of certain unit
-journalctl /dev/sda - show kernel message of device
-journalctl -o json - show logs in json format
-```
+|=======
+| journalctl -r |  show logs in reverse order
+| journalctl -b | show logs since last boot
+| journalctl -k -p err | show error kernel logs
+| journalctl -p warning | show logs with warning priority
+| journalctl --since=2016-08-01 | show logs since
+| journalctl --until=2016-08-03 | show logs until
+| journalctl --until=today | show logs until midnight today
+| journalctl --since=yesterday | show logs since yesterday midnight
+| journalctl --since=-2week | show logs for last 2 weeks
+| journalctl -u <unit-name> | show logs of certain unit
+| journalctl /dev/sda | show kernel message of device
+| journalctl -o json | show logs in json format
+|=======

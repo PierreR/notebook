@@ -1,0 +1,18 @@
+= Openshift
+
+
+
+|======
+|K8s | Openshift
+
+| Ingress | Routers
+| Namespace | Project
+| Deployment | DeploymentConfig
+| Helm | Templates
+
+|======
+
+== Projets
+
+A project is a Kubernetes namespace with additional annotations.
+A project allows a community of users to organize and manage their content in isolation from other communities

@@ -22,10 +22,15 @@ IBM SVC::
 SAN Volume Controler.
 
 NAS::
-Storage Area Network
+Network Attached Storage.
 
 SAN::
-Network Attached Storage
+Storage Area Network - not ideal of containers.
+
+iSCSI (Internet Small Computer System Interface)::
+TCP / IP-based protocol used to manage interconnections between IP storage devices (in SANs).
+
+LUN (Logical Unit Number):: represents the actual disk
 
 Object storage::
 Object storage adds comprehensive metadata to the file, eliminating the tiered file structure used in file storage, and places everything into a flat address space.

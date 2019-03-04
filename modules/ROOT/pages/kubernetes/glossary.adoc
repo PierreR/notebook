@@ -1,0 +1,29 @@
+= Glossary
+
+Control plane::
+Kubernetes master cluster that includes the kube `apiserver`, `scheduler` and `controller managers`.
+Usually the `etcd` cluster is part of it too (but it can be separated).
+
+Deployments::
+Collection of resources and references
+
+DaemonSet::
+Ensures that all (or some) Nodes run a copy of a Pod.
+
+Secrets::
+- Separate sensible information and flag them as such.
+- Don't provide encryption (Base64 encoded).
+- Set of key/value pairs
+
+Namespaces::
+Create multiple virtual clusters on the same physical clusters.
+You can limit resources such as CPU per namespace.
+
+Container Network Interface (CNI)::
+ex: `flannel`
+
+Container-Native Storage (CNS)::
+
+IPVS::
+IP Virtual Server is built on top of the Netfilter and implements transport-layer load balancing as part of the Linux kernel.
+It can now be use instead of iptables to scale `kube-proxy` (services L4).
