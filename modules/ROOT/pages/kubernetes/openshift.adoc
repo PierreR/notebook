@@ -1,7 +1,6 @@
 = Openshift
 
 
-
 |======
 |K8s | Openshift
 
@@ -12,7 +11,53 @@
 
 |======
 
-== Projets
-
+Projets::
 A project is a Kubernetes namespace with additional annotations.
 A project allows a community of users to organize and manage their content in isolation from other communities
+
+
+== Installation
+
+
+=== Structure
+
+3 types of nodes:
+
+- master
+- infrastructure
+- application
+
+=== Prerequisite
+
+- https://docs.openshift.com/container-platform/3.11/install/prerequisites.html#install-config-install-prerequisites[Prerequisites]
+- https://docs.openshift.com/container-platform/3.11/install/host_preparation.html[Host preparation]
+
+- base DNS domain
+- 2 different network CIDRs, both virtual ranges:
+  * the pod network `osm_cluster_network_cidr`
+  * the services network `openshift_portal_net`
+- All of the hosts in the cluster need to be resolvable via DNS.
+If using a control node to serve as the ansible installer it too should be able to resolve all hosts in your cluster.
+- public master DNS `openshift_master_cluster_public_hostname`
+- internal master DNS `openshift_master_cluster_hostname`
+
+=== Storage
+
+==== ReadWriteOnce
+
+Block storage as iSCI, Ceph EBS
+
+==== ReadWriteMany
+
+Shared storage such as GlusterFS
+
+== S2i
+
+....
+   s2i scripts <1>
+-> source code <2>
+-> builder image <3>
+....
+<1> {assemble|run}
+<2> arg1 -> /tmp/src
+<3> arg2

@@ -39,4 +39,6 @@
 * xref::postgres/index.adoc[Postgres]
 * xref::vmware/index.adoc[VMware]
 * xref::cloud/aws.adoc[AWS]
+* xref::cicd/index.adoc[CICD]
+** xref::cicd/infra.adoc[Infra]
 * xref::notions/index.adoc[Glossary]

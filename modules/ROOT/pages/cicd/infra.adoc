@@ -11,26 +11,30 @@ ESXi:: hypervisor
 ## Network
 
 VLAN:: Level 2 segmentation of a network
+In a more general sense, VLAN provides logical segmentations of networks.
 
 Subnet:: Level 3 segmentation of a network
 
-ACI:: microsegmentation (by Cisco)
 
 ## Storage
 
 IBM SVC::
 SAN Volume Controler.
 
+IBM Easy Tier::
+Functionality included in IBM `Storwize` to automatically migrate high demand storage data (Hot) to SSD (and vice-versa).
+
 NAS::
 Network Attached Storage.
 
 SAN::
-Storage Area Network - not ideal of containers.
+Storage Area Network - not ideal for containers.
 
 iSCSI (Internet Small Computer System Interface)::
 TCP / IP-based protocol used to manage interconnections between IP storage devices (in SANs).
 
 LUN (Logical Unit Number):: represents the actual disk
+
 
 Object storage::
 Object storage adds comprehensive metadata to the file, eliminating the tiered file structure used in file storage, and places everything into a flat address space.
@@ -38,4 +42,33 @@ Object storage adds comprehensive metadata to the file, eliminating the tiered f
 Block storage::
 ..
 
+RAID 10::
+RAID 10 is a combination of levels 1 (mirroring) and 0 (striping).
+It requires at least 4 different disks.
++
+RAID 10 protects you from a single drive failure.
+The mirror takes over for a time while you replace the failed disk and rebuild the copy.
+
 At the CIRB, the VMWare (SVC) and GlusterFS storage are totally separated. GlusterFS is backed up by Redhad physical appliance.
+
+## HyperConverged
+
+Fuse compute, network, storage and virtualization within a big system or even backup (see HPE Simplivity)
+
+
+## ACI
+
+Network microsegmentation (by Cisco)
+ACI stands for "Application Centric Interface".
+
+### EPG
+
+3 kinds of EPG:
+
+ - EPG segmentation
+ - Intra EPG Isolation
+ - µE Attribute based EPG (will point to the same BD)
+
+### VRF
+
+### Tenant

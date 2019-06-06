@@ -97,3 +97,5 @@ Circle <: Shape
 
 Object Orientated Programming::
 Objects by definition include mutable state -> intensional object identity !!
+
+SWOT:: Strength / Weakness / Opportunity / Threats

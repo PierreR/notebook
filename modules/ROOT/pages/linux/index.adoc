@@ -1,18 +1,57 @@
 = Linux
 
-== Script
+== Tips
 
+.Add route in windows
+```
+route ADD 192.168.30.0 MASK 255.255.255.0 10.255.10.4
+```
+
+.SCP copy from local to remote
+```
+scp -i ~/.ssh/user_rsa -r folder user@svifscapl003.prd.srv.cirb.lan:/tmp
+```
+
+.SCP copy from remote to remote using your local computer
+```
+ssh-add ~/.ssh/alhazen_rsa
+# Give alhazen the permission to write on targetfqdn:/srv/tmp
+ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn \
+"scp -o StrictHostKeyChecking=No /srv/data/pgserver.dump alhazen@targetfqdn:/srv/tmp"
+```
+
+.ssh/config to force ssh with pwd on a specific host
+```
+Host 192.168.xx.xx
+  PreferredAuthentications password
+```
+
+.DNS
+```
+$ nslookup.exe stash.cirb.lan 192.168.34.2xx <1>
+Non-authoritative answer:
+Server:  svidscapw000.ad.cirb.lan
+Address:  192.168.34.2xx
+
+Name:    stash.cirb.lan
+Address:  192.168.34.xx
+
+```
+<1> DNS to lookup + DNS server
+
+.List swap usage
+```
+for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 " " $3}END{ print ""}' $file; done | grep kB | sort -k2 -n
+```
+
+.Script control
 ```
 #!/bin/bash -xe
 set -euo pipefail <1>
-
-while read host
-do
-       cat plone_team.pub | ssh alhazen@"$host".prd.srv.cirb.lan "grep plone ~/.ssh/authorized_keys || cat >> ~/.ssh/authorized_keys"
-done < plone-prod-uniq.txt
 ```
 <1> exits immediately when a command fails (`e`) even within a pipe (`o pipefail`), treat unset variables as an error (`u`)
 
+.Convert html to pdf
 ```
 pandoc --latex-engine=xelatex -o blog.pdf http://blog.jakubarnold.cz/2014/07/22/building-monad-transformers-part-1.html
 ```
@@ -40,50 +79,6 @@ at the CIRB the easier is:
 - The machine will be received with a full `vg_rhel` of 40G. Go to the vcloud console and extend the second disk to 60G
 - The machine now has a /dev/sdb disk with 60G. Extends the pv using `pvresize -v /dev/sdb`. And check with `vgdisplay or pvs`.
 
-== Tips
-
-Add route in windows::
-+
-```
-route ADD 192.168.30.0 MASK 255.255.255.0 10.255.10.4
-```
-
-SCP copy from local to remote::
-+
-```
-scp -i ~/.ssh/user_rsa -r folder user@svifscapl003.prd.srv.cirb.lan:/tmp
-```
-
-SCP copy from remote to remote::
-Using your local computer
-+
-```
-ssh-add ~/.ssh/alhazen_rsa
-# Give alhazen the permission to write on targetfqdn:/srv/tmp
-ssh -A -i  ~/.ssh/alhazen_rsa alhazen@sourcefqdn \
-"scp -o StrictHostKeyChecking=No /srv/data/pgserver.dump alhazen@targetfqdn:/srv/tmp"
-```
-
-SSH with password for a specific host::
-+
-.ssh/config
-```
-Host 192.168.xx.xx
-  PreferredAuthentications password
-```
-
-NsLookup::
-```
-$ nslookup.exe stash.cirb.lan 192.168.34.2xx <1>
-Non-authoritative answer:
-Server:  svidscapw000.ad.cirb.lan
-Address:  192.168.34.2xx
-
-Name:    stash.cirb.lan
-Address:  192.168.34.xx
-
-```
-<1> DNS to lookup + DNS server
 
 == Concepts
 

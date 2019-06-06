@@ -1,12 +1,17 @@
 # CI/CD Guidelines
-Pierre Radermecker
-2013
-
 
 ## General Objectives
 
 The overall objective of the CI/CD is to reduce the risk associated to releasing software.
 It works on multiples angles such as automatic testing, machine provisioning or standard libraries/practices identification and thus aims at providing multiple benefits (rapid development cycle, devops, ...)
+
+## DevOps
+
+`Devops` is a sofware development approach that combines:
+
+- Automation
+- Communication
+- Agility
 
 ## Dev/Ops & Data
 
@@ -19,13 +24,7 @@ It is crucial to be able to quicky search and indentify ownership and responsabi
 - "Middleware" information (database connection string, ...)
 - ...
 
-### Q ?
-
-* Hiera production/staging is then seperated -> Jules || Jules 3 is used to edit these hiera configuration
-* Why does Jenkins have SSH PPK pair  ? -> because it needs to tag the source
-
 
 ## Build
 
 TIP: Be careful with the word `BUILD`. Configuring a machine can be associated with a build process.
- 
