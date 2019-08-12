@@ -28,6 +28,7 @@
 ** xref::kubernetes/concepts.adoc[Concepts]
 ** xref::kubernetes/eks.adoc[Eks]
 ** xref::kubernetes/glossary.adoc[Glossary]
+** xref::kubernetes/openshift.adoc[Glossary]
 * xref::elk/es.adoc[ELK]
 ** xref::elk/logstash.adoc[Logstash]
 ** xref::elk/beats.adoc[Beats]

@@ -1,6 +1,20 @@
 = Openshift
 
 
+== Networking
+
+The default CNI plugin in OpenShift (OVS) supports network isolation through NetworkPolicy object.
+To isolate one or more Pods in a project, you can create NetworkPolicy objects in that project to indicate the allowed incoming connections.
+
+== Concepts
+
+=== Projects
+
+A project is a Kubernetes namespace with additional annotations.
+A project allows a community of users to organize and manage their content in isolation from other communities
+
+
+.K8s relation
 |======
 |K8s | Openshift
 
@@ -11,9 +25,6 @@
 
 |======
 
-Projets::
-A project is a Kubernetes namespace with additional annotations.
-A project allows a community of users to organize and manage their content in isolation from other communities
 
 
 == Installation
