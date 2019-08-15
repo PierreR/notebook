@@ -1,0 +1,54 @@
+# Network
+
+VLAN:: Level 2 segmentation of a network
+In a more general sense, VLAN provides logical segmentations of networks.
+
+Subnet:: Level 3 segmentation of a network
+
+
+CIDR::
+
+|=======
+| 32 | 1
+| 31 | 2
+| 30 | 4
+| 29 | 8
+| 28 | 16
+| 27 | 32
+| 26 | 64
+| 25 | 128
+| 24 | 256
+| 16 | 65536
+| 14 | 262142
+|=======
+
+## ACI
+
+ACI stands for Application Centric Interface, a network microsegmentation system by Cisco.
+
+### Tenant
+
+A configuration space with some access defined. Can be related to VDCs (Virtual Device Context)
+
+### Virtual routing and forwarding (VRF)
+
+### Bridge domain (BD)
+
+Subnet, L2 or L3 ~> primary VLAN
+
+### Endpoint Group (EPG)
+
+a security zone/group ~ (secondary) VLAN
+
+ACI allows to have multiple EPGs (VLANs) built on the same BD (Subnet).
+
+3 kinds of EPG:
+
+- EPG segmentation
+- Intra EPG Isolation
+- µE Attribute based EPG (will point to the same BD)
+
+
+### Application Profile (AP)
+
+Group of EPGs, EPGs that can be spread across different BD.

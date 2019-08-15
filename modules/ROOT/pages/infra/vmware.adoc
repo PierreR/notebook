@@ -1,0 +1,19 @@
+# Vmware
+
+## Products
+
+VCloud:: Manage one or multiple VCenter(s)
+Organization -> OVDC(s)
+
+VIDM:: Vmware Identity manager
+
+VSphere Client:: Manage ESXi units (6.7 - 30 avril 2018)
+
+VCenter:: Centralized management application that lets you manage virtual machines and ESXi hosts centrally
+
+ESXi:: Hypervisor installed on a physical machine
+
+## Concepts
+
+Port group::
+It’s common to create a port group for each VLAN and network subnet that you want to present to your VMs. VM port groups do not provide vSphere services or require IP addresses—they are just ways to configure policy for a group of virtual ports on your vSwitch.

@@ -38,8 +38,10 @@
 * xref::linux/index.adoc[Linux]
 * xref::purescript/index.adoc[Purescript]
 * xref::postgres/index.adoc[Postgres]
-* xref::vmware/index.adoc[VMware]
 * xref::cloud/aws.adoc[AWS]
 * xref::cicd/index.adoc[CICD]
-** xref::cicd/infra.adoc[Infra]
+* Infra
+** xref::infra/network.adoc[Network]
+** xref::infra/storage.adoc[Storage]
+** xref::infra/vmware.adoc[VMware]
 * xref::notions/index.adoc[Glossary]
