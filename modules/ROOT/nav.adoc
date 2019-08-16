@@ -29,6 +29,7 @@
 ** xref::kubernetes/storage.adoc[Storage]
 ** xref::kubernetes/openshift.adoc[OpenShift]
 ** xref::kubernetes/components.adoc[Cluster components]
+** xref::kubernetes/pipeline.adoc[CICD Pipeline]
 ** xref::kubernetes/eks.adoc[EKS]
 * xref::elk/es.adoc[ELK]
 ** xref::elk/logstash.adoc[Logstash]

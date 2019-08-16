@@ -1,0 +1,10 @@
+= CICD Pipelines
+
+== Tekton
+
+Tasks::
+Sequence of steps that are run on the same node.
+Each step run in its own container.
+
+Pipelines::
+Tasks with defined order, can execute them in different nodes, links inputs to outputs
