@@ -167,8 +167,14 @@ docker-compose rm
 
 == Swarm
 
-Manager are just worker with extra permissions to control the swarm cluster.
+NOTE: Manager are just worker with extra permissions to control the swarm cluster.
 
+
+.Network
+====
+Swarm provides an inbuilt facility of services (in the Kubernetes sense) & Load Balancing.
+When a swarm cluster is initialized it creates an overlay network to allow containers in the cluster to communicate with each other.
+====
 
 == POC (2017)
 
