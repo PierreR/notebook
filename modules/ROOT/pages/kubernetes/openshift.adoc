@@ -26,7 +26,6 @@ A project allows a community of users to organize and manage their content in is
 |======
 
 
-
 == Installation
 
 
