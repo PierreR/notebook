@@ -1,0 +1,70 @@
+= Networking
+
+== SDN
+
+Software Defined Network (SDN) routes the traffic across a virtualized system.
+It is a broad concept that does not belong to Kubernetes (unlike CNI).
+
+Kubernetes through the notion of network plugins can be use with a vast number of SDN. The most famous are:
+
+- Calico (L3) used by GKE, EKS, AKS, ...
+- OpenShiftSDN
+- ACI plugin for Kubernetes
+- Flannel (can run in L2)
+
+== CNI
+
+Kubernetes networking has one important fundamental design property which set it apart from Docker:
+
+====
+Every pod must be able to communicate with each other in the cluster without NAT, using a unique IP.
+A node can also communicate with a Pod without the use of NAT
+====
+
+This principle gives a unique and first-class identity to every Pod in the cluster. Pods communicates likes VMs where the receiving side sees this unique identity/IP.
+
+Containers inside a pod share the same network namespace and communicate over localhost.
+
+This network scheme is not implemented by Kubernetes but via a plugin architecture called the Container Network Interface (#CNI#) model.
+
+== Isolation
+
+By default, pods are non-isolated; they accept traffic from any source.
+Pods become isolated through `NetworkPolicy` that are implemented by a network plugin that supports this feature..
+
+== Services
+
+Expose a single, constant IP address through which clients can connect to a set of pods.
+Services operate at the transport layer (TCP/IP).
+
+Each service receives a unique virtual IP called #ClusterIP# that has not visibility outside of the cluster.
+This is the job of the `kube-proxy` that is installed on every node and is achieved through iptables or other means according to the type of the `kube-proxy` in use.
+`ClusterIP` is also the default type of a service. To make the service available to the external world, you need to use/specify another type of service such as `NodePort`, `LoadBalancer` or `ExternalName`.
+
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+  type: ClusterIP <1>
+```
+<1> NodePort | LoadBalancer | ExternalName
+
+A NodePort service is the most primitive way to get external traffic directly to your service. NodePort opens a specific port on all the nodes, and any traffic that is sent to this port is forwarded to the service.
+
+== Ingress
+
+Each LoadBalancer service requires its own load balancer with its own public IP address. Ingress only requires one, even when providing access to dozens of services. Ingresses operate at the application layer (HTTP).
+
+
+== IPVS
+
+IP Virtual Server is built on top of the Netfilter and implements transport-layer load balancing as part of the Linux kernel.
+It can now be use instead of iptables to scale `kube-proxy` (services L4).

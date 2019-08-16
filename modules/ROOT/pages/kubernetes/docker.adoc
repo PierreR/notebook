@@ -1,6 +1,7 @@
 = Docker
 
 == Intro
+
 Containers work by isolating the differences between applications inside the container so that everything outside the container can be standardized.
 At the core of container technology are `cGroups` and `namespaces`. Control groups work by allowing the host to share and limit the resources each process or container can consume. Processes are limited
 to see only the process ID in the same namespace.
@@ -31,11 +32,48 @@ docker inspect
 <3>  `--net compose_default` specify the network (this one is created by default by docker-compose)
 <4> show image layers
 
+== Network
+
+When a  container launches, the docker engine assigns it a network interface with an IP address, a default gateway, and other components, such as a routing table and DNS services.
+
+We connect a docker container to a particular network by using the #--net# option when launching it.
+
+Docker offers the following network types.
+
+- #host#
++
+The container shares the same IP address and network namespace as that of the host.
+- `bridge` (default)
++
+The container runs in a private network internal to the host.
+Communication with other containers on the same host is enabled through the `docker0` bridge.
++
+Communication with services outside of the host goes through NAT before exiting the host.
+Ports mapping needs to be explicitly described with the `-p` option. The docker daemon creates iptables rules (Netfilter on linux) to publish these ports.
+
+- `custom bridge`
++
+Same as above but with a dedicated bridge. This allows to isolate containers running on the same host.
+- `container-defined`
++
+Similar to how a Pod works in Kubernetes.
+Services running on one container can talk to services running on the other via the localhost address.
++
+```
+docker run -it --name=container-a busybox /bin/sh
+docker run -it --name=container-b --network=container:container-a busybox /bin/sh
+
+```
+
+It is possible to extend the number of provided types using https://docs.docker.com/engine/extend/plugins_network/[network driver plugin].
+
+Cross-host networking usually uses an overlay network that is setup by *Swarm*.
+
 == Standard
 
 OCI:: Open Container Image
 
-runC:: Lightweight universal run time container, which abides by the OCI specification
+http://runc.io[runC]:: Lightweight universal run time container, which abides by the OCI specification
 
 containerd:: container runtime which can manage a complete container lifecycle (spins up runC)
 

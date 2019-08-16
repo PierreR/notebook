@@ -1,0 +1,6 @@
+= Tekton
+
+Tasks::
+Steps in seq on the same node
+Pipelines::
+Tasks with defined order, can execute them in different nodes, links inputs to outputs
