@@ -1,5 +1,8 @@
 # Network
 
+Router::
+Outside world <-> Router <-> Inside world
+
 VLAN:: Level 2 segmentation of a network
 In a more general sense, VLAN provides logical segmentations of networks.
 

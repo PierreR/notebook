@@ -11,8 +11,14 @@ Kubernetes through the notion of network plugins can be use with a vast number o
 - OpenShiftSDN
 - ACI plugin for Kubernetes
 - Flannel (can run in L2)
+- Canal (Flannel with Calico)
 
-== CNI
+For a more detail description of Flannel, Calico and other network provider,
+see https://info.rancher.com/hubfs/eBooks,%20reports,%20and%20whitepapers/Diving%20Deep%20Into%20Kubernetes%20Networking.pdf[Deep Into Kubernetes Networking].
+
+=== CNI
+
+The Container Networking Interface is under the governance of the CNCF. It is responsible for connecting the container’s network with that of the host. Kubernetes natively supports that model.
 
 Kubernetes networking has one important fundamental design property which set it apart from Docker:
 
@@ -27,10 +33,27 @@ Containers inside a pod share the same network namespace and communicate over lo
 
 This network scheme is not implemented by Kubernetes but via a plugin architecture called the Container Network Interface (#CNI#) model.
 
-== Isolation
+The specification requires that providers implement their plugin as a binary executable that the container engine invokes.
+
+[NOTE]
+.IPAM plugin
+====
+The CNI plugin provides IP address management for the Pods and builds routes for the virtual interfaces.
+To do this, the plugin interfaces with an IPAM plugin that is also part of the CNI specification.
+The IPAM plugin must also be a single executable that the CNI plugin consumes.
+The role of the IPAM plugin is to provide to the CNI plugin the gateway, IP subnet, and routes for the Pod.
+====
+
+=== Isolation
 
 By default, pods are non-isolated; they accept traffic from any source.
 Pods become isolated through `NetworkPolicy` that are implemented by a network plugin that supports this feature..
+
+=== IPVS
+
+IP Virtual Server is built on top of the Netfilter and implements transport-layer load balancing as part of the Linux kernel.
+It can now be use instead of iptables to scale `kube-proxy` (services L4).
+
 
 == Services
 
@@ -39,9 +62,11 @@ Services operate at the transport layer (TCP/IP).
 
 Each service receives a unique virtual IP called #ClusterIP# that has not visibility outside of the cluster.
 This is the job of the `kube-proxy` that is installed on every node and is achieved through iptables or other means according to the type of the `kube-proxy` in use.
+
 `ClusterIP` is also the default type of a service. To make the service available to the external world, you need to use/specify another type of service such as `NodePort`, `LoadBalancer` or `ExternalName`.
 
-```
+[Source]
+----
 kind: Service
 apiVersion: v1
 metadata:
@@ -56,15 +81,21 @@ spec:
   type: ClusterIP <1>
 ```
 <1> NodePort | LoadBalancer | ExternalName
+----
 
-A NodePort service is the most primitive way to get external traffic directly to your service. NodePort opens a specific port on all the nodes, and any traffic that is sent to this port is forwarded to the service.
+NodePort type::
+A #NodePort# service is the most primitive way to get external traffic directly to your service. NodePort opens a specific port on all the nodes, and any traffic that is sent to this port is forwarded to the service.
+
+LoadBalancer type::
+
+Kubernetes either can create internal load balancers using Kubernetes resources such as plain Services and Ingresses,
+or it can deploy and manage external load balancers such as those provided by AWS, GCP, F5, and others by deploying a service of type #LoadBalancer#.
++
+This type of Service creates a *Layer 4* load balancer outside of the cluster, but it only does this if the cluster knows how.
 
 == Ingress
 
-Each LoadBalancer service requires its own load balancer with its own public IP address. Ingress only requires one, even when providing access to dozens of services. Ingresses operate at the application layer (HTTP).
+Because LoadBalancer service works at the Layer 4 only, every service requires its own load balancer with its own public IP address.
+The Kubernetes resource that handles load balancing at *Layer 7* (HTTP) is called an #Ingress#.
 
-
-== IPVS
-
-IP Virtual Server is built on top of the Netfilter and implements transport-layer load balancing as part of the Linux kernel.
-It can now be use instead of iptables to scale `kube-proxy` (services L4).
+Ingress only requires one load balancer (Nginx, HAProxy, Traefik, or Amazon ALB,...) even when providing access to dozens of services.
