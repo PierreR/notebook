@@ -1,0 +1,7 @@
+
+= ACI integration
+
+The ACI CNI Plugin for OCP provides integration between the APIC and one or more OpenShift cluster.
+
+The plugin connects all pods to the integrated VXLAN overlay provided by Cisco.
+It models the cluster as a Virtual Machine Manager (`VMM`) Domain  (one per OCP cluster) on the Cisco APIC.

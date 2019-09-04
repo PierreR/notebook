@@ -16,10 +16,22 @@ The default DNS provider is CoreDNS.
 The default OCP4 CNI plugin (OVS) supports network isolation through `NetworkPolicy` object.
 
 By default every pod in a project can communicate with one another.
-To prevent a 'web' pod to communicate directly to a 'db' pod for instance, you could create NetworkPolicy objects to indicate the allowed incoming connections (ingress) for the db podfootnote:[using a podSelector].
+To prevent a 'web' pod to communicate directly to a 'db' pod for instance, you would create NetworkPolicy objects to indicate the allowed incoming connections (ingress) for the db podfootnote:[using a podSelector].
 
 NOTE: You can also defined network policy for egress traffic using egress policy type.
 
+.Egress
+====
+For egress traffic, the OpenShift SDN relies on “external routers” and/or on a tunnel interface on
+every OpenShift node that provides a NAT connection with the node’s host address.
+====
+
+=== ACI plugin
+
+The ACI CNI Plugin for OCP provides integration between the APIC and one or more OpenShift cluster.
+
+The plugin connects all pods to the integrated VXLAN overlay provided by Cisco.
+It models the cluster as a Virtual Machine Manager (`VMM`) Domain  (one per OCP cluster) on the Cisco APIC.
 
 == Concepts
 

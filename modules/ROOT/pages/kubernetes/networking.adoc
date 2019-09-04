@@ -65,7 +65,7 @@ This is the job of the `kube-proxy` that is installed on every node and is achie
 
 `ClusterIP` is also the default type of a service. To make the service available to the external world, you need to use/specify another type of service such as `NodePort`, `LoadBalancer` or `ExternalName`.
 
-[Source]
+[source]
 ----
 kind: Service
 apiVersion: v1

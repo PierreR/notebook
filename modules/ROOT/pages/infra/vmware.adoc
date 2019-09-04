@@ -15,5 +15,8 @@ ESXi:: Hypervisor installed on a physical machine
 
 ## Concepts
 
+VDS:: Virtual VSphere Distributed Switch
+
 Port group::
-It’s common to create a port group for each VLAN and network subnet that you want to present to your VMs. VM port groups do not provide vSphere services or require IP addresses—they are just ways to configure policy for a group of virtual ports on your vSwitch.
+It’s common to create a port group for each VLAN and network subnet that you want to present to your VMs.
+VM port groups do not provide vSphere services or require IP addresses— they are just ways to configure policy for a group of virtual ports on your vSwitch.

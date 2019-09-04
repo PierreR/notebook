@@ -1,0 +1,136 @@
+
+= Asciidoc in a nutshell
+:table-stripes:
+:source-highlighter: highlightjs
+:highlightjs-linenums-mode: inline
+:example-caption!:
+
+
+== Text
+
+`world`
+
+#highlight#
+
+Hellofootnote:[in the foot]
+
+=== Glossary
+
+Cross reference::
+a link from one location in the document to another location marked by an ancho
+
+List continuation::
+a plus sign (+) on a line by itself that connects adjacent lines of text to a list item
+
+https://asciidoctor-docs.netlify.com/asciidoctor/1.5/cli-options-and-parameters/#document-settings
+
+== Blocks
+
+|===
+
+| Admonition | NOTE: my note
+| Example  | ====
+| Sidebar  | +****+
+|===
+
+NOTE: hello world
+
+[source,ruby,linenums]
+----
+ORDERED_LIST_KEYWORDS = {
+  'loweralpha' => 'a',
+  'lowerroman' => 'i',
+  'upperalpha' => 'A',
+  'upperroman' => 'I'
+   #'lowergreek' => 'a'
+   #'arabic'     => '1'
+   #'decimal'    => '1'
+}
+----
+
+.app.rb
+[#src-listing]
+[source,ruby,linenums]
+----
+require 'sinatra'
+
+get '/hi' do
+  "Hello World!"
+end
+----
+
+```ruby
+require 'sinatra'
+
+get '/hi' do
+  "Hello World!"
+end
+```
+
+.script.sh
+```bash
+function foo () {
+  echo "Starting ..."
+  if [ -z "$1" ]
+  then
+      echo "Please specify the target";
+  else
+	    TERM=xterm ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no $1
+  fi
+}
+
+```
+
+[example]
+.So called Example
+====
+hello
+====
+
+****
+Sidebar text
+****
+
+[listing]
+----
+Hello
+World
+----
+
+== Listing
+
+Text
+
+.Items
+* item 1
+* item 2
+* item 3
+
+Text
+
+[lowerroman]
+. item 1
+. item 2
+. item 3
+
+== Break
+
+|===
+| Page break        |  `<<<`
+| Line break (ruler)| '''
+|===
+
+== Table
+
+|===
+| Strengths | Weaknesses
+
+a|
+* Visibility
+* Governance
+a|
+* Flexibility
+* Performance
+| cell 21
+| cell 22
+|===

@@ -55,3 +55,6 @@ ACI allows to have multiple EPGs (VLANs) built on the same BD (Subnet).
 ### Application Profile (AP)
 
 Group of EPGs, EPGs that can be spread across different BD.
+
+### Application Policy Infrastructure Controller (APIC)
+
