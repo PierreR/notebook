@@ -89,7 +89,7 @@ Think of `next` as pattern matching on the head of the Producer. This Either ret
 next :: Monad m => Producer a m r -> m (Either r (a, Producer a m r))
 ```
 
-##= Consumer
+### Consumer
 
 A consumer represents an "exhaustible" (it may refuse to accept new values) and possibly effectful sink of values. An example of an exhaustible sink is `toOutput` from `pipes-concurrency`, which will terminate if the `Output` it writes to has been sealed.
 

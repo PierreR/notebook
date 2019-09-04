@@ -96,9 +96,7 @@ You can think of it like a database, file, or other external data store.
 
 == Functor
 
-====
 > A functor is a structure-preserving mapping (or homomorphism) between 2 categories.
-====
 
 This means that :
 
@@ -216,12 +214,13 @@ class Applicative m => Monad m where
 ```
 <1> The signature of `bind` allows the second computation to depend on the value of the first one.
 
-====
-> Monadic values are produced in a context. Monads provide both substitution (fmap) and renormalization (join).
+
+____
+Monadic values are produced in a context. Monads provide both substitution (fmap) and renormalization (join).
 ```
 m >>= f = join (fmap f m)
 ```
-====
+____
 
 Even if a monad is strictly more powerful than an Applicative, there are situations for which an applicative is the only valid choice.
 Indeed `<*>` lets you explore both arguments by pattern matching but with `ap` the right hand side cannot be evaluated without the result from the left.
@@ -244,9 +243,8 @@ A free monad is just substitution (fmap) with the minimum amount of renormalizat
 
 It is perfect to separate syntax (data, ast, parsing) from semantics (interpretation)
 
-====
+
 > The free monad is guaranteed to be the formulation that gives you the most flexibility how to interpret it, since it is purely syntactic.
-====
 
 ```haskell
 data Free f a = Pure a | Free (f (Free f a))
@@ -260,13 +258,12 @@ fix f = f (fix f)
 > A Monad n is a free Monad for f if every Monad homomorphism from n to another monad m is equivalent to a natural transformation from f to m.
 
 == Existential classes
-====
-""
+
+____
 When someone defines a universal type ∀X they're saying: you can plug in whatever type you want, I don't need to know anything about the type to do my job, I'll only refer to it opaquely as X.
 
-When someone defines an existential type ∃X they're saying: I'll use whatever type I want here; you won't know anything about the type, so you can only refer to it opaquely as X
-""
-====
+When someone defines an existential type ∃X they're saying: I'll use whatever type I want here; you won't know anything about the type, so you can only refer to it opaquely as X.
+____
 
 == ByteString
 
