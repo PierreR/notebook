@@ -1,0 +1,30 @@
+= Development
+
+
+== Stack
+
+- first time build takes a long time (you can fix your home to use the same LTS)
+- `nix` integration works but only for system dependencies
+- haskell nixpkgs is not re-used
+
+== Cabal
+
+There is no advantage to use `cabal` (unless you are a library author).
+
+Compare to `stack`:
+
+- no integration with the known good package set given by Stackage.
+- building the first time takes as much time
+- the nix integration is worse (doesn't find system library out of the box)
+- tool integration is usually worse
+- haskell nixpkgs is not re-used
+- eternal confusion with cabal build, cabal new-build, ...
+
+== Bazel
+
+Bazel is not a good fit for small Haskell application. It is only useful for bigger polyglot libraries.
+The learning curve is quite steep and it is not always working out of the box as you would expect.
+
+== GHCIDE
+
+Easy to setup. Works nicely.

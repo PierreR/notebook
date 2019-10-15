@@ -10,6 +10,7 @@
 ** xref::haskell/concepts.adoc[Concepts]
 *** xref::haskell/monads.adoc[Monads]
 ** xref::haskell/convention.adoc[Conventions]
+* xref::haskell/development.adoc[Development]
 *** xref::haskell/convention.adoc#_naming_convention[Name]
 *** xref::haskell/convention.adoc#_code_convention[Code]
 ** xref::haskell/folds.adoc[Folds]
