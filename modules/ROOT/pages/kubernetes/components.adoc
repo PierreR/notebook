@@ -30,19 +30,25 @@ You currently need to deploy the server into your cluster with the `helm init` c
 
 ```
 → kubectl apply -f helm-rbac.yaml
-→ helm init --service-account tiller
+→ helm init --service-account tiller <1>
 → helm version
 → helm search stable/jenkins
 → helm install --name mediawiki stable/mediawiki
 → helm ls
 → helm delete mediawiki
 ```
+<1> In the next major version of helm (v3) tiller will not be necessary anymore
 
 == Dashboard
 
+=== Install
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
 ```
+
+=== Configure
+
+Add an `admin-user` and bind it to the dashboard
 
 .dashboard-user.yaml
 ```
@@ -68,11 +74,89 @@ subjects:
 
 ```
 kubectl apply -f dashboard-user.yaml
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | cut -f1 -d ' ')
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | cut -f1 -d ' ')  <1>
 ```
+<1> output the admin authentication token
+
+=== Connect
+
+To connect to the dashboard, you need to use `kubectl proxy` :
 
 ```
 kubectl proxy
 xdg-open http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login <1>
 ```
 <1> http://localhost:8080/api/v1/namespaces/kube-system/services/kubernetes-dashboard might also work.
+
+== Load balancer
+
+A bare metal cluster does not have any builtin load balancer. https://metallb.universe.tf[Metallb] needs to be installed in order to provide such capabilities.
+
+```
+→ helm install --namespace metallb-system --name metallb stable/metallb
+→ kubectl create -f metallb/config.yaml
+```
+
+
+== Monitoring
+
+=== Prometheus
+
+Prometheus is an open source tool widely used to monitor containerized environments. It's a pulling tool, which means that it doesn't required agents.
+
+Prometheus collects metrics from monitored targets by scraping metrics HTTP endpoints on these targets.
+
+There is a natural integration with Kubernetes, Docker, cAdvisor and node-exporter.
+
+To install on Kube, you need 2 yaml files :
+
+* `prometheus-deployment.yaml` : define the deployment procedure for the prometheus image.
+* `prometheus-service.yaml` : define the service which will be used to access the prometheus pods
+
+You will also need to define the custom prometheus config through a http://stash.cirb.lan/projects/K8S/repos/kube-middleware/browse/prometheus/config-map.yaml[configMap] .
+
+This is where you will created the config file prometheus need (alerts files and prometheus.yml file)
+
+=== Node-exporter
+
+Node-exporter retrieves metrics about the host where it runs (CPU, RAM, Disks)
+
+Here is a kube config example :
+
+```
+
+      containers:
+        - name: prometheus-node-exporter
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly:  true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+            - name: root
+              mountPath: /rootfs
+              readOnly: true
+            - name: cirb-srv
+              mountPath: /srv
+              readOnly: true
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: root
+          hostPath:
+            path: /rootfs
+        - name: cirb-srv
+          hostPath:
+            path: /srv
+```
+
+=== cAdvisor
+
+cAdvisor is an open source container resource usage and performance analysis agent. It retrieves info from containers present on host node where it's installed.
+
+There is no need to install it as it's embedded in Kubelet component.

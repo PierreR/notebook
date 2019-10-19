@@ -20,7 +20,7 @@ see https://info.rancher.com/hubfs/eBooks,%20reports,%20and%20whitepapers/Diving
 
 The Container Networking Interface is under the governance of the CNCF. It is responsible for connecting the container’s network with that of the host. Kubernetes natively supports that model.
 
-Kubernetes networking has one important fundamental design property which set it apart from Docker:
+Kubernetes networking has one important fundamental design property:
 
 ====
 Every pod must be able to communicate with each other in the cluster without NAT, using a unique IP.
@@ -54,13 +54,12 @@ Pods become isolated through `NetworkPolicy` that are implemented by a network p
 IP Virtual Server is built on top of the Netfilter and implements transport-layer load balancing as part of the Linux kernel.
 It can now be use instead of iptables to scale `kube-proxy` (services L4).
 
-
 == Services
 
 Expose a single, constant IP address through which clients can connect to a set of pods.
 Services operate at the transport layer (TCP/IP).
 
-Each service receives a unique virtual IP called #ClusterIP# that has not visibility outside of the cluster.
+Each service receives a unique virtual IP called #ClusterIP# that has no visibility outside of the cluster.
 This is the job of the `kube-proxy` that is installed on every node and is achieved through iptables or other means according to the type of the `kube-proxy` in use.
 
 `ClusterIP` is also the default type of a service. To make the service available to the external world, you need to use/specify another type of service such as `NodePort`, `LoadBalancer` or `ExternalName`.
