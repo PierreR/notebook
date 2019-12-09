@@ -700,6 +700,18 @@ Reproduce any hydra build locally::
 bash <(curl https://hydra.nixos.org/build/57055021/reproduce)
 ```
 
+Installed nixpkgs version::
+nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
+
+== Niv
+
+https://github.com/nmattia/niv[Niv] is an handy tool to manage sources:
+
+```
+
+niv add cicd-shell -v '3.7.2' -t 'https://github.com/PierreR/cicd-shell/archive/v<version>.tar.gz'
+niv update -v 3.7.3 cicd-shell
+```
 
 == Ruby
 

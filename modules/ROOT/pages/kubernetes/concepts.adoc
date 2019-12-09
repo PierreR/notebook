@@ -21,22 +21,19 @@ Kubernetes master cluster that includes:
 
 Usually the `etcd` cluster is part of it too (but it can be separated).
 
-
 == Namespaces
 
 Create multiple virtual clusters on the same physical clusters.
 You can limit resources such as CPU per namespace.
 
+== Deployments
+
+A xref:deployment.adoc[Deployment] manages a ReplicaSet.
+It gives more control over the rollout strategies of the Pods that the ReplicaSet controls.
 
 == ReplicatSet
 
 The ReplicaSet maintains the desired number of copies of a Pod running within the cluster.
-
-== Deployments
-
-A Deployment manages a ReplicaSet.
-It gives more control over the rollout strategies of the Pods that the ReplicaSet controls.
-
 
 == DaemonSet
 
@@ -45,7 +42,6 @@ A DaemonSet runs one copy of the Pod on each node in the Kubernetes cluster.
 == StatefulSet
 
 Appropriate for situations where Pods have a similar definition but need a unique identity, ordered deployment and scaling, and storage that persists across Pod rescheduling.
-
 
 == Secrets
 
