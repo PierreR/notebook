@@ -1,5 +1,13 @@
 = Concepts
 
+== Container Runtime Interface (CRI)
+
+Kubernetes uses a CRI to communicate with a container runtime.
+
+Container runtimes includes `CRI-O` the default in OCP (developed by RHEL).
+
+The most common container runtimes are https://containerd.io/[containerd] a https://www.cncf.io[cncf] project (used by GKE, ...), https://katacontainers.io[Kata] or the traditional docker daemon.
+
 == Pods
 
 A pod is the atomic unit of scheduling.
