@@ -703,6 +703,13 @@ bash <(curl https://hydra.nixos.org/build/57055021/reproduce)
 Installed nixpkgs version::
 nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
 
+Refering to an attribute that contains dot (e.g: `foo-1.2.0`)::
+You will need to escape the `.`:
+```
+nix-build -A '"foo-1.2.0"'
+```
+
+
 == Niv
 
 https://github.com/nmattia/niv[Niv] is an handy tool to manage sources:

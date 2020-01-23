@@ -13,10 +13,11 @@ SAN::
 Storage Area Network - not ideal for containers.
 
 iSCSI (Internet Small Computer System Interface)::
-TCP / IP-based protocol used to manage interconnections between IP storage devices (in SANs).
+iSCSI and Fibre Channel (FC) are both leading methods of transmitting data to remote storage (SAN/NAS)
+iSCSI is an TCP/IP based protocol.
+It is less expensive and simpler to deploy and manage, but has higher latency compared to FC.
 
 LUN (Logical Unit Number):: represents the actual disk
-
 
 Object storage::
 Object storage adds comprehensive metadata to the file, eliminating the tiered file structure used in file storage, and places everything into a flat address space.
