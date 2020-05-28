@@ -7,7 +7,7 @@ IBM Easy Tier::
 Functionality included in IBM `Storwize` to automatically migrate high demand storage data (Hot) to SSD (and vice-versa).
 
 NAS::
-Network Attached Storage.
+A file-level Network Attached Storage.
 
 SAN::
 Storage Area Network - not ideal for containers.

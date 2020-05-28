@@ -1,0 +1,9 @@
+= Service Mesh
+
+Service mesh enables human to interact with each other to build software meeting SLOfootnote:[Service Level Objective]
+
+User & Maintainers: Given/Taken relationships: symbiosys.
+
+data plane:: series of proxies (sidecar containers) that monitor ...
+control plane:: interacting with the data plane
+
