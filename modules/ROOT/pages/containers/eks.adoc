@@ -6,7 +6,7 @@ It is easy to create all required AWS resources by using the following terraform
 https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/2.0.0
 
 .main.tf
-```
+```tf
 provider "aws" {
   region = "eu-central-1"
 }

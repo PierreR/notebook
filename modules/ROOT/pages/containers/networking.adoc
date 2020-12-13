@@ -64,8 +64,7 @@ This is the job of the `kube-proxy` that is installed on every node and is achie
 
 `ClusterIP` is also the default type of a service. To make the service available to the external world, you need to use/specify another type of service such as `NodePort`, `LoadBalancer` or `ExternalName`.
 
-[source]
-----
+```yaml
 kind: Service
 apiVersion: v1
 metadata:
@@ -80,7 +79,6 @@ spec:
   type: ClusterIP <1>
 ```
 <1> NodePort | LoadBalancer | ExternalName
-----
 
 NodePort type::
 A #NodePort# service is the most primitive way to get external traffic directly to your service. NodePort opens a specific port on all the nodes, and any traffic that is sent to this port is forwarded to the service.

@@ -1,19 +1,8 @@
 = Docker
 
-== Intro
-
-Containers work by isolating the differences between applications inside the container so that everything outside the container can be standardized.
-At the core of container technology are `cGroups` and `namespaces`. Control groups work by allowing the host to share and limit the resources each process or container can consume. Processes are limited
-to see only the process ID in the same namespace.
-
-A Docker environment is made up of filesystems layered over each other. At the base is a boot filesystem, docker's next layer is the root filesystem, rootfs. Then Docker takes advantage of a union mount to add more readonly filesystems on top. These filesystems are called "images". Finally, Docker mounts a read-write filesystem on top of any layers below. This is where whatever process we want our Docker container to run will execute.
-
-User images are named using "initial/name:tag"
+== Useful command
 
 The `RUN` instruction in a `Dockerfile` executes commands on the current image and commits the results.
-
-
-== Useful command
 
 ```
 docker build -t initial/name .
@@ -172,15 +161,17 @@ docker-compose rm
 
 NOTE: Manager are just worker with extra permissions to control the swarm cluster.
 
-
 .Network
 ====
 Swarm provides an inbuilt facility of services (in the Kubernetes sense) & Load Balancing.
 When a swarm cluster is initialized it creates an overlay network to allow containers in the cluster to communicate with each other.
 ====
 
-== POC (2017)
+> Docker Swarm forms a multi-host ingress network overlay that connects containers running on all cluster nodes.
+More inter-container networks can be configured manually.
+Connections between nodes are also automatically secured through TLS authentication with certificates.
 
+== POC (2017)
 
 === Initial Win7 host setup
 
@@ -198,6 +189,12 @@ Create a dir `puppetmaster` and a file inside called `Dockerfile`. Build with `s
 
 Then you need to ssh-copy-id your public id_rsa.pub key to be able to fetch the Docker configuration from Github.
 
+Each node is configured by puppet and contain:
+
+- a container swarm running inside a docker (spawn with the docker engine daemon)
+- a docker registrator running inside a docker (spawn with the docker engine daemon)
+- a consult agent (doesn't run within a docker)
+
 === Trouble Shouting
 
 WARNING::
@@ -209,14 +206,7 @@ The Centos latest official images, currently 6.5, comes with a broken `centos.pl
 yum downgrade --skip-broken libselinux libselinux-utils
 ```
 
-=== Swarm node
-
-Each node is configured by puppet and contain:
-
-- a container swarm running inside a docker (spawn with the docker engine daemon)
-- a docker registrator running inside a docker (spawn with the docker engine daemon)
-- a consult agent (doesn't run within a docker)
-
 === DNS
 
 You can use `Consul` as a DNS service. `dnsmask` is configured within each swarm node while every dockers inside a node is running with `--dns 172.17.0.1`.footnote:[the DNS host for every docker is always 172.17.0.1]
+

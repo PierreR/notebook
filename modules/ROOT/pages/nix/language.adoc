@@ -1,0 +1,111 @@
+= Language
+
+String::
++
+```nix
+let
+  h = "Hello";
+  value = 4;
+in
+{
+  helloWorld = "${h} ${toString value} the win!"; <1>
+}
+```
+<1> interpolation of the `toString` builtin function to convert an int value
+
+List::
++
+```nix
+[ 123 ./foo.nix "abc" (f { x = y; }) ]
+```
+
+Attribute Set::
+
++
+```nix
+let x = 12;
+    y = 34;
+    f = {n}: 5 + n;
+in
+rec {
+  r = { inherit x y; <1>
+    text = "Hello";
+    add = f { n = 56; }; <2>
+  };
+  sum = r.add + r.y;
+  hello = r.text or "World"; <3>
+  b = r ? x; <4>
+}
+```
+<1> when defining a set it is often convenient to copy variables from the surrounding lexical scope
+<2> all `;` are mandatory
+<3> Sets accessor using `.` +
+    Default using `or`
+<4> does the record 'r' contains an attribute 'x' `?`
+
+Function::
++
+```nix
+pattern: body
+```
++
+```nix
+# `min` and `max` are available in stdenv.lib
+min = x: y: if x < y then x else y; <1>
+```
+<1> pattern is a func returning a func (2 arguments)
++
+```nix
+{stdenv, fetchurl, perl, ... }: <1>
+
+  stdenv.mkDerivation { <2>
+    name = "hello-2.1.1";
+	...
+  };
+```
+<1> pattern is a set of arguments +
+the 'ellipsis' (`...`) allows the passing of a bigger set, one that contains more than the 3 required arguments.
+<2> function call passing a set as argument
+
+Common functions::
++
+```
+listToAttrs <1>
+  [ { name = "foo"; value = 123; }
+    { name = "bar"; value = 456; }
+  ]
+```
+<1> alike fromList from Haskell except there is no tuple type in Nix
+
+With::
++
+```nix
+with e1; e2
+```
+Introduces all attributes of the set `e1` into the lexical scope of the expression `e2`:
++
+```nix
+let as = { x = "foo"; y = "bar"; };
+in
+foobar = with as; x + y
+```
+
+Optional argument::
++
+```nix
+{ x, y ? "foo", z ? "bar" }: z + y + x <1>
+```
+<1> a function that only requires an attribute named x, but optionally accepts y and z.
+
+Merge sets::
++
+```nix
+e1 // e2 # merge e1 and e2 with e2 taking precedence in case of equally named attribute
+```
+
+Logical implication::
++
+```
+e1 -> e2 <1>
+```
+<1> if #e1# is false, return true else check that e2 is true otherwise return false (in order word return e2). Useful with #assert#

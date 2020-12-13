@@ -1,603 +1,40 @@
 = Nix
 
+Nix is not a configuration management tool alike `Puppet` or `Chef`.
+It is more accurately described as a (universal) package manager or build tool.
 
-Nix is not a configuration management tool alike `Puppet`, `Chef` or `Salt`. It is more accurately described as a (universal) package manager.
+Nix operates within its store (usually located in '/nix') to gather packages called `derivations`.
+In that regard, unless you are running `nixos`, nix won't configure systemd services for instance.
 
-In that regard, unless you are running `nixos`, `disnix` (or use other tricks), nix won't configure systemd services for instance.
-Nix only operates on its store (usually located in '/nix') to gather packages called `derivations` in nix parlance.
-
-Nix is a radical rethink of the distribution model. It offers:
+Nix aims to offer:
 
 - best possible build reproducibility
 - self-contained environments
 - easy rollback
-- composability of derivation
-
-== NixOS
-
-=== icon:tasks[] Install
-
-. Switch to azerty keyboard
-+
-```
-→ loadkeys be-latin1
-```
-. Partition with gdisk (https://nixos.org/nixos/manual/index.html#sec-uefi-installation[efi]) or fdisk (noefi)
-+
-icon:info-circle[1x] using virtualbox you don't want/need efi
-+
-```
-→ (g/f)disk /dev/sda
-```
-+
-Create 2 partitions sda1(83 default)/sda2(82).
-+
-[efi] Create an extra (boot) partition with type EF00.
-
-. Create file system
-+
-```
-→ mkfs.ext4 -L nixos /dev/sda1
-→ mkswap -L swap /dev/sda2
-```
-+
-[efi] Choose `vfat`.
-
-. Mount it
-+
-```
-→ mount /dev/disk/by-label/nixos /mnt
-```
-[efi] `mkdir /mnt/boot` and mount the boot partition in.
-
-. Generate a default config
-+
-```
-→ nixos-generate-config --root /mnt
-```
-
-. Minimal edit the config; don't forget to uncomment the option 'boot.loader.grub.device'
-+
-```
-→ vim /mnt/etc/nixos/configuration.nix
-```
-+
-[efi] No edit required.
-
-. Install
-+
-```
-→ nixos-install
-```
-. Reboot
-+
-```
-→ reboot
-```
-. Upgrade
-+
-```
-→ nixos-rebuild boot --upgrade
-→ reboot
-```
-. <<Configuration>>
-
-[[Configuration]]
-=== icon:wrench[] Configuration
-
-[NOTE]
-====
-Some nix properties are set up in `/etc/nix/nix.conf`
-
-for `wifi`, manually configure it by using `NetworkManager` through the `nmtui` text interface
-====
-
-./etc/nixos/configuration.nix
-```nix
-  nixpkgs.config.allowUnfree = true;
-
-  i18n = {
-    consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "be-latin1";
-    defaultLocale = "en_US.UTF-8";
-  } ;
-
-  environment.systemPackages = with pkgs; [
-    asciidoctor <1>
-  ];
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.extraUsers.nix = { <2>
-    createHome = true;
-    home = "/home/nix";
-    isSystemUser = true;
-    extraGroups = [ "wheel" "disk" "vboxusers" "docker"];
-    shell = "/run/current-system/sw/bin/bash";
-    uid = 1000;
-  };
-
-  programs.bash.enableCompletion = true;
-  security.sudo.wheelNeedsPassword = false;
-
-  fonts = {
-    enableFontDir = true;
-    fonts = [ pkgs.source-code-pro ];
-  };
-
-  nix.extraOptions = ''
-    gc-keep-outputs = true <3>
-    gc-keep-derivations = true <3>
-  '';
-
-  virtualisation.docker.enable = true;
-  virtualisation.docker.extraOptions = "--insecure-registry x.lan --insecure-registry y.lan";
-
-  virtualisation.virtualbox.guest.enable = true; <4>
-  boot.initrd.checkJournalingFS = false; <4>
-
-```
-<1> add packages
-<2> do create a new user !  +
-(root won't be able to have a chromium session by default)
-<3> prevent too much gc in developer environment
-<4> virtualbox only
-
-=== icon:cog[] System management
-
-.Update
-```
-→ sudo nixos-rebuild switch
-→ sudo nixos-rebuild boot --upgrade <1>
-```
-<1> safer to use `boot` when upgrading
-
-=== Channels
-
-A channel is the Nix mechanism for distributing a consistent set of Nix expressions and binaries.
-nix-channel --add
-
-```
-→ nix-channel --add http://nixos.org/channels/nixpkgs-unstable
-→ nix-channel --update
-→ nixos-rebuild switch
-```
-
-The unstable channel is usually a few days older from `nixpkgs` master.
-For a precise status, check http://howoldis.herokuapp.com[here].
-
-You can directly use a derivation from master. For instance, after cloning `nixpkgs`, you could type:
-
-```
-→  NIX_PATH=nixpkgs=/home/vagrant/projects/nix/nixpkgs nix-env -f '<nixpkgs>' -iA haskellPackages.stack
-```
-
-[NOTE]
-====
-- In future version of nix, `channel` might be deprecated to favor `NIX_PATH` solely.
-- On `nixos`, you should stick to `nixos-unstable` (don't use `nixpkgs-unstable` because specific nixos sanity check won't applied)
-
-====
-
-== Concepts
-
-=== Derivation
-
-Nix produces build product by following a two steps phase:
-
-====
-Nix expression {nbsp}{nbsp} _(evaluation)_ -> {nbsp}{nbsp} Derivation {nbsp}{nbsp} _(realisation)_ -> {nbsp}{nbsp} Build product
-====
-
-The first evaluation step is pure. The produced *drv* file acts as an intermediate specification for a build that can be freely redistribute to a set of machines.
-
-Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it's a little more complex than this), and name is the name of the derivation.
-
-From a nix language point of view, a derivation is simply a set, with some attributes.
-
-To build a package, `nixpkgs` makes heavy usage of `stdenv` and its function `mkDerivation`:
-
-```nix
-stdenv.mkDerivation rec {
-  name = "libfoo-${version}"; <1>
-  version = "1.2.3"
-  src = fetchurl {
-    url = http://example.org/libfoo-1.2.3.tar.bz2;
-    md5 = "e1ec107956b6ddcb0b8b0679367e9ac9"; <2>
-  };
-  builder = ./builder.sh; <3>
-  buildInputs = [ruby]; <4>
-}
-```
-<1> mandatory `name` attr
-<2> mandatory checksum for remote source
-<3> if not provided, the generic builder is used
-<4> additional input required to build the derivationfootnote:[This means that if a package provides a bin subdirectory, it's added to PATH; if it has a include subdirectory, it's added to GCC's header search path; and so on]
-
-The output of a derivation needs to be deterministic. That's why you can fetch source remotely iff you know the hash beforehand.
-
-runtime dependencies::
-derivation never specifies runtime dependencies. These are automatically computed by Nix. You can print them with:
-+
-```
-nix-store -q --tree $(nix-store -qd $(which cabal2nix))
-```
-overrideDerivation _drv f_::
-takes a derivation and returns a new derivation in which the attributes of the original are overriden according to the function f.
-Most of the time, you should prefer `overrideAttrs`.
-
-=== Bootstrap
-
-Nix composes all of these individual functions into a large package repository. This repository essentially calls every single top level function, with support for recursive bindings in order to satisfy dependencies. Continuing with the hello example, we may have a top-level entry point like:
-
-
-```nix
-rec {
-  hello = import /path/to/hello.nix { inherit stdenv fetchurl; }; <1>
-
-  stdenv = import /path/to/stdenv.nix { inherit gcc };
-
-  fetchurl = import /path/to ;
-
-  gcc = import /path/to/gcc.nix {};
-
-  # ...
-}
-```
-<1> Import loads a file containing a function and then calls that function with the provided arguments
-
-> But wait - I just said this calls all functions… so wouldn’t that then mean that all software gets installed? The trick here is that Nix is a lazy language.
-
-
-== Commands
-
-=== Nix-shell
-
-When Nix builds a package, it builds it in an isolated environment. It does this by creating a clean, child shell, then adding only the dependencies the package declares. After setting up the dependencies, it runs the build script, moves the built app into the Nix store, and sets up the environment to point to it. Finally, it destroys this child shell.
-
-But we can ask Nix to not destroy the child shell, and instead let us use it for working iteratively on the app.
-This is what the #nix-shell# is about: it will build the dependencies of the specified derivation, but *not* the derivation itself.
-
-```
- nix-shell '<nixpkgs>' -p ruby haskellPackages.stack <1>
-```
-<1> `p` and `-A` are mutually exclusive
-
-If a path is not given, nix-shell defaults to `shell.nix` if it exists, and `default.nix` otherwise.footnote:[If no such files exists, it will default to `<nixpkgs>`]
-
-This allows for a nice trick. We can decribe a virtual dev environment (of any sort for any language) by decribing a derivation in `default.nix` like so:
-
-.default.nix
-```nix
-with import <nixpkgs> {};
-
-let henv = haskellPackages.ghcWithPackages (p: with p; [shake]);
-
-in
-stdenv.mkDerivation {
-  name = "haskell-env";
-  buildInputs = [ henv pythonPackages.pyyaml];
-}
-```
-
-[WARNING]
-====
-nix-shell will use the `NIX_PATH` environment variable which by default in user space points to the root nixpkgs channel. That means that (unlike `nix-env`), even if your channel points to unstable in user space, nix-shell might still use the root stable channel. You can change that behavior by running for instance:
-
-```
-nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz
-```
-====
-
-You can force any script file to run in a nix-shell as such:
-```
-#! /usr/bin/env nix-shell
-#! nix-shell -i bash
-```
-or without a default.nix file:
-
-```
-#! /usr/bin/env nix-shell
-#! nix-shell --pure
-#! nix-shell -p asciidoctor -p pythonPackages.pygments
-#! nix-shell -p "haskellPackages.ghcWithPackages(p: with p; [shake])" <1>
-#! nix-shell -i bash
-#! /usr/bin/env nix-shell
-```
-<1> Double quotes are required. Don't add `-p ghc` as you will end up with two different ghcs !
-
-[NOTE]
-====
-In Haskell, we need the --attr https://github.com/NixOS/nixpkgs/blob/b40e1efe000ec5c4616cecc9d6836eade419434e/pkgs/development/haskell-modules/generic-builder.nix#L283[env] to tell `nix-shell` to compute the isolated development environment:
-
-.shell.nix
-```nix
-with (import <nixpkgs> {}).pkgs;
-(haskellPackages.callPackage ./. {}).env <1>
-```
-<1> `callPackage` will use the current defined scope to pass matched arguments
-
-`default.nix` is then generated by `cabal2nix` to describe how to nix-build the haskell package.
-====
-
-=== Nix-env
-
-#nix-env# is the command to use to search, install, remove packages locally in user space (or profile). These packages are installed in the `nix-store` but are only accessible inside one environment (aka user/profile).
-
-[CAUTION]
-====
-`nix-env` doesn't require a starting nix expression. As a consequence, `nix-env` does not use `<nixpkgs>` as NIX_PATH. It actually uses `~/.nix-defexpr/channels`. +
-If you want to use <nixpkgs>, you would explicitly use the `-f` (or `--file`) option on the command line.
-====
-
-- *-q* list installed derivations within a profile
-- *-qaP* list available package with the path
-
-When searching for packages, it is usually more efficient to specify a namespace attribute using the `-A` option.
-
-```
-# in nixos:
-→ nix-env -qaP -A nixos.haskellPackages
-→ nix-env -qaP -A nixos.pythonPackages
-# outside nixos:
-→ nix-env -qaP -A nixpkgs.pythonPackages
-```
-You can also omit the channel namespace and specify the input for `nixpkgs` explicitly with the `-f` option:
-
-```
-→ nix-env -f '<nixpkgs>' -qaP -A haskellPackages.shake --description
-```
-
-- *-i* install derivations
-+
-```
-→ nix-env -f '<nixpkgs>' -iA pythonPackages.pyyaml <1>
-→ nix-env -f '<nixpkgs>' -i brackets -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz’ <2>
-```
-<1> on nixos, you might use `nix-env -iA nixos.pythonPackages.pyyaml`
-<2> install from master directly
-
-- *-e* erase
-+
-```
-→ nix-env -e python2.7-PyYAML-3.11
-```
-
-- *-u* update
-+
-```
-→ nix-env -u
-```
-
-=== Nix-build
-
-nix-build tool does two main jobs:
-
-* nix-instantiate: parse the `.nix` file and return the .drv file (the evaluation step)
-* nix-store -r: realise the build product from the input .drv derivation
-
-****
-WARNING: `nix-pull` is deprecated and replaced by the use of `binary caches`
-****
-
-== Language
-
-String::
-+
-```nix
-let
-  h = "Hello";
-  value = 4;
-in
-{
-  helloWorld = "${h} ${toString value} the win!"; <1>
-}
-```
-<1> interpolation of the `toString` builtin function to convert an int value
-
-List::
-+
-```nix
-[ 123 ./foo.nix "abc" (f { x = y; }) ]
-```
-
-Attribute Set::
-
-+
-```nix
-let x = 12;
-    y = 34;
-    f = {n}: 5 + n;
-in
-rec {
-  r = { inherit x y; <1>
-    text = "Hello";
-    add = f { n = 56; }; <2>
-  };
-  sum = r.add + r.y;
-  hello = r.text or "World"; <3>
-  b = r ? x; <4>
-}
-```
-<1> when defining a set it is often convenient to copy variables from the surrounding lexical scope
-<2> all `;` are mandatory
-<3> Sets accessor using `.` +
-    Default using `or`
-<4> does the record 'r' contains an attribute 'x' `?`
-
-Function::
-+
-```nix
-pattern: body
-```
-+
-```nix
-# `min` and `max` are available in stdenv.lib
-min = x: y: if x < y then x else y; <1>
-```
-<1> pattern is a func returning a func (2 arguments)
-+
-```nix
-{stdenv, fetchurl, perl, ... }: <1>
-
-  stdenv.mkDerivation { <2>
-    name = "hello-2.1.1";
-	...
-  };
-```
-<1> pattern is a set of arguments +
-the 'ellipsis' (`...`) allows the passing of a bigger set, one that contains more than the 3 required arguments.
-<2> function call passing a set as argument
-
-Common functions::
-+
-```
-listToAttrs <1>
-  [ { name = "foo"; value = 123; }
-    { name = "bar"; value = 456; }
-  ]
-```
-<1> alike fromList from Haskell except there is no tuple type in Nix
-
-With::
-+
-```nix
-with e1; e2
-```
-Introduces all attributes of the set `e1` into the lexical scope of the expression `e2`:
-+
-```nix
-let as = { x = "foo"; y = "bar"; };
-in
-foobar = with as; x + y
-```
-
-Optional argument::
-+
-```nix
-{ x, y ? "foo", z ? "bar" }: z + y + x <1>
-```
-<1> a function that only requires an attribute named x, but optionally accepts y and z.
-
-Merge sets::
-+
-```nix
-e1 // e2 # merge e1 and e2 with e2 taking precedence in case of equally named attribute
-```
-
-Logical implication::
-+
-```
-e1 -> e2 <1>
-```
-<1> if #e1# is false, return true else check that e2 is true otherwise return false (in order word return e2). Useful with #assert#
-
-== Nix modules
-
-A NixOS module is a file that handles one logical aspect of the configuration.
-
-```
-{ config, lib, pkgs, ... }: <1>
-
-{
-  imports = <2>
-    [
-    ];
-
-   options.services.foo = { <3>
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = ''
-
-      '';
-    };
-    ...
-  };
-
-  config = mkIf config.services.foo.enable { <4>
-    environment.systemPackages = [ ... ];
-  };
-}
-```
-<1> function declaration with access to the full system configuration and nixpkgs
-<2> paths to other modules that should be included in the evaluation
-<3> options declaration
-<4> option definition
+- composability
 
 == Tips and tricks
 
-Customize nixpkgs locally::
-+
-You can override derivation attributes in user space without forking the `nixpkgs` repository.
-In `~/.nixpkgs/config.nix` you typically declare a `packageOverrides` function and then use `override` to customize attributes:
-+
-.~/.nixpkgs/config.nix
-```nix
-{
-  packageOverrides = super: <1>
-    let self = super.pkgs;
-        foo = super.foo.override { barSupport = true ; }; <2>
-    in
-    {
-      inherit foo;
-      haskellPackages = super.haskellPackages.override {
-        overrides = self: super: { <3>
-          language-puppet_1_3_3 = self.callPackage ./pkgs/language-puppet {inherit foo;}; <4>
-        };
-    };
-}
-```
-<1> #packageOverrides# takes the original (super) nixpkgs set and return a new (self) record set.
-footnote:[similar to `overrridePackages` which is only used outside of the special `config.nix` for specific use cases]
-<2> call #override# (defined on much derivations) to changes the arguments passed to it.
-<3> override the #overrides# attribute of haskellPackages
-<4> key = value of the return set
-+
-.+++ <div class="tri"></div> +++ override/fix pattern
-****
-....
-fix = f:
-  let self = f self;
-  in self;
-
-extend = attrs: f: self:
-  let super = attrs self;
-  in super // f self super;
-
-ps = self:
-  { foo = "foo"; bar = "bar";
-     foobar = self.foo + self.bar;
-  };
-
-f = self: super:
-  { foo = reverse super.foo; }
-
-(fix ps).foobar # "foobar"
-
-(fix (extend ps f)).foobar # "oofbar"
-....
-****
-
 Overlays::
 
-Since `17.03` there is a more idiomatic way to achieve such local customization:
+You can override derivation attributes in user space without forking the nixpkgs repository by using one or multiple overlays:
 +
 .~/.config/nixpgks/overlays/default.nix
-```
+```nix
 self: super:
 let
   hlib = super.haskell.lib;
 in
 {
   haskellPackages = super.haskellPackages.override {
-    overrides =  hpkgs: _hpkgs: {
+    overrides =  curr: prev: {
       cicd-shell = hlib.dontCheck (hlib.dontHaddock
-        (_hpkgs.callCabal2nix "cicd-shell" (super.fetchgit { <1>
+        (curr.callCabal2nix "cicd-shell" (super.fetchgit { <1>
            url = "http://stash.cirb.lan/scm/cicd/cicd-shell.git";
            rev = "d76c532d69e4d01bdaf2c716533d9557371c28ea";
            sha256 = "0yval6k6rliw1q79ikj6xxnfz17wdlnjz1428qbv8yfl8692p13h";
          }) {
-              protolude = _hpkgs.protolude_0_2;
+              protolude = prev.protolude_0_2;
             }
         ));
       };
@@ -606,22 +43,26 @@ in
 ```
 <1> `callCabal2nix` allows to automatically fetch and build any haskell package from the web
 
-Overrides haskell packages for the `ghc821` compiler::
+
+Pinned a version of nixpkgs::
++
+```nix
+let
+  nixpkgs = builtins.fromJSON (builtins.readFile ./.nixpkgs.json);
+in
+import (fetchTarball {
+  url = "https://github.com/NixOS/nixpkgs/archive/${nixpkgs.rev}.tar.gz";
+  inherit (nixpkgs) sha256;
+})
+```
+Updating `.nixpkgs.json` is realized with such a zsh function:
 +
 ```
-self: super:
-let
-  hlib = super.haskell.lib;
-in
-{
-haskell = super.haskell // { packages = super.haskell.packages // { ghc821 = super.haskell.packages.ghc821.override { <1>
-   overrides =  hpkgs: _hpkgs: {
-     containers = hlib.dontCheck(_hpkgs.containers);
-   };
-};};};
+function updateNixpkgs () {
+    nix-prefetch-git https://github.com/NixOS/nixpkgs.git "$1" > ~/.config/nixpkgs/.nixpkgs.json
 }
 ```
-<1> `haskell` equals `super.haskell` except packages, which equals `super.haskell.packages` except for `ghc821`, which is the overriden version of `super 821`
+It is easier to manage pinned/sha using https://github.com/nmattia/niv[niv].
 
 Private packages::
 +
@@ -669,24 +110,22 @@ You then build the derivation or install it in the user environment.
 ```
 <1> `nix-env -i` takes the name attribute and strip the version (first numeric after `-`)
 
-Pinned a version of nixpkgs::
+Overrides haskell packages for the `ghc821` compiler::
 +
-```
+```nix
+self: super:
 let
-  nixpkgs = builtins.fromJSON (builtins.readFile ./.nixpkgs.json);
+  hlib = super.haskell.lib;
 in
-import (fetchTarball {
-  url = "https://github.com/NixOS/nixpkgs/archive/${nixpkgs.rev}.tar.gz";
-  inherit (nixpkgs) sha256;
-})
-```
-Updating `.nixpkgs.json` is realized with such a zsh function:
-+
-```
-function updateNixpkgs () {
-    nix-prefetch-git https://github.com/NixOS/nixpkgs.git "$1" > ~/.config/nixpkgs/.nixpkgs.json
+{
+haskell = super.haskell // { packages = super.haskell.packages // { ghc821 = super.haskell.packages.ghc821.override { <1>
+   overrides =  hpkgs: _hpkgs: {
+     containers = hlib.dontCheck(_hpkgs.containers);
+   };
+};};};
 }
 ```
+<1> `haskell` equals `super.haskell` except packages, which equals `super.haskell.packages` except for `ghc821`, which is the overriden version of `super 821`
 
 Caching the list of all available package into a local file::
 +
@@ -709,38 +148,36 @@ You will need to escape the `.`:
 nix-build -A '"foo-1.2.0"'
 ```
 
+Convert an attribute set into a string representation::
+Attribute set are not automatically converted into string.
+That said, you can provide an implementation by using the #outPath# field:
 
-== Niv
-
-https://github.com/nmattia/niv[Niv] is an handy tool to manage sources:
-
+```nix
+builtins.fromJSON fromCUE // { outPath = fromCUE; }
 ```
 
-niv add cicd-shell -v '3.7.2' -t 'https://github.com/PierreR/cicd-shell/archive/v<version>.tar.gz'
-niv update -v 3.7.3 cicd-shell
-```
+== Pitfall
 
-== Ruby
+When you create a derivation, a path value will auto-magically be interpolated with its generated outpath:
 
-* Create or copy a Gemfile at the root dir of the project
-* Create a `default.nix` file :
+```nix
+pkgs.runCommand "hello" { buildInputs = []; } ''
+  cp ${./talk.adoc} $out <1>
+''
 ```
+<1> path -> /nix/store/xxxx
 
-{ bundlerEnv }:
+The tricky part arises when you want to use a string variable to describe this path. To force the coersing from string -> path you need to use #+#:
 
-bundlerEnv rec {
-  name = "xxx-${version}";
-  version = "4.10.11";
-  gemdir = ./.;
-}
+```nix
+let
+  cueSchema = "${config.home.homeDirectory}/bootstrap/user/schema.cue";
+  cueConfig = "${sharedDir}/box.cue";
+in
+pkgs.runCommand "fromCue" { } ''
+  ${pkgs.cue}/bin/cue export ${/. + cueSchema } ${/. + cueConfig} > $out;
+''
 ```
-* Use bundix in the target directory:
-```
-$(nix-build '<nixpkgs>' -A bundix --no-out-link)/bin/bundix --magic <1>
-```
-<1> #magic# lock,pack and write dependencies
-It will create both  a `gimset.nix` file and a `Gemfile.lock`
-* Create a default.nix file
 
 == References
 

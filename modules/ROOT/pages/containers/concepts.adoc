@@ -36,12 +36,41 @@ You can limit resources such as CPU per namespace.
 
 == Deployments
 
-A xref:deployment.adoc[Deployment] manages a ReplicaSet.
-It gives more control over the rollout strategies of the Pods that the ReplicaSet controls.
+In Kubernetes you typically manage the configuration of pods and replicat set through a `deployment` resource:
 
-== ReplicatSet
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xxx
+  namespace: xxx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: xxx
+  strategy:
+    type: RollingUpdate <1>
+  template:
+    metadata:
+      labels: xxx
+        app: xxx
+    spec:
+      containers:
+      - name: xxx
+        image: 'cicd-docker.repository.irisnet.be/xxx@sha256:075e27c6d210a1605d34946b70282a10b585768b0aa299345c90f98f65ef73e0' <2>
+        imagePullPolicy: IfNotPresent <3>
+        restartPolicy: Always <4>
+        dnsPolicy: ClusterFirst <5>
 
-The ReplicaSet maintains the desired number of copies of a Pod running within the cluster.
+```
+<1> #RollingUpdate# (updates one pod at a time) the default or #Recreate#
+<2> avoid the usage of the tag 'latest'footnote:[https://kubernetes.io/docs/concepts/configuration/overview/#container-images]
+<3> can be omit if you use sha id
+<4> can be omit; #Always# is the default
+<5> can be omit; #ClusterFirst# is the default
+
 
 == DaemonSet
 

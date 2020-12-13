@@ -1,0 +1,93 @@
+= Concepts
+
+== Derivation
+
+Nix produces build product by following a two steps phase:
+
+====
+Nix expression {nbsp}{nbsp} _(evaluation)_ -> {nbsp}{nbsp} Derivation {nbsp}{nbsp} _(realisation)_ -> {nbsp}{nbsp} Build product
+====
+
+The first evaluation step is pure. The produced *drv* file acts as an intermediate specification for a build that can be freely redistribute to a set of machines.
+
+Derivations are stored in the nix store as follows: /nix/store/hash-name, where the hash uniquely identifies the derivation (not true, it's a little more complex than this), and name is the name of the derivation.
+
+From a nix language point of view, a derivation is simply a set, with some attributes.
+
+To build a package, `nixpkgs` makes heavy usage of `stdenv` and its function `mkDerivation`:
+
+```nix
+stdenv.mkDerivation rec {
+  name = "libfoo-${version}"; <1>
+  version = "1.2.3"
+  src = fetchurl {
+    url = http://example.org/libfoo-1.2.3.tar.bz2;
+    md5 = "e1ec107956b6ddcb0b8b0679367e9ac9"; <2>
+  };
+  builder = ./builder.sh; <3>
+  buildInputs = [ruby]; <4>
+}
+```
+<1> mandatory `name` attr
+<2> mandatory checksum for remote source
+<3> if not provided, the generic builder is used
+<4> additional input required to build the derivationfootnote:[This means that if a package provides a bin subdirectory, it's added to PATH; if it has a include subdirectory, it's added to GCC's header search path; and so on]
+
+The output of a derivation needs to be deterministic. That's why you can fetch source remotely iff you know the hash beforehand.
+
+runtime dependencies::
+derivation never specifies runtime dependencies. These are automatically computed by Nix. You can print them with:
++
+```
+nix-store -q --tree $(nix-store -qd $(which cabal2nix))
+```
+overrideDerivation _drv f_::
+takes a derivation and returns a new derivation in which the attributes of the original are overriden according to the function f.
+Most of the time, you should prefer `overrideAttrs`.
+
+
+== override/fix pattern
+....
+fix = f:
+  let self = f self;
+  in self;
+
+extend = attrs: f: self:
+  let super = attrs self;
+  in super // f self super;
+
+ps = self:
+  { foo = "foo"; bar = "bar";
+     foobar = self.foo + self.bar;
+  };
+
+f = self: super:
+  { foo = reverse super.foo; }
+
+(fix ps).foobar # "foobar"
+
+(fix (extend ps f)).foobar # "oofbar"
+....
+
+== Bootstrap
+
+Nix composes all of these individual functions into a large package repository. This repository essentially calls every single top level function, with support for recursive bindings in order to satisfy dependencies. Continuing with the hello example, we may have a top-level entry point like:
+
+
+```nix
+rec {
+  hello = import /path/to/hello.nix { inherit stdenv fetchurl; }; <1>
+
+  stdenv = import /path/to/stdenv.nix { inherit gcc };
+
+  fetchurl = import /path/to ;
+
+  gcc = import /path/to/gcc.nix {};
+
+  # ...
+}
+```
+<1> Import loads a file containing a function and then calls that function with the provided arguments
+
+> But wait - I just said this calls all functions… so wouldn’t that then mean that all software gets installed? The trick here is that Nix is a lazy language.
+

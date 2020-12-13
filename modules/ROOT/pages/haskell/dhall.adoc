@@ -8,7 +8,7 @@ let double = \(n : Natural) -> n * 2 in double 4
 ```
 
 ./config/box
-```
+```haskell
 { userName         = ""
 , userEmail        = ""
 , userStacks       = ["bos", "irisbox"]
@@ -30,12 +30,11 @@ data BoxConfig
 
 makeLenses ''BoxConfig
 
-instance Interpret BoxConfig
+instance FromDhall BoxConfig
 ```
 <1> Dhall uses vector instead of list
 
-
-```
+```haskell
 main :: IO ()
 main = do
   box_config  <- Dhall.input auto "./config/box"

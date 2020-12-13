@@ -1,0 +1,52 @@
+= Containers
+
+A container is a standard unit of software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another.
+
+image::vm-vs-container.png[]
+
+At the core of container technology are `cGroups` and `namespaces`.
+Control groups work by allowing the host to share and limit the resources each process or container can consume.
+Processes are limited to see only the process ID in the same namespace.
+
+https://kubernetes.io/docs/home[Kubernetes] is an open-source system for automating deployment, scaling, and management of containerized applications.
+
+A container image is made up of filesystems layered over each other. At the base is a boot filesystem, docker's next layer is the root filesystem, rootfs. Then Docker takes advantage of a union mount to add more readonly filesystems on top. These filesystems are called "images". Finally, Docker mounts a read-write filesystem on top of any layers below. This is where whatever process we want our Docker container to run will execute.
+
+== Useful commands
+
+.node description
+```
+kubectl describe node master
+```
+
+.pod description
+```
+kubectl -n kube-system get pod -o wide
+```
+
+.kubeadmin config
+```
+kubectl -n kube-system get cm kubeadm-config -oyaml
+```
+
+.remove evicted pods
+```
+kubectl get po -a --all-namespaces -o json | jq  '.items[] | select(.status.reason!=null) | select(.status.reason | contains("Evicted")) | "kubectl delete po \(.metadata.name) -n \(.metadata.namespace)"' | xargs -n 1 bash -c
+```
+
+.api
+```
+http://127.0.0.1:8080/api/v1/proxy/namespaces/kube-system/services/
+```
+
+== Minikube on Windows
+
+.using chocolatey
+```
+choco install -f -y kubernetes-helm
+```
+
+== Resources
+
+https://metallb.universe.tf/[metalLB]::
+a load-balancer implementation for bare metal Kubernetes clusters, using standard routing protocols.

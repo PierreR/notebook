@@ -1,0 +1,197 @@
+= NixOS
+
+== icon:tasks[] Install
+
+. Switch to azerty keyboard
++
+```
+→ loadkeys be-latin1
+```
+. Partition with gdisk (https://nixos.org/nixos/manual/index.html#sec-uefi-installation[efi]) or fdisk (noefi)
++
+icon:info-circle[1x] using virtualbox you don't want/need efi
++
+```
+→ (g/f)disk /dev/sda
+```
++
+Create 2 partitions sda1(83 default)/sda2(82).
++
+[efi] Create an extra (boot) partition with type EF00.
+
+. Create file system
++
+```
+→ mkfs.ext4 -L nixos /dev/sda1
+→ mkswap -L swap /dev/sda2
+```
++
+[efi] Choose `vfat`.
+
+. Mount it
++
+```
+→ mount /dev/disk/by-label/nixos /mnt
+```
+[efi] `mkdir /mnt/boot` and mount the boot partition in.
+
+. Generate a default config
++
+```
+→ nixos-generate-config --root /mnt
+```
+
+. Minimal edit the config; don't forget to uncomment the option 'boot.loader.grub.device'
++
+```
+→ vim /mnt/etc/nixos/configuration.nix
+```
++
+[efi] No edit required.
+
+. Install
++
+```
+→ nixos-install
+```
+. Reboot
++
+```
+→ reboot
+```
+. Upgrade
++
+```
+→ nixos-rebuild boot --upgrade
+→ reboot
+```
+. <<Configuration>>
+
+[[Configuration]]
+== icon:wrench[] Configuration
+
+[NOTE]
+====
+Some nix properties are set up in `/etc/nix/nix.conf`
+
+for `wifi`, manually configure it by using `NetworkManager` through the `nmtui` text interface
+====
+
+./etc/nixos/configuration.nix
+```nix
+  nixpkgs.config.allowUnfree = true;
+
+  i18n = {
+    consoleFont = "Lat2-Terminus16";
+    consoleKeyMap = "be-latin1";
+    defaultLocale = "en_US.UTF-8";
+  } ;
+
+  environment.systemPackages = with pkgs; [
+    asciidoctor <1>
+  ];
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.extraUsers.nix = { <2>
+    createHome = true;
+    home = "/home/nix";
+    isSystemUser = true;
+    extraGroups = [ "wheel" "disk" "vboxusers" "docker"];
+    shell = "/run/current-system/sw/bin/bash";
+    uid = 1000;
+  };
+
+  programs.bash.enableCompletion = true;
+  security.sudo.wheelNeedsPassword = false;
+
+  fonts = {
+    enableFontDir = true;
+    fonts = [ pkgs.source-code-pro ];
+  };
+
+  nix.extraOptions = ''
+    gc-keep-outputs = true <3>
+    gc-keep-derivations = true <3>
+  '';
+
+  virtualisation.docker.enable = true;
+  virtualisation.docker.extraOptions = "--insecure-registry x.lan --insecure-registry y.lan";
+
+  virtualisation.virtualbox.guest.enable = true; <4>
+  boot.initrd.checkJournalingFS = false; <4>
+
+```
+<1> add packages
+<2> do create a new user !  +
+(root won't be able to have a chromium session by default)
+<3> prevent too much gc in developer environment
+<4> virtualbox only
+
+== icon:cog[] System management
+
+.Update
+```
+→ sudo nixos-rebuild switch
+→ sudo nixos-rebuild boot --upgrade <1>
+```
+<1> safer to use `boot` when upgrading
+
+=== Channels
+
+A channel is the Nix mechanism for distributing a consistent set of Nix expressions and binaries.
+nix-channel --add
+
+```
+→ nix-channel --add http://nixos.org/channels/nixpkgs-unstable
+→ nix-channel --update
+→ nixos-rebuild switch
+```
+
+The unstable channel is usually a few days older from `nixpkgs` master.
+For a precise status, check http://howoldis.herokuapp.com[here].
+
+You can directly use a derivation from master. For instance, after cloning `nixpkgs`, you could type:
+
+```
+→  NIX_PATH=nixpkgs=/home/vagrant/projects/nix/nixpkgs nix-env -f '<nixpkgs>' -iA haskellPackages.stack
+```
+
+[NOTE]
+====
+- In future version of nix, `channel` might be deprecated to favor `NIX_PATH` solely.
+- On `nixos`, you should stick to `nixos-unstable` (don't use `nixpkgs-unstable` because specific nixos sanity check won't applied)
+
+====
+
+== Nix modules
+
+A NixOS module is a file that handles one logical aspect of the configuration.
+
+```
+{ config, lib, pkgs, ... }: <1>
+
+{
+  imports = <2>
+    [
+    ];
+
+   options.services.foo = { <3>
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+
+      '';
+    };
+    ...
+  };
+
+  config = mkIf config.services.foo.enable { <4>
+    environment.systemPackages = [ ... ];
+  };
+}
+```
+<1> function declaration with access to the full system configuration and nixpkgs
+<2> paths to other modules that should be included in the evaluation
+<3> options declaration
+<4> option definition
