@@ -8,15 +8,15 @@ At the core of container technology are `cGroups` and `namespaces`.
 Control groups work by allowing the host to share and limit the resources each process or container can consume.
 Processes are limited to see only the process ID in the same namespace.
 
-https://kubernetes.io/docs/home[Kubernetes] is an open-source system for automating deployment, scaling, and management of containerized applications.
+https://kubernetes.io/docs/home[Kubernetes, role=external] is an open-source system for automating deployment, scaling, and management of containerized applications.
 
 A container image is made up of filesystems layered over each other. At the base is a boot filesystem, docker's next layer is the root filesystem, rootfs. Then Docker takes advantage of a union mount to add more readonly filesystems on top. These filesystems are called "images". Finally, Docker mounts a read-write filesystem on top of any layers below. This is where whatever process we want our Docker container to run will execute.
 
 == Useful commands
 
-.node description
+.check if the node is tainted
 ```
-kubectl describe node master
+kubectl describe node worker001 | grep -i 'taint'
 ```
 
 .pod description
@@ -48,5 +48,5 @@ choco install -f -y kubernetes-helm
 
 == Resources
 
-https://metallb.universe.tf/[metalLB]::
+https://metallb.universe.tf/[metalLB, role=external]::
 a load-balancer implementation for bare metal Kubernetes clusters, using standard routing protocols.

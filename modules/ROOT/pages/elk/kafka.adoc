@@ -2,7 +2,7 @@
 
 ## What it is
 
-Kafka is an open source distributed real-time messaging system originally developed by LinkedIn.
+https://kafka.apache.org[Kafka, role=external] is an open source distributed real-time messaging system originally developed by LinkedIn.
 A Kafka cluster consists of a set of brokers that process messages from producers.
 
 Kafka deals with publisher-consumer and queue semantics by grouping data into topics.

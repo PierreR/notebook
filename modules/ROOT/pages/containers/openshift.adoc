@@ -93,6 +93,21 @@ Block storage as iSCI, Ceph EBS
 
 Shared storage such as GlusterFS
 
+
+== Useful commands
+
+.check node resources
+```
+oc adm top node svvrocow002.sbx.paas.cirb.lan
+NAME                            CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
+svvrocow002.sbx.paas.cirb.lan   1581m        45%    2197Mi          7%
+```
+
+.console URL
+```
+oc whoami --show-console
+```
+
 == S2i
 
 ....

@@ -2,7 +2,9 @@
 
 ## Internals
 
-Git maintained snapshot of directory's contents. It is a content-addressable filesystem, a simple key value data store. Keys are SHA-1 hash and values are objects.
+Git maintains snapshots of directory's contents.
+It is a content-addressable filesystem, a simple key value data store.
+Keys are SHA-1 hash and values are objects.
 
 There are 4 different types of objects:
 

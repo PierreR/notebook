@@ -70,7 +70,7 @@ A shard is written on disks in multiple segment files.
 ## APIs
 
 .Index search
-```
+```json
 GET blogs/_search
 {
   "query": {
@@ -82,7 +82,7 @@ GET blogs/_search
 ```
 
 .Create your own mapping
-```
+```json
 PUT blogs
 {
   "mappings": {
@@ -109,7 +109,7 @@ GET _cluster/state
 ```
 
 .Update index settings
-```
+```json
 PUT blogs/_settings
 {
   "settings": {
@@ -120,7 +120,7 @@ PUT blogs/_settings
 <1> you can dynamically change the number of replicas but not the #number_of_shards#
 
 .Reindex
-```
+```json
 POST _reindex
 {
   "source": {
@@ -136,7 +136,7 @@ POST _reindex
 ```
 
 .Ingest
-```
+```json
 PUT _ingest/pipeline/fix_locales
 {
   "processors": [

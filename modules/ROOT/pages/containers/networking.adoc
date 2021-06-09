@@ -14,7 +14,7 @@ Kubernetes through the notion of network plugins can be use with a vast number o
 - Canal (Flannel with Calico)
 
 For a more detail description of Flannel, Calico and other network provider,
-see https://info.rancher.com/hubfs/eBooks,%20reports,%20and%20whitepapers/Diving%20Deep%20Into%20Kubernetes%20Networking.pdf[Deep Into Kubernetes Networking].
+see https://info.rancher.com/hubfs/eBooks,%20reports,%20and%20whitepapers/Diving%20Deep%20Into%20Kubernetes%20Networking.pdf[Deep Into Kubernetes Networking, role=external].
 
 === CNI
 

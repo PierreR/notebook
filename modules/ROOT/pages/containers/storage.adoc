@@ -50,7 +50,7 @@ PVCs referring to that particular storage class will get their PV objects create
 
 === Storage plugin/class choices
 
-“ReadWriteMany” is not supported by all storages. Currently GCE Persistent Disk / AWS EBS / AzureDisk don't support it.
+`ReadWriteMany` is not supported by all storages. Currently GCE Persistent Disk / AWS EBS / AzureDisk don't support it.
 These might have performance issues on small capacities (<100GB, typical for PVCs)
 
 OpenEBS:: (relies on iSCSI)

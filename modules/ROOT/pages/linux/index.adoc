@@ -79,10 +79,7 @@ at the CIRB the easier is:
 - The machine will be received with a full `vg_rhel` of 40G. Go to the vcloud console and extend the second disk to 60G
 - The machine now has a /dev/sdb disk with 60G. Extends the pv using `pvresize -v /dev/sdb`. And check with `vgdisplay or pvs`.
 
-
-== Concepts
-
-=== Glossary
+== Glossary
 
 The iSCSI (Internet Small Computer System Interface)::
 is a TCP / IP-based protocol used to establish and manage interconnections between IP storage devices, hosts and clients, and to create storage area networks (SANs )
@@ -94,8 +91,6 @@ Transport layer:: TCP, UDP (SCTP)
 Protocol buffers:: language-neutral, platform-neutral extensible mechanism for serializing structured data.
 
 Push (SSE) vs Pull (REQ/REP):: Server Send Events
-
-
 
 == Logs
 

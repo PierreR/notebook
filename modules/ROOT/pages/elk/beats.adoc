@@ -2,9 +2,9 @@
 
 Beats provides specialized `shippers` such as:
 
-- https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-overview.html[journalbeat]
-- https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html[filebeat]
-- https://www.elastic.co/guide/en/beats/auditbeat/current/auditbeat-overview.html[auditbeat]
-- https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-overview.html[metricbeat]
+- https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-overview.html[journalbeat, role=external]
+- https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html[filebeat, role=external]
+- https://www.elastic.co/guide/en/beats/auditbeat/current/auditbeat-overview.html[auditbeat, role=external]
+- https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-overview.html[metricbeat, role=external]
 
 They can be installed on a machine as an agent or run in a docker on a separate node.

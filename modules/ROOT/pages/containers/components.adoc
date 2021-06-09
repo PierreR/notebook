@@ -13,7 +13,7 @@
 - kube-controller-manager
 - kube-proxy
 - kube-flannel
-- https://coredns.io/[coredns]
+- https://coredns.io/[coredns, role=external]
 
 
 == Worker
@@ -123,7 +123,7 @@ Node-exporter retrieves metrics about the host where it runs (CPU, RAM, Disks)
 
 Here is a kube config example :
 
-```
+```yaml
 
       containers:
         - name: prometheus-node-exporter
